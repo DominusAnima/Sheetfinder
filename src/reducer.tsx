@@ -1,7 +1,7 @@
-import { Abilities, Alignment, Blocks, CharacterSize } from "./charSheet";
+import { Abilities, Alignment, Blocks, CharacterSize, ClassEntry, Skill } from "./charSheet";
 import { ABILITY_TYPES } from "./constants";
 
-export type ReducerAction = ChangeHPFieldAction | AbilToggleAction | ChangeBioAlignAction | ChangeBioSizeAction | ChangeBioFieldAction | RecalculateAction | ChangeAbilFieldAction
+export type ReducerAction = toggleClassSkillAction | ChangeSkillFieldAction | ChangeClassEntryFieldAction | ChangeHPFieldAction | AbilToggleAction | ChangeBioAlignAction | ChangeBioSizeAction | ChangeBioFieldAction | RecalculateAction | ChangeAbilFieldAction
 
 type RecalculateAction = {
   type: "recalculate",
@@ -47,6 +47,32 @@ type ChangeHPFieldAction = {
   type: 'changeHPField'
   payload: {
     field: 'bonusMaxPoints' | 'currentPoints' | 'tempPoints' | 'nonLethal',
+    value: string
+  }
+}
+
+type ChangeClassEntryFieldAction = {
+  type: 'changeClassEntryField',
+  payload: {
+    entryIndex: number,
+    field: 'hitDie' | 'name' | 'bab' | 'skill' | 'favClassBonusType' | 'favClassBonus' | 'fort' | 'ref' | 'will' | 'levels',
+    value: string
+  }
+}
+
+type ChangeSkillFieldAction = {
+  type: 'changeSkillField',
+  payload: {
+    skillIndex: number,
+    field: 'ranks' | 'misc',
+    value: string
+  }
+}
+
+type toggleClassSkillAction = {
+  type: 'toggleClassSkill',
+  payload: {
+    skillIndex: number,
     value: string
   }
 }
@@ -206,51 +232,127 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       return newState;
     }
     case 'changeBioField': {
-      console.log('trying to set ' + state.bio[action.payload.field] + ' to ' + action.payload.value + ' in field ' + action.payload.field)
-
-      const newState: Blocks = state;
-      newState.bio[action.payload.field] = action.payload.value;
+      const newState: Blocks = {
+        ...state,
+        bio: {
+          ...state.bio,
+          [action.payload.field]: action.payload.value
+        }
+      }
 
       return newState;
     }
     case 'changeBioSize': {
-      const newState: Blocks = state;
-
-      newState.bio.size = action.payload.value;
-      console.log('Changed field size to ' + newState.bio.size)
+      const newState: Blocks = {
+        ...state,
+        bio: {
+          ...state.bio,
+          size: action.payload.value
+        }
+      }
 
       return newState;
     }
     case 'changeBioAlign': {
-      const newState: Blocks = state;
-
-      newState.bio.align = action.payload.value;
-      console.log('Changed field size to ' + newState.bio.size)
+      const newState: Blocks = {
+        ...state,
+        bio: {
+          ...state.bio,
+          align: action.payload.value
+        }
+      }
 
       return newState;
     }
     case 'changeAbilities': {
-      console.log('trying to set ' + state.abilityBlock.abilities[action.payload.ability][action.payload.field] + ' to ' + action.payload.value + ' in field ' + action.payload.field)
+      const newState: Blocks = {
+        ...state,
+        abilityBlock: {
+          ...state.abilityBlock,
+          abilities: {
+            ...state.abilityBlock.abilities,
+            [action.payload.ability]: {
+              ...state.abilityBlock.abilities[action.payload.ability],
+              [action.payload.field]: action.payload.value
+            }
+          } 
+        }
+      }
 
-      const newState: Blocks = state;
-      newState.abilityBlock.abilities[action.payload.ability][action.payload.field] = action.payload.value;
       return newState;
     }
     case 'abilToggle': {
-      const newState: Blocks = state;
-      newState.abilityBlock.toggleDetail = !newState.abilityBlock.toggleDetail;
-
-      console.log('Toggling ability details to ' + newState.abilityBlock.toggleDetail)
+      const newState: Blocks = {
+        ...state,
+        abilityBlock: {
+          ...state.abilityBlock,
+          toggleDetail: !state.abilityBlock.toggleDetail
+        }
+      }
 
       return newState;
     }
     case 'changeHPField': {
-      console.log('trying to set ' + state.hitPoints[action.payload.field] + ' to ' + action.payload.value + ' in field ' + action.payload.field)
-
-      const newState: Blocks = state;
-      newState.hitPoints[action.payload.field] = action.payload.value;
+      const newState: Blocks = {
+        ...state,
+        hitPoints: {
+          ...state.hitPoints,
+          [action.payload.field]: action.payload.value
+        }
+      }
 
       return newState;
+    }
+    case 'changeClassEntryField': {
+      const newState: Blocks = {
+        ...state,
+        classRecorder: {
+          ...state.classRecorder,
+          entries: {
+            ...state.classRecorder.entries.map((e: ClassEntry, i: number) => {
+              if (i == action.payload.entryIndex) {
+                e[action.payload.field] = action.payload.value
+              }
+            })
+          }
+        }
+      }
+
+      return newState
+    }
+    case 'changeSkillField': {
+      const newState: Blocks = {
+        ...state,
+        skills: {
+          ...state.skills,
+          skills: {
+            ...state.skills.skills.map((e: Skill, i: number) => {
+              if (i == action.payload.skillIndex) {
+                e[action.payload.field] = action.payload.value
+              }
+            })
+          }
+        }
+      }
+
+      return newState
+    }
+    case 'toggleClassSkill': {
+      const newState: Blocks = {
+        ...state,
+        skills: {
+          ...state.skills,
+          skills: {
+            ...state.skills.skills.map((e: Skill, i: number) => {
+              if(i == action.payload.skillIndex) {
+                e.classSkill = action.payload.value == 'true'
+              }
+            })
+          }
+        }
+      }
+
+      return newState
     }
     default: {
       throw Error('Unknown action: ' + action)
