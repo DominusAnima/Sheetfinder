@@ -1,0 +1,18 @@
+IMPORTANT:
+  figure out class recorder
+  fix change skill field and change class recorder field reducer functions
+  add option to add new skills (like knowledge, proffesion, perform skills) into the skill list
+  special block
+  magic Blocks
+  feat block
+  equipment block
+
+NON-ESSENTIAL:
+  restrict adding skill ranks into skills if character has no more available skill ranks left
+  update the state structure graph and export an image, so others can see it without special software
+  make it look normal
+  change combat tables into arrays, so they can be initialized in a loop
+  merge change combat block field functions in reducer
+  make size bonuses automatically change based on size choice in bio
+  add toggle detail button to all blocks
+  add text field to some blocks for notes

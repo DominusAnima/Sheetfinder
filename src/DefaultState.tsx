@@ -48,6 +48,7 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
 }
 
 const DEFAULT_SKILL_BLOCK: SkillBlock = {
+  detailToggle: true,
   totalRanks: 0,
   remainRanks: 0,
   skills: [

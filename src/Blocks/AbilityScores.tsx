@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
-import { Abilities, AbilityBlock } from "./charSheet";
-import { ABILITY_TYPES } from "./constants";
-import { ReducerAction } from "./reducer";
+import { Abilities, AbilityBlock } from "../charSheet";
+import { ABILITY_TYPES } from "../constants";
+import { ReducerAction } from "../reducer";
 
 export function AbilityScores({state, dispatch}: {state: AbilityBlock, dispatch: Dispatch<ReducerAction>}) {
 

@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
-import { HPBlock } from "./charSheet";
-import { ReducerAction } from "./reducer";
+import { HPBlock } from "../charSheet";
+import { ReducerAction } from "../reducer";
 
 export function HitPoints({state, dispatch}: {state: HPBlock, dispatch: Dispatch<ReducerAction>}) {
 

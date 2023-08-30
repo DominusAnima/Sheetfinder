@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
-import { Alignment, BioBlock, CharacterSize } from "./charSheet";
-import { ReducerAction } from "./reducer";
+import { Alignment, BioBlock, CharacterSize } from "../charSheet";
+import { ReducerAction } from "../reducer";
 
 export function Bio({state, dispatch}: {state: BioBlock, dispatch: Dispatch<ReducerAction>}) {
 

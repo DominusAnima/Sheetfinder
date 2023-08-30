@@ -1,7 +1,7 @@
-import { Abilities, Alignment, Blocks, CharacterSize, ClassEntry, Skill } from "./charSheet";
+import { Abilities, Alignment, Blocks, CharacterSize } from "./charSheet";
 import { ABILITY_TYPES } from "./constants";
 
-export type ReducerAction = toggleClassSkillAction | ChangeSkillFieldAction | ChangeClassEntryFieldAction | ChangeHPFieldAction | AbilToggleAction | ChangeBioAlignAction | ChangeBioSizeAction | ChangeBioFieldAction | RecalculateAction | ChangeAbilFieldAction
+export type ReducerAction = changeAttackBonusAction | changeSaveBonusAction | changeACBonusAction | toggleSkillDetailAction | toggleClassSkillAction | ChangeSkillFieldAction | ChangeClassEntryFieldAction | ChangeHPFieldAction | AbilToggleAction | ChangeBioAlignAction | ChangeBioSizeAction | ChangeBioFieldAction | RecalculateAction | ChangeAbilFieldAction
 
 type RecalculateAction = {
   type: "recalculate",
@@ -77,6 +77,36 @@ type toggleClassSkillAction = {
   }
 }
 
+type toggleSkillDetailAction = {
+  type: 'toggleSkillDetail'
+}
+
+type changeACBonusAction = {
+  type: 'changeACBonus',
+  payload: {
+    field: 'dodge' | 'deflect' | 'natural' | 'size' | 'misc',
+    value: string
+  }
+}
+
+type changeSaveBonusAction = {
+  type: 'changeSaveBonus',
+  payload: {
+    saveType: 'fort' | 'ref' | 'will',
+    field: 'enh' | 'misc',
+    value: string
+  }
+}
+
+type changeAttackBonusAction = {
+  type: 'changeAttackBonus',
+  payload: {
+    attackType: 'melee' | 'ranged' | 'combatDefense' | 'combatBonus'
+    field: 'misc'
+    value: string
+  }
+}
+
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
   switch (action.type) {
     case 'recalculate': {
@@ -127,7 +157,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       const combatBonuses = newState.combat.acBonuses
       const newCombatBlock = newState.combat
         newCombatBlock.ac = 
-          Number(combatBonuses.armor) 
+          10
+          + Number(combatBonuses.armor) 
           + Number(combatBonuses.shield)
           + Math.min(Number(combatBonuses.maxDex), Number(newState.abilityBlock.abilities.dex.mod))
           + Number(combatBonuses.size)
@@ -136,13 +167,15 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           + Number(combatBonuses.deflect)
           + Number(combatBonuses.misc);
       newCombatBlock.touchAC =
+        10
         + Math.min(Number(combatBonuses.maxDex), Number(newState.abilityBlock.abilities.dex.mod))
         + Number(combatBonuses.size)
         + Number(combatBonuses.dodge)
         + Number(combatBonuses.deflect)
         + Number(combatBonuses.misc);
       newCombatBlock.flatFooted =
-        Number(combatBonuses.armor)
+        10
+        + Number(combatBonuses.armor)
         + Number(combatBonuses.shield)
         + Number(combatBonuses.size)
         + Number(combatBonuses.natural)
@@ -279,6 +312,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         }
       }
 
+      reducer(newState, {type: 'recalculate'})
+
       return newState;
     }
     case 'abilToggle': {
@@ -301,56 +336,123 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         }
       }
 
+      reducer(newState, {type: 'recalculate'})
+
       return newState;
     }
-    case 'changeClassEntryField': {
+    // case 'changeClassEntryField': {
+    //   const newState: Blocks = {
+    //     ...state,
+    //     classRecorder: {
+    //       ...state.classRecorder,
+    //       entries: {
+    //         ...state.classRecorder.entries.map((e: ClassEntry, i: number) => {
+    //           if (i == action.payload.entryIndex) {
+    //             e[action.payload.field] = action.payload.value
+    //           }
+    //         })
+    //       }
+    //     }
+    //   }
+
+    //   reducer(newState, {type: 'recalculate'})
+
+    //   return newState
+    // }
+    // case 'changeSkillField': {
+    //   const newState: Blocks = {
+    //     ...state,
+    //     skills: {
+    //       ...state.skills,
+    //       skills: {
+    //         ...state.skills.skills.map((e: Skill, i: number) => {
+    //           if (i == action.payload.skillIndex) {
+    //             e[action.payload.field] = action.payload.value
+    //           }
+    //         })
+    //       }
+    //     }
+    //   }
+
+    //   reducer(newState, {type: 'recalculate'})
+
+    //   return newState
+    // }
+    // case 'toggleClassSkill': {
+    //   const newState: Blocks = {
+    //     ...state,
+    //     skills: {
+    //       ...state.skills,
+    //       skills: {
+    //         ...state.skills.skills.map((e: Skill, i: number) => {
+    //           if(i == action.payload.skillIndex) {
+    //             e.classSkill = action.payload.value == 'true'
+    //           }
+    //         })
+    //       }
+    //     }
+    //   }
+
+    //   reducer(newState, {type: 'recalculate'})
+
+    //   return newState
+    // }
+    case 'toggleSkillDetail': {
       const newState: Blocks = {
         ...state,
-        classRecorder: {
-          ...state.classRecorder,
-          entries: {
-            ...state.classRecorder.entries.map((e: ClassEntry, i: number) => {
-              if (i == action.payload.entryIndex) {
-                e[action.payload.field] = action.payload.value
-              }
-            })
-          }
+        skills: {
+          ...state.skills,
+          detailToggle: !state.skills.detailToggle
         }
       }
 
       return newState
     }
-    case 'changeSkillField': {
+    case 'changeACBonus': {
       const newState: Blocks = {
         ...state,
-        skills: {
-          ...state.skills,
-          skills: {
-            ...state.skills.skills.map((e: Skill, i: number) => {
-              if (i == action.payload.skillIndex) {
-                e[action.payload.field] = action.payload.value
-              }
-            })
+        combat: {
+          ...state.combat,
+          acBonuses: {
+            ...state.combat.acBonuses,
+            [action.payload.field]: action.payload.value
           }
         }
       }
 
+      reducer(newState, {type: 'recalculate'})
+
       return newState
     }
-    case 'toggleClassSkill': {
+    case 'changeSaveBonus': {
       const newState: Blocks = {
         ...state,
-        skills: {
-          ...state.skills,
-          skills: {
-            ...state.skills.skills.map((e: Skill, i: number) => {
-              if(i == action.payload.skillIndex) {
-                e.classSkill = action.payload.value == 'true'
-              }
-            })
+        combat: {
+          ...state.combat,
+          [action.payload.saveType]: {
+            ...state.combat[action.payload.saveType],
+            [action.payload.field]: action.payload.value
           }
         }
       }
+
+      reducer(newState, {type: 'recalculate'})
+
+      return newState
+    }
+    case 'changeAttackBonus': {
+      const newState: Blocks = {
+        ...state,
+        combat: {
+          ...state.combat,
+          [action.payload.attackType]: {
+            ...state.combat[action.payload.attackType],
+            [action.payload.field]: action.payload.value
+          }
+        }
+      }
+
+      reducer(newState, {type: "recalculate"})
 
       return newState
     }

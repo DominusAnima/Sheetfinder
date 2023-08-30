@@ -118,6 +118,7 @@ export interface HPBlock {
 
 //pull total skill ranks from ClassrecordBlock.ClassStatTotals.skill
 export interface SkillBlock {
+  detailToggle: boolean,
   totalRanks: number,
   remainRanks: number,
   skills: Array<Skill>

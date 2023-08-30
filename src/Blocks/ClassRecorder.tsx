@@ -1,6 +1,6 @@
 import { Dispatch } from "react"
-import { ClassRecordBlock } from "./charSheet"
-import { ReducerAction } from "./reducer"
+import { ClassRecordBlock } from "../charSheet"
+import { ReducerAction } from "../reducer"
 
 export function ClassRecorder({state, dispatch}: {state: ClassRecordBlock, dispatch: Dispatch<ReducerAction>}) {
 
