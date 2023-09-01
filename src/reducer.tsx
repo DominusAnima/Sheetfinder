@@ -1,303 +1,346 @@
 import { Abilities, Alignment, Blocks, CharacterSize } from "./charSheet";
 import { ABILITY_TYPES } from "./constants";
 
-export type ReducerAction = changeAttackBonusAction | changeSaveBonusAction | changeACBonusAction | toggleSkillDetailAction | toggleClassSkillAction | ChangeSkillFieldAction | ChangeClassEntryFieldAction | ChangeHPFieldAction | AbilToggleAction | ChangeBioAlignAction | ChangeBioSizeAction | ChangeBioFieldAction | RecalculateAction | ChangeAbilFieldAction
+export type ReducerAction =
+  | changeAttackBonusAction
+  | changeSaveBonusAction
+  | changeACBonusAction
+  | toggleSkillDetailAction
+  | toggleClassSkillAction
+  | ChangeSkillFieldAction
+  | ChangeClassEntryFieldAction
+  | ChangeLevelGainedFieldAction
+  | ChangeHPFieldAction
+  | AbilToggleAction
+  | ChangeBioAlignAction
+  | ChangeBioSizeAction
+  | ChangeBioFieldAction
+  | RecalculateAction
+  | ChangeAbilFieldAction;
 
 type RecalculateAction = {
-  type: "recalculate",
-}
+  type: "recalculate";
+};
 
 type ChangeBioFieldAction = {
-  type: 'changeBioField',
+  type: "changeBioField";
   payload: {
-    field: 'name' | 'race' | 'gender' | 'height' | 'weight' | 'hair' | 'eyes' | 'skin' | 'age' | 'deity' | 'background' | 'languages',
-    value: string
-  }
-}
+    field:
+      | "name"
+      | "race"
+      | "gender"
+      | "height"
+      | "weight"
+      | "hair"
+      | "eyes"
+      | "skin"
+      | "age"
+      | "deity"
+      | "background"
+      | "languages";
+    value: string;
+  };
+};
 
 type ChangeBioSizeAction = {
-  type: 'changeBioSize',
+  type: "changeBioSize";
   payload: {
-    value: CharacterSize
-  }
-}
+    value: CharacterSize;
+  };
+};
 
 type ChangeBioAlignAction = {
-  type: 'changeBioAlign',
+  type: "changeBioAlign";
   payload: {
-    value: Alignment
-  }
-
-} 
+    value: Alignment;
+  };
+};
 
 type ChangeAbilFieldAction = {
-  type: 'changeAbilities',
+  type: "changeAbilities";
   payload: {
-    ability: keyof Abilities,
-    field: 'base' | 'enh' | 'size' | 'misc' | 'damage' | 'drain',
-    value: string
-  }
-}
+    ability: keyof Abilities;
+    field: "base" | "enh" | "size" | "misc" | "damage" | "drain";
+    value: string;
+  };
+};
 
 type AbilToggleAction = {
-  type: 'abilToggle',
-}
+  type: "abilToggle";
+};
 
 type ChangeHPFieldAction = {
-  type: 'changeHPField'
+  type: "changeHPField";
   payload: {
-    field: 'bonusMaxPoints' | 'currentPoints' | 'tempPoints' | 'nonLethal',
-    value: string
-  }
-}
+    field: "bonusMaxPoints" | "currentPoints" | "tempPoints" | "nonLethal";
+    value: string;
+  };
+};
 
 type ChangeClassEntryFieldAction = {
-  type: 'changeClassEntryField',
+  type: "changeClassEntryField";
   payload: {
-    entryIndex: number,
-    field: 'hitDie' | 'name' | 'bab' | 'skill' | 'favClassBonusType' | 'favClassBonus' | 'fort' | 'ref' | 'will' | 'levels',
-    value: string
-  }
-}
+    entryIndex: number;
+    field:
+      | "hitDie"
+      | "name"
+      | "bab"
+      | "skill"
+      | "favClassBonusType"
+      | "favClassBonus"
+      | "fort"
+      | "ref"
+      | "will"
+      | "levels";
+    value: string;
+  };
+};
+
+type ChangeLevelGainedFieldAction = {
+  type: "changeLevelGainedField";
+  payload: {
+    entryIndex: number;
+    levelIndex: number;
+    value: string;
+  };
+};
 
 type ChangeSkillFieldAction = {
-  type: 'changeSkillField',
+  type: "changeSkillField";
   payload: {
-    skillIndex: number,
-    field: 'ranks' | 'misc',
-    value: string
-  }
-}
+    skillIndex: number;
+    field: "ranks" | "misc";
+    value: string;
+  };
+};
 
 type toggleClassSkillAction = {
-  type: 'toggleClassSkill',
+  type: "toggleClassSkill";
   payload: {
-    skillIndex: number,
-    value: string
-  }
-}
+    skillIndex: number;
+    value: string;
+  };
+};
 
 type toggleSkillDetailAction = {
-  type: 'toggleSkillDetail'
-}
+  type: "toggleSkillDetail";
+};
 
 type changeACBonusAction = {
-  type: 'changeACBonus',
+  type: "changeACBonus";
   payload: {
-    field: 'dodge' | 'deflect' | 'natural' | 'size' | 'misc',
-    value: string
-  }
-}
+    field: "dodge" | "deflect" | "natural" | "size" | "misc";
+    value: string;
+  };
+};
 
 type changeSaveBonusAction = {
-  type: 'changeSaveBonus',
+  type: "changeSaveBonus";
   payload: {
-    saveType: 'fort' | 'ref' | 'will',
-    field: 'enh' | 'misc',
-    value: string
-  }
-}
+    saveType: "fort" | "ref" | "will";
+    field: "enh" | "misc";
+    value: string;
+  };
+};
 
 type changeAttackBonusAction = {
-  type: 'changeAttackBonus',
+  type: "changeAttackBonus";
   payload: {
-    attackType: 'melee' | 'ranged' | 'combatDefense' | 'combatBonus'
-    field: 'misc'
-    value: string
-  }
-}
+    attackType: "melee" | "ranged" | "combatDefense" | "combatBonus";
+    field: "misc";
+    value: string;
+  };
+};
 
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
   switch (action.type) {
-    case 'recalculate': {
+    case "recalculate": {
       const newState: Blocks = state;
 
       //calculate ability score total and modifier
       ABILITY_TYPES.map((ability) => {
-        const newAbility = newState.abilityBlock.abilities[ability]
-        newAbility.total = 
-          Number(newAbility.base)
-          + Number(newAbility.enh) 
-          + Number(newAbility.size) 
-          + Number(newAbility.misc) 
-          - Number(newAbility.damage)
-          - Number(newAbility.drain);
-        newAbility.mod = Math.floor((Number(newAbility.total) - 10)/2)
-      })
+        const newAbility = newState.abilityBlock.abilities[ability];
+        newAbility.total =
+          Number(newAbility.base) +
+          Number(newAbility.enh) +
+          Number(newAbility.size) +
+          Number(newAbility.misc) -
+          Number(newAbility.damage) -
+          Number(newAbility.drain);
+        newAbility.mod = Math.floor((Number(newAbility.total) - 10) / 2);
+      });
 
       //reset totals on class recorder block
-      const newClassRecTot = newState.classRecorder.totals
-      newClassRecTot.bab = 0
-      newClassRecTot.favClassBonus = 0
-      newClassRecTot.fort = 0
-      newClassRecTot.ref = 0
-      newClassRecTot.will = 0
-      newClassRecTot.skill = 0
-      newClassRecTot.levels = 0
+      const newClassRecTot = newState.classRecorder.totals;
+      newClassRecTot.bab = 0;
+      newClassRecTot.favClassBonus = 0;
+      newClassRecTot.fort = 0;
+      newClassRecTot.ref = 0;
+      newClassRecTot.will = 0;
+      newClassRecTot.skill = 0;
+      newClassRecTot.levels = 0;
       //reset max hp
-      const newHP = newState.hitPoints
-      newHP.maxPoints = 0
+      const newHP = newState.hitPoints;
+      newHP.maxPoints = 0;
       //calculate total bab, skill points, favoured bonus, saves and levels before ability modifiers
-      newState.classRecorder.entries.forEach(entry => {
-        newClassRecTot.bab += Number(entry.bab)
-        newClassRecTot.favClassBonus += Number(entry.favClassBonus)
-        newClassRecTot.fort += Number(entry.fort)
-        newClassRecTot.ref += Number(entry.ref)
-        newClassRecTot.will += Number(entry.will)
-        newClassRecTot.skill += Number(entry.skill) * Number(entry.levels)
-        newClassRecTot.levels += Number(entry.levels)
+      newState.classRecorder.entries.forEach((entry) => {
+        newClassRecTot.bab += Number(entry.bab);
+        newClassRecTot.favClassBonus += Number(entry.favClassBonus);
+        newClassRecTot.fort += Number(entry.fort);
+        newClassRecTot.ref += Number(entry.ref);
+        newClassRecTot.will += Number(entry.will);
+        newClassRecTot.skill += Number(entry.skill) * Number(entry.levels);
+        newClassRecTot.levels += Number(entry.levels);
         //calculate max HP
-        entry.hpGained.forEach(element => {
-          newHP.maxPoints += Number(element) + Number(newState.abilityBlock.abilities.con.mod)
-        })
+        entry.hpGained.forEach((element) => {
+          newHP.maxPoints += Number(element) + Number(newState.abilityBlock.abilities.con.mod);
+        });
       });
-      newHP.maxPoints += Number(newState.hitPoints.bonusMaxPoints)
+      newHP.maxPoints += Number(newState.hitPoints.bonusMaxPoints);
 
       //calculate armor classes
-      const combatBonuses = newState.combat.acBonuses
-      const newCombatBlock = newState.combat
-        newCombatBlock.ac = 
-          10
-          + Number(combatBonuses.armor) 
-          + Number(combatBonuses.shield)
-          + Math.min(Number(combatBonuses.maxDex), Number(newState.abilityBlock.abilities.dex.mod))
-          + Number(combatBonuses.size)
-          + Number(combatBonuses.dodge)
-          + Number(combatBonuses.natural)
-          + Number(combatBonuses.deflect)
-          + Number(combatBonuses.misc);
+      const combatBonuses = newState.combat.acBonuses;
+      const newCombatBlock = newState.combat;
+      newCombatBlock.ac =
+        10 +
+        Number(combatBonuses.armor) +
+        Number(combatBonuses.shield) +
+        Math.min(Number(combatBonuses.maxDex), Number(newState.abilityBlock.abilities.dex.mod)) +
+        Number(combatBonuses.size) +
+        Number(combatBonuses.dodge) +
+        Number(combatBonuses.natural) +
+        Number(combatBonuses.deflect) +
+        Number(combatBonuses.misc);
       newCombatBlock.touchAC =
-        10
-        + Math.min(Number(combatBonuses.maxDex), Number(newState.abilityBlock.abilities.dex.mod))
-        + Number(combatBonuses.size)
-        + Number(combatBonuses.dodge)
-        + Number(combatBonuses.deflect)
-        + Number(combatBonuses.misc);
+        10 +
+        Math.min(Number(combatBonuses.maxDex), Number(newState.abilityBlock.abilities.dex.mod)) +
+        Number(combatBonuses.size) +
+        Number(combatBonuses.dodge) +
+        Number(combatBonuses.deflect) +
+        Number(combatBonuses.misc);
       newCombatBlock.flatFooted =
-        10
-        + Number(combatBonuses.armor)
-        + Number(combatBonuses.shield)
-        + Number(combatBonuses.size)
-        + Number(combatBonuses.natural)
-        + Number(combatBonuses.deflect)
-        + Number(combatBonuses.misc);
+        10 +
+        Number(combatBonuses.armor) +
+        Number(combatBonuses.shield) +
+        Number(combatBonuses.size) +
+        Number(combatBonuses.natural) +
+        Number(combatBonuses.deflect) +
+        Number(combatBonuses.misc);
 
       //set penalties in combat block
       newCombatBlock.armorCheckPenalty =
-        Number(newCombatBlock.equipment.armor.checkPenalty)
-        + Number(newCombatBlock.equipment.shield.checkPenalty);
-      newCombatBlock.acBonuses.maxDex = Math.min(Number(newCombatBlock.equipment.armor.maxDex), Number(newCombatBlock.equipment.shield.maxDex))
+        Number(newCombatBlock.equipment.armor.checkPenalty) + Number(newCombatBlock.equipment.shield.checkPenalty);
+      newCombatBlock.acBonuses.maxDex = Math.min(
+        Number(newCombatBlock.equipment.armor.maxDex),
+        Number(newCombatBlock.equipment.shield.maxDex)
+      );
       newCombatBlock.spellFail =
-        Number(newCombatBlock.equipment.armor.spellFail)
-        + Number(newCombatBlock.equipment.shield.spellFail);
+        Number(newCombatBlock.equipment.armor.spellFail) + Number(newCombatBlock.equipment.shield.spellFail);
 
       //set initiative
-      newCombatBlock.initiative = newState.abilityBlock.abilities.dex.mod + Number(newCombatBlock.initBonus)
+      newCombatBlock.initiative = newState.abilityBlock.abilities.dex.mod + Number(newCombatBlock.initBonus);
 
       //calculate saving throws
       newCombatBlock.fort.total =
-        newClassRecTot.fort
-        + newState.abilityBlock.abilities[newCombatBlock.fort.ability].mod
-        + Number(newCombatBlock.fort.enh)
-        + Number(newCombatBlock.fort.misc);
+        newClassRecTot.fort +
+        newState.abilityBlock.abilities[newCombatBlock.fort.ability].mod +
+        Number(newCombatBlock.fort.enh) +
+        Number(newCombatBlock.fort.misc);
       newCombatBlock.ref.total =
-        newClassRecTot.ref
-        + newState.abilityBlock.abilities[newCombatBlock.ref.ability].mod
-        + Number(newCombatBlock.ref.enh)
-        + Number(newCombatBlock.ref.misc);
+        newClassRecTot.ref +
+        newState.abilityBlock.abilities[newCombatBlock.ref.ability].mod +
+        Number(newCombatBlock.ref.enh) +
+        Number(newCombatBlock.ref.misc);
       newCombatBlock.will.total =
-        newClassRecTot.will
-        + newState.abilityBlock.abilities[newCombatBlock.will.ability].mod
-        + Number(newCombatBlock.will.enh)
-        + Number(newCombatBlock.will.misc);
+        newClassRecTot.will +
+        newState.abilityBlock.abilities[newCombatBlock.will.ability].mod +
+        Number(newCombatBlock.will.enh) +
+        Number(newCombatBlock.will.misc);
 
       //calculate attack bonuses
       newCombatBlock.melee.total =
-        newState.abilityBlock.abilities[newCombatBlock.melee.ability].mod
-        + newClassRecTot.bab
-        + Number(newCombatBlock.melee.misc);
+        newState.abilityBlock.abilities[newCombatBlock.melee.ability].mod +
+        newClassRecTot.bab +
+        Number(newCombatBlock.melee.misc);
       newCombatBlock.ranged.total =
-        newState.abilityBlock.abilities[newCombatBlock.ranged.ability].mod
-        + newClassRecTot.bab
-        + Number(newCombatBlock.ranged.misc);
+        newState.abilityBlock.abilities[newCombatBlock.ranged.ability].mod +
+        newClassRecTot.bab +
+        Number(newCombatBlock.ranged.misc);
 
       //calculate combat manuevers
       newCombatBlock.combatBonus.total =
-        newState.abilityBlock.abilities[newCombatBlock.combatBonus.ability].mod
-        + newClassRecTot.bab
-        + Number(newCombatBlock.combatBonus.misc);
+        newState.abilityBlock.abilities[newCombatBlock.combatBonus.ability].mod +
+        newClassRecTot.bab +
+        Number(newCombatBlock.combatBonus.misc);
       newCombatBlock.combatDefense.total =
-        10
-        + newState.abilityBlock.abilities.str.mod
-        + newState.abilityBlock.abilities.dex.mod
-        + newClassRecTot.bab
-        + Number(newCombatBlock.acBonuses.dodge)
-        + Number(newCombatBlock.acBonuses.deflect)
-        + Number(newCombatBlock.combatDefense.misc);
+        10 +
+        newState.abilityBlock.abilities.str.mod +
+        newState.abilityBlock.abilities.dex.mod +
+        newClassRecTot.bab +
+        Number(newCombatBlock.acBonuses.dodge) +
+        Number(newCombatBlock.acBonuses.deflect) +
+        Number(newCombatBlock.combatDefense.misc);
 
       //calculate skill rank amounts and skill bonus totals
-      newState.skills.totalRanks = newClassRecTot.skill + newClassRecTot.levels * newState.abilityBlock.abilities.int.mod;
+      newState.skills.totalRanks =
+        newClassRecTot.skill + newClassRecTot.levels * newState.abilityBlock.abilities.int.mod;
       newState.skills.remainRanks = newState.skills.totalRanks;
-      newState.skills.skills.forEach(element => {
+      newState.skills.skills.forEach((element) => {
         newState.skills.remainRanks -= Number(element.ranks);
         element.totalBonus = Number(element.ranks) + newState.abilityBlock.abilities[element.ability].mod;
-        if (Number(element.ranks) > 0 && element.classSkill) 
-          element.totalBonus += 3;
-        if (element.armorPenalty) 
-          element.totalBonus -= newCombatBlock.armorCheckPenalty;
+        if (Number(element.ranks) > 0 && element.classSkill) element.totalBonus += 3;
+        if (element.armorPenalty) element.totalBonus -= newCombatBlock.armorCheckPenalty;
         element.totalBonus += Number(element.misc);
-      })
+      });
 
       //calculate weight
       const newWeight = newState.equipment.weight;
-      newWeight.currLoad = Number(newCombatBlock.equipment.armor.weight) + Number(newCombatBlock.equipment.shield.weight);
-      newCombatBlock.equipment.weapons.forEach(weapon => 
-        newWeight.currLoad += Number(weapon.weight));
-      newState.equipment.bags.forEach(bag => 
-        newWeight.currLoad += Number(bag.weight));
-      newState.equipment.coinPurse.forEach(currency => 
-        newWeight.currLoad += Number(currency.weight) * Number(currency.amount));
-      newState.equipment.worn.forEach(element =>
-        newWeight.currLoad += Number(element.weight));
-      newState.equipment.inventory.forEach(element =>
-        newWeight.currLoad += Number(element.weight));
+      newWeight.currLoad =
+        Number(newCombatBlock.equipment.armor.weight) + Number(newCombatBlock.equipment.shield.weight);
+      newCombatBlock.equipment.weapons.forEach((weapon) => (newWeight.currLoad += Number(weapon.weight)));
+      newState.equipment.bags.forEach((bag) => (newWeight.currLoad += Number(bag.weight)));
+      newState.equipment.coinPurse.forEach(
+        (currency) => (newWeight.currLoad += Number(currency.weight) * Number(currency.amount))
+      );
+      newState.equipment.worn.forEach((element) => (newWeight.currLoad += Number(element.weight)));
+      newState.equipment.inventory.forEach((element) => (newWeight.currLoad += Number(element.weight)));
 
       return newState;
     }
-    case 'changeBioField': {
+    case "changeBioField": {
       const newState: Blocks = {
         ...state,
         bio: {
           ...state.bio,
-          [action.payload.field]: action.payload.value
-        }
-      }
+          [action.payload.field]: action.payload.value,
+        },
+      };
 
       return newState;
     }
-    case 'changeBioSize': {
+    case "changeBioSize": {
       const newState: Blocks = {
         ...state,
         bio: {
           ...state.bio,
-          size: action.payload.value
-        }
-      }
+          size: action.payload.value,
+        },
+      };
 
       return newState;
     }
-    case 'changeBioAlign': {
+    case "changeBioAlign": {
       const newState: Blocks = {
         ...state,
         bio: {
           ...state.bio,
-          align: action.payload.value
-        }
-      }
+          align: action.payload.value,
+        },
+      };
 
       return newState;
     }
-    case 'changeAbilities': {
+    case "changeAbilities": {
       const newState: Blocks = {
         ...state,
         abilityBlock: {
@@ -306,59 +349,82 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
             ...state.abilityBlock.abilities,
             [action.payload.ability]: {
               ...state.abilityBlock.abilities[action.payload.ability],
-              [action.payload.field]: action.payload.value
-            }
-          } 
-        }
-      }
+              [action.payload.field]: action.payload.value,
+            },
+          },
+        },
+      };
 
-      reducer(newState, {type: 'recalculate'})
+      reducer(newState, { type: "recalculate" });
 
       return newState;
     }
-    case 'abilToggle': {
+    case "abilToggle": {
       const newState: Blocks = {
         ...state,
         abilityBlock: {
           ...state.abilityBlock,
-          toggleDetail: !state.abilityBlock.toggleDetail
-        }
-      }
+          toggleDetail: !state.abilityBlock.toggleDetail,
+        },
+      };
 
       return newState;
     }
-    case 'changeHPField': {
+    case "changeHPField": {
       const newState: Blocks = {
         ...state,
         hitPoints: {
           ...state.hitPoints,
-          [action.payload.field]: action.payload.value
-        }
-      }
+          [action.payload.field]: action.payload.value,
+        },
+      };
 
-      reducer(newState, {type: 'recalculate'})
+      reducer(newState, { type: "recalculate" });
 
       return newState;
     }
-    // case 'changeClassEntryField': {
-    //   const newState: Blocks = {
-    //     ...state,
-    //     classRecorder: {
-    //       ...state.classRecorder,
-    //       entries: {
-    //         ...state.classRecorder.entries.map((e: ClassEntry, i: number) => {
-    //           if (i == action.payload.entryIndex) {
-    //             e[action.payload.field] = action.payload.value
-    //           }
-    //         })
-    //       }
-    //     }
-    //   }
+    case "changeClassEntryField": {
+      const newState: Blocks = {
+        ...state,
+        classRecorder: {
+          ...state.classRecorder,
+          entries: state.classRecorder.entries.map((e, i) => {
+            if (i == action.payload.entryIndex) {
+              return {
+                ...e,
+                [action.payload.field]: action.payload.value,
+              };
+            }
+            return e;
+          }),
+        },
+      };
 
-    //   reducer(newState, {type: 'recalculate'})
+      reducer(newState, { type: "recalculate" });
 
-    //   return newState
-    // }
+      return newState;
+    }
+
+    case "changeLevelGainedField": {
+      const newState: Blocks = {
+        ...state,
+        classRecorder: {
+          ...state.classRecorder,
+          entries: state.classRecorder.entries.map((e, i) => {
+            if (i !== action.payload.entryIndex) {
+              return e;
+            }
+
+            return {
+              ...e,
+              hpGained: e.hpGained.map((hp, j) => (j === action.payload.levelIndex ? action.payload.value : hp)),
+            };
+          }),
+        },
+      };
+
+      return reducer(newState, { type: "recalculate" });
+    }
     // case 'changeSkillField': {
     //   const newState: Blocks = {
     //     ...state,
@@ -397,67 +463,67 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
     //   return newState
     // }
-    case 'toggleSkillDetail': {
+    case "toggleSkillDetail": {
       const newState: Blocks = {
         ...state,
         skills: {
           ...state.skills,
-          detailToggle: !state.skills.detailToggle
-        }
-      }
+          detailToggle: !state.skills.detailToggle,
+        },
+      };
 
-      return newState
+      return newState;
     }
-    case 'changeACBonus': {
+    case "changeACBonus": {
       const newState: Blocks = {
         ...state,
         combat: {
           ...state.combat,
           acBonuses: {
             ...state.combat.acBonuses,
-            [action.payload.field]: action.payload.value
-          }
-        }
-      }
+            [action.payload.field]: action.payload.value,
+          },
+        },
+      };
 
-      reducer(newState, {type: 'recalculate'})
+      reducer(newState, { type: "recalculate" });
 
-      return newState
+      return newState;
     }
-    case 'changeSaveBonus': {
+    case "changeSaveBonus": {
       const newState: Blocks = {
         ...state,
         combat: {
           ...state.combat,
           [action.payload.saveType]: {
             ...state.combat[action.payload.saveType],
-            [action.payload.field]: action.payload.value
-          }
-        }
-      }
+            [action.payload.field]: action.payload.value,
+          },
+        },
+      };
 
-      reducer(newState, {type: 'recalculate'})
+      reducer(newState, { type: "recalculate" });
 
-      return newState
+      return newState;
     }
-    case 'changeAttackBonus': {
+    case "changeAttackBonus": {
       const newState: Blocks = {
         ...state,
         combat: {
           ...state.combat,
           [action.payload.attackType]: {
             ...state.combat[action.payload.attackType],
-            [action.payload.field]: action.payload.value
-          }
-        }
-      }
+            [action.payload.field]: action.payload.value,
+          },
+        },
+      };
 
-      reducer(newState, {type: "recalculate"})
+      reducer(newState, { type: "recalculate" });
 
-      return newState
+      return newState;
     }
     default: {
-      throw Error('Unknown action: ' + action)
+      throw Error("Unknown action: " + action);
     }
   }
 }

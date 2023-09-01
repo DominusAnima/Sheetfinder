@@ -40,3 +40,50 @@
 .read-the-docs {
   color: #888;
 }
+
+#root {
+  max-width: 390px;
+  background-color: aliceblue;
+}
+
+.abilities {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.abilities thead th:first-child,
+.abilities tbody th {
+  background-color: white;
+  position: sticky;
+  left: 0;
+}
+
+.abilities table {
+  width: 100%;
+}
+
+.abilities input {
+  width: 30px;
+}
+
+.bio {
+  display: flex;
+  flex-direction: column;
+}
+
+.hitPoints {
+  display: flex;
+  flex-direction: column;
+}
+
+.classRecorderTable {
+  width: 100%;
+}
+
+.classRecorderTable .entryRow input {
+  width: 30px;
+}
+
+.classRecorderTable .levelsRow input {
+  width: 30px;
+}
