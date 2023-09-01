@@ -1,6 +1,5 @@
 IMPORTANT:
   figure out class recorder
-  fix change skill field and change class recorder field reducer functions
   add option to add new skills (like knowledge, proffesion, perform skills) into the skill list
   special block
   magic Blocks
