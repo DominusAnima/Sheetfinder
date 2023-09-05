@@ -1,34 +1,17 @@
-import { Dispatch } from "react";
 import { Blocks } from "../charSheet";
-import { ReducerAction } from "../reducer";
+import { useFormDispatch } from "../lib/useFormDispatch";
 
-export function CombatBlock({
-  state,
-  dispatch,
-}: {
-  state: Blocks;
-  dispatch: Dispatch<ReducerAction>;
-}) {
-  function handleACChange(
-    field: "dodge" | "deflect" | "natural" | "size" | "misc",
-    value: string
-  ) {
+export function CombatBlock({ state }: { state: Blocks }) {
+  const dispatch = useFormDispatch();
+  function handleACChange(field: "dodge" | "deflect" | "natural" | "size" | "misc", value: string) {
     dispatch({ type: "changeACBonus", payload: { field, value } });
   }
 
-  function handleSaveChange(
-    saveType: "fort" | "ref" | "will",
-    field: "enh" | "misc",
-    value: string
-  ) {
+  function handleSaveChange(saveType: "fort" | "ref" | "will", field: "enh" | "misc", value: string) {
     dispatch({ type: "changeSaveBonus", payload: { saveType, field, value } });
   }
 
-  function handleAttackChange(
-    attackType: "melee" | "ranged",
-    field: "misc",
-    value: string
-  ) {
+  function handleAttackChange(attackType: "melee" | "ranged", field: "misc", value: string) {
     dispatch({
       type: "changeAttackBonus",
       payload: { attackType, field, value },
@@ -69,23 +52,12 @@ export function CombatBlock({
             <td>= 10</td>
             <td>{state.combat.acBonuses.armor}</td>
             <td>{state.combat.acBonuses.shield}</td>
+            <td>{Math.min(state.combat.acBonuses.maxDex, state.abilityBlock.abilities.dex.mod)}</td>
             <td>
-              {Math.min(
-                state.combat.acBonuses.maxDex,
-                state.abilityBlock.abilities.dex.mod
-              )}
+              <input value={state.combat.acBonuses.size} onChange={(e) => handleACChange("size", e.target.value)} />
             </td>
             <td>
-              <input
-                value={state.combat.acBonuses.size}
-                onChange={(e) => handleACChange("size", e.target.value)}
-              />
-            </td>
-            <td>
-              <input
-                value={state.combat.acBonuses.dodge}
-                onChange={(e) => handleACChange("dodge", e.target.value)}
-              />
+              <input value={state.combat.acBonuses.dodge} onChange={(e) => handleACChange("dodge", e.target.value)} />
             </td>
             <td>
               <input
@@ -100,10 +72,7 @@ export function CombatBlock({
               />
             </td>
             <td>
-              <input
-                value={state.combat.acBonuses.misc}
-                onChange={(e) => handleACChange("misc", e.target.value)}
-              />
+              <input value={state.combat.acBonuses.misc} onChange={(e) => handleACChange("misc", e.target.value)} />
             </td>
           </tr>
           <tr>
@@ -112,23 +81,12 @@ export function CombatBlock({
             <td>= 10</td>
             <td></td>
             <td></td>
+            <td>{Math.min(state.combat.acBonuses.maxDex, state.abilityBlock.abilities.dex.mod)}</td>
             <td>
-              {Math.min(
-                state.combat.acBonuses.maxDex,
-                state.abilityBlock.abilities.dex.mod
-              )}
+              <input value={state.combat.acBonuses.size} onChange={(e) => handleACChange("size", e.target.value)} />
             </td>
             <td>
-              <input
-                value={state.combat.acBonuses.size}
-                onChange={(e) => handleACChange("size", e.target.value)}
-              />
-            </td>
-            <td>
-              <input
-                value={state.combat.acBonuses.dodge}
-                onChange={(e) => handleACChange("dodge", e.target.value)}
-              />
+              <input value={state.combat.acBonuses.dodge} onChange={(e) => handleACChange("dodge", e.target.value)} />
             </td>
             <td></td>
             <td>
@@ -138,10 +96,7 @@ export function CombatBlock({
               />
             </td>
             <td>
-              <input
-                value={state.combat.acBonuses.misc}
-                onChange={(e) => handleACChange("misc", e.target.value)}
-              />
+              <input value={state.combat.acBonuses.misc} onChange={(e) => handleACChange("misc", e.target.value)} />
             </td>
           </tr>
           <tr>
@@ -152,10 +107,7 @@ export function CombatBlock({
             <td>{state.combat.acBonuses.shield}</td>
             <td></td>
             <td>
-              <input
-                value={state.combat.acBonuses.size}
-                onChange={(e) => handleACChange("size", e.target.value)}
-              />
+              <input value={state.combat.acBonuses.size} onChange={(e) => handleACChange("size", e.target.value)} />
             </td>
             <td></td>
             <td>
@@ -171,10 +123,7 @@ export function CombatBlock({
               />
             </td>
             <td>
-              <input
-                value={state.combat.acBonuses.misc}
-                onChange={(e) => handleACChange("misc", e.target.value)}
-              />
+              <input value={state.combat.acBonuses.misc} onChange={(e) => handleACChange("misc", e.target.value)} />
             </td>
           </tr>
         </tbody>
@@ -195,23 +144,14 @@ export function CombatBlock({
             <td>Fortitude</td>
             <td>{state.combat.fort.total}</td>
             <td>{state.classRecorder.totals.fort}</td>
+            <td>{state.abilityBlock.abilities[state.combat.fort.ability].mod}</td>
             <td>
-              {state.abilityBlock.abilities[state.combat.fort.ability].mod}
-            </td>
-            <td>
-              <input
-                value={state.combat.fort.enh}
-                onChange={(e) =>
-                  handleSaveChange("fort", "enh", e.target.value)
-                }
-              />
+              <input value={state.combat.fort.enh} onChange={(e) => handleSaveChange("fort", "enh", e.target.value)} />
             </td>
             <td>
               <input
                 value={state.combat.fort.misc}
-                onChange={(e) =>
-                  handleSaveChange("fort", "misc", e.target.value)
-                }
+                onChange={(e) => handleSaveChange("fort", "misc", e.target.value)}
               />
             </td>
           </tr>
@@ -219,45 +159,26 @@ export function CombatBlock({
             <td>Reflex</td>
             <td>{state.combat.ref.total}</td>
             <td>{state.classRecorder.totals.ref}</td>
+            <td>{state.abilityBlock.abilities[state.combat.ref.ability].mod}</td>
             <td>
-              {state.abilityBlock.abilities[state.combat.ref.ability].mod}
+              <input value={state.combat.ref.enh} onChange={(e) => handleSaveChange("ref", "enh", e.target.value)} />
             </td>
             <td>
-              <input
-                value={state.combat.ref.enh}
-                onChange={(e) => handleSaveChange("ref", "enh", e.target.value)}
-              />
-            </td>
-            <td>
-              <input
-                value={state.combat.ref.misc}
-                onChange={(e) =>
-                  handleSaveChange("ref", "misc", e.target.value)
-                }
-              />
+              <input value={state.combat.ref.misc} onChange={(e) => handleSaveChange("ref", "misc", e.target.value)} />
             </td>
           </tr>
           <tr>
             <td>Will</td>
             <td>{state.combat.will.total}</td>
             <td>{state.classRecorder.totals.will}</td>
+            <td>{state.abilityBlock.abilities[state.combat.will.ability].mod}</td>
             <td>
-              {state.abilityBlock.abilities[state.combat.will.ability].mod}
-            </td>
-            <td>
-              <input
-                value={state.combat.will.enh}
-                onChange={(e) =>
-                  handleSaveChange("will", "enh", e.target.value)
-                }
-              />
+              <input value={state.combat.will.enh} onChange={(e) => handleSaveChange("will", "enh", e.target.value)} />
             </td>
             <td>
               <input
                 value={state.combat.will.misc}
-                onChange={(e) =>
-                  handleSaveChange("will", "misc", e.target.value)
-                }
+                onChange={(e) => handleSaveChange("will", "misc", e.target.value)}
               />
             </td>
           </tr>
@@ -278,15 +199,11 @@ export function CombatBlock({
             <td>Melee</td>
             <td>{state.combat.melee.total}</td>
             <td>{state.classRecorder.totals.bab}</td>
-            <td>
-              {state.abilityBlock.abilities[state.combat.melee.ability].mod}
-            </td>
+            <td>{state.abilityBlock.abilities[state.combat.melee.ability].mod}</td>
             <td>
               <input
                 value={state.combat.melee.misc}
-                onChange={(e) =>
-                  handleAttackChange("melee", "misc", e.target.value)
-                }
+                onChange={(e) => handleAttackChange("melee", "misc", e.target.value)}
               />
             </td>
           </tr>
@@ -294,15 +211,11 @@ export function CombatBlock({
             <td>Ranged</td>
             <td>{state.combat.ranged.total}</td>
             <td>{state.classRecorder.totals.bab}</td>
-            <td>
-              {state.abilityBlock.abilities[state.combat.ranged.ability].mod}
-            </td>
+            <td>{state.abilityBlock.abilities[state.combat.ranged.ability].mod}</td>
             <td>
               <input
                 value={state.combat.ranged.misc}
-                onChange={(e) =>
-                  handleAttackChange("ranged", "misc", e.target.value)
-                }
+                onChange={(e) => handleAttackChange("ranged", "misc", e.target.value)}
               />
             </td>
           </tr>

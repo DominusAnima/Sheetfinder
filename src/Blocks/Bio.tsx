@@ -1,184 +1,165 @@
-import { Dispatch } from "react";
+import React, { InputHTMLAttributes, useState } from "react";
 import { Alignment, BioBlock, CharacterSize } from "../charSheet";
-import { ReducerAction } from "../reducer";
+import Input from "../Components/Input";
+import Select from "../Components/Select";
+import { useFormDispatch } from "../lib/useFormDispatch";
+import Button from "../Components/Button";
+import Field from "../Components/Field";
+import Textarea from "../Components/Textarea";
+import { FaEdit, FaTimesCircle } from "react-icons/fa";
 
-export function Bio({
-  state,
-  dispatch,
-}: {
-  state: BioBlock;
-  dispatch: Dispatch<ReducerAction>;
-}) {
-  function handleChange(
-    field:
-      | "name"
-      | "race"
-      | "gender"
-      | "height"
-      | "weight"
-      | "hair"
-      | "eyes"
-      | "skin"
-      | "age"
-      | "deity"
-      | "background"
-      | "languages",
-    fieldValue: string
-  ) {
+const LABELS: { [K in keyof BioBlock]: string } = {
+  age: "Age",
+  align: "Alignment",
+  background: "Homeland & background occupation",
+  deity: "Deity",
+  eyes: "Eyes",
+  gender: "Gender",
+  hair: "Hair",
+  height: "Height",
+  languages: "Languages",
+  name: "Name",
+  race: "Race",
+  size: "Size",
+  skin: "Skin",
+  weight: "Weight",
+};
+
+const SIZES: { [K in CharacterSize]: string } = {
+  colossal: "Colossal",
+  diminutive: "Diminutive",
+  fine: "Fine",
+  gargantuan: "Gargantuan",
+  huge: "Huge",
+  large: "Large",
+  medium: "Medium",
+  small: "Small",
+  tiny: "Tiny",
+};
+
+const ALIGNMENTS: { [K in Alignment]: string } = {
+  "chaotic evil": "Chaotic evil",
+  "chaotic good": "Chaotic good",
+  "chaotic neutral": "Chaotic neutral",
+  "lawful evil": "Lawful evil",
+  "lawful good": "Lawful good",
+  "lawful neutral": "Lawful neutral",
+  "neutral evil": "Neutral evil",
+  "neutral good": "Neutral good",
+  neutral: "Neutral",
+};
+
+const BioForm = ({ state }: { state: BioBlock }) => {
+  const dispatch = useFormDispatch();
+  const handleChange = <T extends keyof BioBlock>(field: T, value: BioBlock[T]) => {
     dispatch({
-      type: "changeBioField",
-      payload: { field: field, value: fieldValue },
+      type: "changeBio",
+      payload: {
+        [field]: value,
+      },
     });
-    console.log(
-      "handle change: changing field " +
-        field +
-        " (" +
-        state[field] +
-        ") " +
-        " to " +
-        fieldValue
-    );
-  }
+  };
 
-  function handleSelectChange(field: "size" | "align", fieldValue: string) {
-    if (field == "size") {
-      dispatch({
-        type: "changeBioSize",
-        payload: {
-          value: CharacterSize[fieldValue as keyof typeof CharacterSize],
-        },
-      });
-    } else {
-      dispatch({
-        type: "changeBioAlign",
-        payload: { value: Alignment[fieldValue as keyof typeof Alignment] },
-      });
-    }
-  }
-
-  function handleSubmit(event: { preventDefault: any }) {
-    event.preventDefault;
-  }
+  const textField = (key: keyof BioBlock, props?: InputHTMLAttributes<HTMLInputElement>) => (
+    <Field className="flex-1" label={LABELS[key]}>
+      <Input value={state[key]} onChange={(e) => handleChange(key, e.target.value)} {...props} />
+    </Field>
+  );
 
   return (
-    <div onSubmit={handleSubmit}>
-      <h2>Character info</h2>
-      <label>
-        Name:
-        <input
-          value={state.name}
-          onChange={(e) => handleChange("name", e.target.value)}
-        />
-      </label>
-      <label>
-        Race:
-        <input
-          value={state.race}
-          onChange={(e) => handleChange("race", e.target.value)}
-        />
-      </label>
-      <label>
-        Size:
-        <select
-          value={state.size}
-          onChange={(e) => handleSelectChange("size", e.target.value)}
-        >
-          {Object.values(CharacterSize).map((size) => {
-            return (
+    <div className="flex flex-col gap-4 mt-4">
+      <div className="">{textField("name")}</div>
+      <div className="flex gap-4">
+        {textField("age", { type: "number" })}
+        {textField("race")}
+        {textField("gender")}
+      </div>
+      <div className="flex gap-4">
+        {textField("height")}
+        {textField("weight")}
+        <Field className="flex-1" label={LABELS.size}>
+          <Select value={state.size} onChange={(e) => handleChange("size", e.target.value as CharacterSize)}>
+            {Object.values(CharacterSize).map((size) => (
               <option key={size} value={size}>
-                {size}
+                {SIZES[size]}
               </option>
-            );
-          })}
-        </select>
-      </label>
-      <label>
-        Gender:
-        <input
-          value={state.gender}
-          onChange={(e) => handleChange("gender", e.target.value)}
-        />
-      </label>
-      <label>
-        Height:
-        <input
-          type="number"
-          value={state.height}
-          onChange={(e) => handleChange("height", e.target.value)}
-        />
-      </label>
-      <label>
-        Weight:
-        <input
-          value={state.weight}
-          onChange={(e) => handleChange("weight", e.target.value)}
-        />
-      </label>
-      <label>
-        Hair:
-        <input
-          value={state.hair}
-          onChange={(e) => handleChange("hair", e.target.value)}
-        />
-      </label>
-      <label>
-        Eyes:
-        <input
-          value={state.eyes}
-          onChange={(e) => handleChange("eyes", e.target.value)}
-        />
-      </label>
-      <label>
-        Skin:
-        <input
-          value={state.skin}
-          onChange={(e) => handleChange("skin", e.target.value)}
-        />
-      </label>
-      <label>
-        Age:
-        <input
-          type="number"
-          value={state.age}
-          onChange={(e) => handleChange("age", e.target.value)}
-        />
-      </label>
-      <label>
-        Alignment:
-        <select
-          value={state.align}
-          onChange={(e) => handleSelectChange("align", e.target.value)}
-        >
-          {Object.values(Alignment).map((align) => {
-            return (
-              <option key={align} value={align}>
-                {align}
-              </option>
-            );
-          })}
-        </select>
-      </label>
-      <label>
-        Deity:
-        <input
-          value={state.deity}
-          onChange={(e) => handleChange("deity", e.target.value)}
-        />
-      </label>
-      <label>
-        Homeland & background occupation:
-        <input
-          value={state.background}
-          onChange={(e) => handleChange("background", e.target.value)}
-        />
-      </label>
-      <label>
-        Languages:
-        <input
-          value={state.languages}
-          onChange={(e) => handleChange("languages", e.target.value)}
-        />
-      </label>
+            ))}
+          </Select>
+        </Field>
+      </div>
+      <div className="flex gap-4">
+        {textField("hair")}
+        {textField("eyes")}
+        {textField("skin")}
+      </div>
+      <div className="flex gap-4">
+        <Field className="flex-1" label={LABELS.align}>
+          <Select value={state.align} onChange={(e) => handleChange("align", e.target.value as Alignment)}>
+            {Object.values(Alignment).map((align) => {
+              return (
+                <option key={align} value={align}>
+                  {ALIGNMENTS[align]}
+                </option>
+              );
+            })}
+          </Select>
+        </Field>
+        {textField("deity")}
+      </div>
+      <div className="">
+        <Field className="flex-1" label={LABELS.background}>
+          <Textarea value={state.background} onChange={(e) => handleChange("background", e.target.value)} rows={3} />
+        </Field>
+      </div>
+      <div className="">{textField("languages")}</div>
     </div>
   );
+};
+
+interface Props {
+  state: BioBlock;
 }
+
+const BioSummary: React.FC<Props> = ({ state }) => {
+  const value = (v: string, suffix?: string) => (
+    <span className="font-bold text-secondary-800">
+      {v ?? "??"}
+      {suffix && ` ${suffix}`}
+    </span>
+  );
+  return (
+    <div className="mt-4">
+      <div className="text-xl font-bold text-secondary-800">{state.name}</div>
+      <div className="">
+        {value(state.age)} years old {value(state.race)} {value(state.gender)}.{" "}
+      </div>
+      <div className="text-sm">
+        {value(state.weight, "kg")}, {value(state.height, "cm")} with {value(state.hair)}&nbsp;hair, {value(state.eyes)}
+        &nbsp;eyes and {value(state.skin)}&nbsp;skin.
+      </div>
+      <div className="text-sm">
+        {value(ALIGNMENTS[state.align])} follower of {value(state.deity)}.
+      </div>
+      <div className="text-sm">Speaks {value(state.languages)}.</div>
+      {state.background.trim() && <div className="text-sm">{state.background}</div>}
+    </div>
+  );
+};
+
+const Bio: React.FC<Props> = ({ state }) => {
+  const [editing, setEditing] = useState(false);
+
+  return (
+    <div className="relative">
+      <h2 className="border-b-2 border-primary-800 text-primary-800">
+        Character info
+        <Button className="float-right" onClick={() => setEditing((v) => !v)}>
+          {editing ? <FaTimesCircle /> : <FaEdit />}
+        </Button>
+      </h2>
+      {editing ? <BioForm state={state} /> : <BioSummary state={state} />}
+    </div>
+  );
+};
+
+export default Bio;

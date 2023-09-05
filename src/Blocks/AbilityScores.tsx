@@ -1,15 +1,9 @@
-import { Dispatch } from "react";
 import { Abilities, AbilityBlock } from "../charSheet";
 import { ABILITY_TYPES } from "../constants";
-import { ReducerAction } from "../reducer";
+import { useFormDispatch } from "../lib/useFormDispatch";
 
-export function AbilityScores({
-  state,
-  dispatch,
-}: {
-  state: AbilityBlock;
-  dispatch: Dispatch<ReducerAction>;
-}) {
+export function AbilityScores({ state }: { state: AbilityBlock }) {
+  const dispatch = useFormDispatch();
   const handleChange = (
     ability: keyof Abilities,
     valueKey: "base" | "enh" | "size" | "misc" | "damage" | "drain",
@@ -59,54 +53,42 @@ export function AbilityScores({
                     <input
                       type="number"
                       value={state.abilities[ability].base}
-                      onChange={(e) =>
-                        handleChange(ability, "base", e.target.value)
-                      }
+                      onChange={(e) => handleChange(ability, "base", e.target.value)}
                     />
                   </td>
                   <td>
                     <input
                       type="number"
                       value={state.abilities[ability].enh}
-                      onChange={(e) =>
-                        handleChange(ability, "enh", e.target.value)
-                      }
+                      onChange={(e) => handleChange(ability, "enh", e.target.value)}
                     />
                   </td>
                   <td>
                     <input
                       type="number"
                       value={state.abilities[ability].size}
-                      onChange={(e) =>
-                        handleChange(ability, "size", e.target.value)
-                      }
+                      onChange={(e) => handleChange(ability, "size", e.target.value)}
                     />
                   </td>
                   <td>
                     <input
                       type="number"
                       value={state.abilities[ability].misc}
-                      onChange={(e) =>
-                        handleChange(ability, "misc", e.target.value)
-                      }
+                      onChange={(e) => handleChange(ability, "misc", e.target.value)}
                     />
                   </td>
                   <td>
                     <input
                       type="number"
                       value={state.abilities[ability].damage}
-                      onChange={(e) =>
-                        handleChange(ability, "damage", e.target.value)
-                      }
+                      onChange={(e) => handleChange(ability, "damage", e.target.value)}
                     />
                   </td>
                   <td>
                     <input
                       type="number"
                       value={state.abilities[ability].drain}
-                      onChange={(e) =>
-                        handleChange(ability, "drain", e.target.value)
-                      }
+                      onChange={(e) => handleChange(ability, "drain", e.target.value)}
                     />
                   </td>
                 </>

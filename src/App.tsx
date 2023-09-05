@@ -1,32 +1,55 @@
-import "./App.css";
 import "./constants.tsx";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { reducer } from "./reducer.tsx";
 import { DEFAULT_STATE } from "./DefaultState.tsx";
 import { Blocks } from "./charSheet.tsx";
-import { Bio } from "./Blocks/Bio.tsx";
+import Bio from "./Blocks/Bio.tsx";
 import { AbilityScores } from "./Blocks/AbilityScores.tsx";
 import { ClassRecorder } from "./Blocks/ClassRecorder.tsx";
 import { HitPoints } from "./Blocks/HitPoints.tsx";
 import { Skills } from "./Blocks/Skills.tsx";
 import { CombatBlock } from "./Blocks/Combat.tsx";
+import Container from "./Components/Container.tsx";
+import { FormContextProvider } from "./lib/FormContext.tsx";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
 };
 
+const loadState = (): Blocks => {
+  try {
+    const jsonString = localStorage.getItem("SHEET_DATA");
+    if (!jsonString) return DEFAULT_STATE;
+    const data = JSON.parse(jsonString);
+    return data as Blocks;
+  } catch (error) {
+    return DEFAULT_STATE;
+  }
+};
+
+const saveState = (state: Blocks) => {
+  localStorage.setItem("SHEET_DATA", JSON.stringify(state));
+};
+
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, DEFAULT_STATE, initialize);
+  const defaultState = loadState();
+  const [state, dispatch] = useReducer(reducer, defaultState, initialize);
+  useEffect(() => {
+    console.log("newState", state);
+    saveState(state);
+  }, [state]);
 
   return (
-    <>
-      <h1>Pathfinder digital character sheet prototype</h1>
-      <Bio state={state.bio} dispatch={dispatch} />
-      <AbilityScores state={state.abilityBlock} dispatch={dispatch} />
-      <HitPoints state={state.hitPoints} dispatch={dispatch} />
-      <ClassRecorder state={state.classRecorder} dispatch={dispatch} />
-      <CombatBlock state={state} dispatch={dispatch} />
-      <Skills state={state} dispatch={dispatch} />
-    </>
+    <FormContextProvider dispatch={dispatch}>
+      <Container>
+        <h1 className="text-lg font-bold text-center mb-4">Pathfinder digital character sheet prototype</h1>
+        <Bio state={state.bio} />
+        <AbilityScores state={state.abilityBlock} />
+        <HitPoints state={state.hitPoints} />
+        <ClassRecorder state={state.classRecorder} />
+        <CombatBlock state={state} />
+        <Skills state={state} />
+      </Container>
+    </FormContextProvider>
   );
 }

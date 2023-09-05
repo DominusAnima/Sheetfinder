@@ -1,18 +1,9 @@
-import { Dispatch } from "react";
 import { HPBlock } from "../charSheet";
-import { ReducerAction } from "../reducer";
+import { useFormDispatch } from "../lib/useFormDispatch";
 
-export function HitPoints({
-  state,
-  dispatch,
-}: {
-  state: HPBlock;
-  dispatch: Dispatch<ReducerAction>;
-}) {
-  function handleChange(
-    field: "bonusMaxPoints" | "currentPoints" | "tempPoints" | "nonLethal",
-    value: string
-  ) {
+export function HitPoints({ state }: { state: HPBlock }) {
+  const dispatch = useFormDispatch();
+  function handleChange(field: "bonusMaxPoints" | "currentPoints" | "tempPoints" | "nonLethal", value: string) {
     dispatch({ type: "changeHPField", payload: { field, value } });
   }
 
@@ -42,19 +33,11 @@ export function HitPoints({
       </label>
       <label>
         Temporary HP:
-        <input
-          type="number"
-          value={state.tempPoints}
-          onChange={(e) => handleChange("tempPoints", e.target.value)}
-        />
+        <input type="number" value={state.tempPoints} onChange={(e) => handleChange("tempPoints", e.target.value)} />
       </label>
       <label>
         Nonlethal damage:{" "}
-        <input
-          type="number"
-          value={state.nonLethal}
-          onChange={(e) => handleChange("nonLethal", e.target.value)}
-        />
+        <input type="number" value={state.nonLethal} onChange={(e) => handleChange("nonLethal", e.target.value)} />
       </label>
     </div>
   );

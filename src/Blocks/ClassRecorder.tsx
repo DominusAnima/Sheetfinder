@@ -1,14 +1,8 @@
-import { Dispatch } from "react";
 import { ClassRecordBlock } from "../charSheet";
-import { ReducerAction } from "../reducer";
+import { useFormDispatch } from "../lib/useFormDispatch";
 
-export function ClassRecorder({
-  state,
-  dispatch,
-}: {
-  state: ClassRecordBlock;
-  dispatch: Dispatch<ReducerAction>;
-}) {
+export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
+  const dispatch = useFormDispatch();
   function handleChange(
     entryIndex: number,
     field:
@@ -53,68 +47,38 @@ export function ClassRecorder({
             return (
               <tr key={i}>
                 <td>
-                  <input
-                    value={entry.hitDie}
-                    onChange={(e) => handleChange(i, "hitDie", e.target.value)}
-                  />
+                  <input value={entry.hitDie} onChange={(e) => handleChange(i, "hitDie", e.target.value)} />
                 </td>
                 <td>
-                  <input
-                    value={entry.name}
-                    onChange={(e) => handleChange(i, "name", e.target.value)}
-                  />
+                  <input value={entry.name} onChange={(e) => handleChange(i, "name", e.target.value)} />
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    value={entry.bab}
-                    onChange={(e) => handleChange(i, "bab", e.target.value)}
-                  />
+                  <input type="number" value={entry.bab} onChange={(e) => handleChange(i, "bab", e.target.value)} />
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    value={entry.skill}
-                    onChange={(e) => handleChange(i, "skill", e.target.value)}
-                  />
+                  <input type="number" value={entry.skill} onChange={(e) => handleChange(i, "skill", e.target.value)} />
                 </td>
                 <td>
                   <input
                     value={entry.favClassBonusType}
-                    onChange={(e) =>
-                      handleChange(i, "favClassBonusType", e.target.value)
-                    }
+                    onChange={(e) => handleChange(i, "favClassBonusType", e.target.value)}
                   />
                 </td>
                 <td>
                   <input
                     type="number"
                     value={entry.favClassBonus}
-                    onChange={(e) =>
-                      handleChange(i, "favClassBonus", e.target.value)
-                    }
+                    onChange={(e) => handleChange(i, "favClassBonus", e.target.value)}
                   />
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    value={entry.fort}
-                    onChange={(e) => handleChange(i, "fort", e.target.value)}
-                  />
+                  <input type="number" value={entry.fort} onChange={(e) => handleChange(i, "fort", e.target.value)} />
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    value={entry.ref}
-                    onChange={(e) => handleChange(i, "ref", e.target.value)}
-                  />
+                  <input type="number" value={entry.ref} onChange={(e) => handleChange(i, "ref", e.target.value)} />
                 </td>
                 <td>
-                  <input
-                    type="number"
-                    value={entry.will}
-                    onChange={(e) => handleChange(i, "will", e.target.value)}
-                  />
+                  <input type="number" value={entry.will} onChange={(e) => handleChange(i, "will", e.target.value)} />
                 </td>
                 <td>
                   <input
