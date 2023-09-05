@@ -573,9 +573,6 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
       return newState;
     }
-    case "changeSkillAbil": {
-      const;
-    }
     default: {
       throw Error("Unknown action: " + action);
     }
