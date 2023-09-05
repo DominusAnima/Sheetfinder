@@ -1,12 +1,24 @@
-import { Abilities, Alignment, Blocks, CharacterSize } from "./charSheet";
+import {
+  Abilities,
+  Alignment,
+  Blocks,
+  CharacterSize,
+  Skill,
+  SpecialEntry,
+} from "./charSheet";
 import { ABILITY_TYPES } from "./constants";
 
 export type ReducerAction =
+  | changeSkillAbilAction
+  | AddSkillAction
+  | AddSpecialEntryAction
+  | changeSpecialEntryFieldAction
+  | toggleSpecialDetailAction
   | changeAttackBonusAction
   | changeSaveBonusAction
   | changeACBonusAction
   | toggleSkillDetailAction
-  | toggleClassSkillAction
+  | toggleSkillAction
   | ChangeSkillFieldAction
   | ChangeClassEntryFieldAction
   | ChangeHPFieldAction
@@ -99,15 +111,24 @@ type ChangeSkillFieldAction = {
   type: "changeSkillField";
   payload: {
     skillIndex: number;
-    field: "ranks" | "misc";
+    field: "name" | "ranks" | "misc";
     value: string;
   };
 };
 
-type toggleClassSkillAction = {
-  type: "toggleClassSkill";
+type changeSkillAbilAction = {
+  type: "changeSkillAbil";
+  payload: {
+    index: number;
+    value: keyof Abilities;
+  };
+};
+
+type toggleSkillAction = {
+  type: "toggleSkill";
   payload: {
     skillIndex: number;
+    field: "classSkill" | "trained";
   };
 };
 
@@ -139,6 +160,28 @@ type changeAttackBonusAction = {
     field: "misc";
     value: string;
   };
+};
+
+type toggleSpecialDetailAction = {
+  type: "toggleSpecialDetail";
+  payload: { index: number };
+};
+
+type changeSpecialEntryFieldAction = {
+  type: "changeSpecialEntryField";
+  payload: {
+    field: "name" | "description" | "usesLimit" | "used";
+    index: number;
+    value: string;
+  };
+};
+
+type AddSpecialEntryAction = {
+  type: "addSpecialEntry";
+};
+
+type AddSkillAction = {
+  type: "addSkill";
 };
 
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
@@ -449,7 +492,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
       return newState;
     }
-    case "toggleClassSkill": {
+    case "toggleSkill": {
       const newState: Blocks = {
         ...state,
         skills: {
@@ -459,7 +502,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
               if (i === action.payload.skillIndex) {
                 return {
                   ...e,
-                  classSkill: !state.skills.skills[i].classSkill,
+                  [action.payload.field]:
+                    !state.skills.skills[i][action.payload.field],
                 };
               } else {
                 return e;
@@ -531,6 +575,95 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       reducer(newState, { type: "recalculate" });
 
       return newState;
+    }
+    case "toggleSpecialDetail": {
+      const newState: Blocks = {
+        ...state,
+        special: {
+          ...state.special,
+          entries: [
+            ...state.special.entries.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  toggleDescr: !state.special.entries[i].toggleDescr,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "changeSpecialEntryField": {
+      const newState: Blocks = {
+        ...state,
+        special: {
+          ...state.special,
+          entries: [
+            ...state.special.entries.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "addSpecialEntry": {
+      const newEntry: SpecialEntry = {
+        toggleDescr: true,
+        name: "-",
+        description: "-",
+        usesLimit: "0",
+        used: "0",
+      };
+
+      const newState: Blocks = {
+        ...state,
+        special: {
+          ...state.special,
+          entries: [...state.special.entries, newEntry],
+        },
+      };
+
+      return newState;
+    }
+    case "addSkill": {
+      const newSkill: Skill = {
+        trained: true,
+        classSkill: false,
+        armorPenalty: false,
+        name: "New Skill",
+        ability: "int",
+        totalBonus: 0,
+        ranks: "0",
+        misc: "0",
+        editable: true,
+      };
+
+      const newState: Blocks = {
+        ...state,
+        skills: {
+          ...state.skills,
+          skills: [...state.skills.skills, newSkill],
+        },
+      };
+
+      return newState;
+    }
+    case "changeSkillAbil": {
+      const;
     }
     default: {
       throw Error("Unknown action: " + action);

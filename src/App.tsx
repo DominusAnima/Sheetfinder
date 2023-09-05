@@ -10,6 +10,7 @@ import { ClassRecorder } from "./Blocks/ClassRecorder.tsx";
 import { HitPoints } from "./Blocks/HitPoints.tsx";
 import { Skills } from "./Blocks/Skills.tsx";
 import { CombatBlock } from "./Blocks/Combat.tsx";
+import { Special } from "./Blocks/Special.tsx";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
@@ -27,6 +28,7 @@ export default function App() {
       <ClassRecorder state={state.classRecorder} dispatch={dispatch} />
       <CombatBlock state={state} dispatch={dispatch} />
       <Skills state={state} dispatch={dispatch} />
+      <Special state={state.special} dispatch={dispatch} />
     </>
   );
 }

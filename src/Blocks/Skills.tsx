@@ -1,6 +1,7 @@
 import { Dispatch } from "react";
-import { Blocks } from "../charSheet";
+import { Abilities, Blocks } from "../charSheet";
 import { ReducerAction } from "../reducer";
+import { ABILITY_TYPES } from "../constants";
 
 export function Skills({
   state,
@@ -11,7 +12,7 @@ export function Skills({
 }) {
   function handleChange(
     skillIndex: number,
-    field: "ranks" | "misc",
+    field: "name" | "ranks" | "misc",
     value: string
   ) {
     dispatch({
@@ -20,8 +21,11 @@ export function Skills({
     });
   }
 
-  function handleClassSkillToggle(skillIndex: number) {
-    dispatch({ type: "toggleClassSkill", payload: { skillIndex } });
+  function handleSkillToggle(
+    skillIndex: number,
+    field: "classSkill" | "trained"
+  ) {
+    dispatch({ type: "toggleSkill", payload: { skillIndex, field } });
   }
 
   function handleSubmit(event: { preventDefault: any }) {
@@ -32,10 +36,19 @@ export function Skills({
     dispatch({ type: "toggleSkillDetail" });
   }
 
+  function addSkill() {
+    dispatch({ type: "addSkill" });
+  }
+
+  function handleSelectChange(index: number, value: string) {
+    dispatch({ type: "changeSkillAbil", payload: { index, value } });
+  }
+
   return (
     <div onSubmit={handleSubmit}>
       <h2>Skills</h2>
       <button onClick={toggleDetail}>toggle detail</button>
+      <button onClick={addSkill}>Add Skill</button>
       <label>
         available ranks:{state.skills.remainRanks}/{state.skills.totalRanks}
       </label>
@@ -66,16 +79,56 @@ export function Skills({
             ? state.skills.skills.map((skill, i) => {
                 return (
                   <tr key={i}>
-                    <th>{skill.trained ? "*" : ""}</th>
+                    {skill.editable ? (
+                      <th>
+                        <input
+                          type="checkbox"
+                          defaultChecked={skill.trained}
+                          onChange={(e) => handleSkillToggle(i, "trained")}
+                        />
+                      </th>
+                    ) : (
+                      <th>{skill.trained ? "*" : ""}</th>
+                    )}
                     <th>
                       <input
                         type="checkbox"
                         defaultChecked={skill.classSkill}
-                        onChange={() => handleClassSkillToggle(i)}
+                        onChange={() => handleSkillToggle(i, "classSkill")}
                       />
                     </th>
-                    <th>{skill.name}</th>
-                    <th>{skill.ability}</th>
+                    <th>
+                      {skill.editable ? (
+                        <input
+                          value={skill.name}
+                          onChange={(e) =>
+                            handleChange(i, "name", e.target.value)
+                          }
+                        />
+                      ) : (
+                        skill.name
+                      )}
+                    </th>
+                    <th>
+                      {skill.editable ? (
+                        <select
+                          value={skill.ability}
+                          onChange={(e) =>
+                            handleSelectChange(i, e.target.value)
+                          }
+                        >
+                          {Object.values(ABILITY_TYPES).map((abilType) => {
+                            return (
+                              <option key={abilType} value={abilType}>
+                                {abilType}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      ) : (
+                        skill.ability
+                      )}
+                    </th>
                     <th>
                       {!skill.trained ||
                       (skill.trained && Number(skill.ranks) > 0)

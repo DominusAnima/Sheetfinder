@@ -1,6 +1,8 @@
 IMPORTANT:
+  merge changes from other branch
   figure out class recorder
   add option to add new skills (like knowledge, proffesion, perform skills) into the skill list
+  add fields for equipped weapons, armor and shield to combat block
   special block
   magic Blocks
   feat block
