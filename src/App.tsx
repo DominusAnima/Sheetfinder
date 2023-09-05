@@ -1,16 +1,17 @@
-import "./constants.tsx";
 import { useEffect, useReducer } from "react";
-import { reducer } from "./reducer.tsx";
-import { DEFAULT_STATE } from "./DefaultState.tsx";
-import { Blocks } from "./charSheet.tsx";
-import Bio from "./Blocks/Bio.tsx";
 import { AbilityScores } from "./Blocks/AbilityScores.tsx";
+import Bio from "./Blocks/Bio.tsx";
 import { ClassRecorder } from "./Blocks/ClassRecorder.tsx";
+import { CombatBlock } from "./Blocks/Combat.tsx";
 import { HitPoints } from "./Blocks/HitPoints.tsx";
 import { Skills } from "./Blocks/Skills.tsx";
-import { CombatBlock } from "./Blocks/Combat.tsx";
 import Container from "./Components/Container.tsx";
+import { DEFAULT_STATE } from "./DefaultState.tsx";
+import { Blocks } from "./charSheet.tsx";
+import "./constants.tsx";
 import { FormContextProvider } from "./lib/FormContext.tsx";
+import { reducer } from "./reducer.tsx";
+import { Special } from "./Blocks/Special.tsx";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
@@ -49,6 +50,7 @@ export default function App() {
         <ClassRecorder state={state.classRecorder} />
         <CombatBlock state={state} />
         <Skills state={state} />
+        <Special state={state.special} />
       </Container>
     </FormContextProvider>
   );

@@ -188,6 +188,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Appraise",
@@ -198,6 +199,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Bluff",
@@ -208,6 +210,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Climb",
@@ -218,6 +221,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Diplomacy",
@@ -228,6 +232,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Disable Device",
@@ -238,6 +243,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Disguise",
@@ -248,6 +254,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Escape Artist",
@@ -258,6 +265,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Fly",
@@ -268,6 +276,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Handle Animal",
@@ -278,6 +287,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Heal",
@@ -288,6 +298,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Intimidate",
@@ -298,6 +309,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Linguistics",
@@ -308,6 +320,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Perception",
@@ -318,6 +331,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Ride",
@@ -328,6 +342,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Sense Motive",
@@ -338,6 +353,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Sleight of Hand",
@@ -348,6 +364,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Spellcraft",
@@ -358,6 +375,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Stealth",
@@ -368,6 +386,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Survival",
@@ -378,6 +397,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Swim",
@@ -388,6 +408,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
     {
       name: "Use Magic Device",
@@ -398,6 +419,7 @@ const DEFAULT_SKILL_BLOCK: SkillBlock = {
       totalBonus: 0,
       ranks: "0",
       misc: "0",
+      editable: false,
     },
   ],
 };

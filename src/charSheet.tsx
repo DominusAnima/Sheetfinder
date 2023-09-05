@@ -133,6 +133,7 @@ export interface Skill {
   totalBonus: number;
   ranks: string;
   misc: string;
+  editable: boolean;
 }
 
 export interface CombatBlock {
