@@ -1,3 +1,4 @@
+import cx from "classnames";
 import * as React from "react";
 
 interface IProps {
@@ -5,12 +6,19 @@ interface IProps {
   id?: string;
   children?: React.ReactNode;
   className?: string;
+  horizontal?: boolean;
 }
 
-const Field: React.FC<IProps> = ({ className, children, label, id }) => (
-  <div className={className}>
+const Field: React.FC<IProps> = ({ className, children, label, id, horizontal }) => (
+  <div className={cx(className, { "flex items-center": horizontal })}>
     {label && (
-      <label htmlFor={id} className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label
+        htmlFor={id}
+        className={cx("block text-sm font-medium text-gray-900 dark:text-white", {
+          "mb-2": !horizontal,
+          "flex-shrink-0 w-52": horizontal,
+        })}
+      >
         {label}
       </label>
     )}

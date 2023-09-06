@@ -17,6 +17,7 @@ import {
   FeatBlock,
   EquipBlock,
   MoneyType,
+  ClassEntry,
 } from "./charSheet";
 
 const DEFAULT_EQUIP_BLOCK: EquipBlock = {
@@ -64,9 +65,7 @@ const DEFAULT_MAGIC: Array<MagicBlock> = [
     casterClass: "-",
     specialty: { mainSpecial: ["-"], subSpecial: ["-"] },
     casterLvl: "0",
-    spellSlots: [
-      { saveDC: "0", lvl: "0", total: "0", classAmount: "0", misc: "0" },
-    ],
+    spellSlots: [{ saveDC: "0", lvl: "0", total: "0", classAmount: "0", misc: "0" }],
     closeRange: "0",
     medRange: "0",
     longRange: "0",
@@ -432,22 +431,24 @@ const DEFAULT_HP_BLOCK: HPBlock = {
   nonLethal: "0",
 };
 
+export const buildClassRecordEntry = (): ClassEntry => {
+  return {
+    hitDie: "",
+    name: "",
+    bab: "0",
+    skill: "0",
+    favClassBonusType: "",
+    favClassBonus: "0",
+    fort: "0",
+    ref: "0",
+    will: "0",
+    levels: "0",
+    hpGained: ["0"],
+  };
+};
+
 const DEFAULT_RECORD_BLOCK: ClassRecordBlock = {
-  entries: [
-    {
-      hitDie: "",
-      name: "",
-      bab: "0",
-      skill: "0",
-      favClassBonusType: "",
-      favClassBonus: "0",
-      fort: "0",
-      ref: "0",
-      will: "0",
-      levels: "0",
-      hpGained: ["0"],
-    },
-  ],
+  entries: [buildClassRecordEntry()],
   favClass: "",
   totals: {
     bab: 0,

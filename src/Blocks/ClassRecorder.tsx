@@ -1,5 +1,11 @@
+import React from "react";
+import SectionTitle from "../Components/SectionTitle";
 import { ClassRecordBlock } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
+import ModalInput from "../Components/ModalInput";
+import Button from "../Components/Button";
+
+const fields = ["bab", "skill", "favClassBonusType", "favClassBonus", "fort", "ref", "will", "levels"] as const;
 
 export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
   const dispatch = useFormDispatch();
@@ -25,74 +31,45 @@ export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
   }
 
   return (
-    <>
-      <h2>Class Recorder</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>HD</th>
-            <th>Class Name</th>
-            <th>BAB</th>
-            <th>Skill</th>
-            <th>Favoured Bonus Type</th>
-            <th>Favoured Bonus</th>
-            <th>Fort</th>
-            <th>Ref</th>
-            <th>Will</th>
-            <th>Levels</th>
-          </tr>
-        </thead>
-        <tbody>
-          {state.entries.map((entry, i) => {
-            return (
-              <tr key={i}>
-                <td>
-                  <input value={entry.hitDie} onChange={(e) => handleChange(i, "hitDie", e.target.value)} />
-                </td>
-                <td>
-                  <input value={entry.name} onChange={(e) => handleChange(i, "name", e.target.value)} />
-                </td>
-                <td>
-                  <input type="number" value={entry.bab} onChange={(e) => handleChange(i, "bab", e.target.value)} />
-                </td>
-                <td>
-                  <input type="number" value={entry.skill} onChange={(e) => handleChange(i, "skill", e.target.value)} />
-                </td>
-                <td>
-                  <input
-                    value={entry.favClassBonusType}
-                    onChange={(e) => handleChange(i, "favClassBonusType", e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={entry.favClassBonus}
-                    onChange={(e) => handleChange(i, "favClassBonus", e.target.value)}
-                  />
-                </td>
-                <td>
-                  <input type="number" value={entry.fort} onChange={(e) => handleChange(i, "fort", e.target.value)} />
-                </td>
-                <td>
-                  <input type="number" value={entry.ref} onChange={(e) => handleChange(i, "ref", e.target.value)} />
-                </td>
-                <td>
-                  <input type="number" value={entry.will} onChange={(e) => handleChange(i, "will", e.target.value)} />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={entry.levels}
-                    onChange={(e) => handleChange(i, "levels", e.target.value)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <button>dd entry</button>
-    </>
+    <div className="mt-4">
+      <SectionTitle title="Class Recorder" />
+      {state.entries.map((entry, i) => (
+        <React.Fragment key={i}>
+          <div className="text-xs mt-4">
+            <ModalInput value={entry.hitDie} placeholder="{HD}" onChange={(v) => handleChange(i, "hitDie", v)} />
+            {" - "}
+            <ModalInput value={entry.name} placeholder="{Class Name}" onChange={(v) => handleChange(i, "name", v)} />
+          </div>
+          <div className="flex flex-wrap gap-x-2">
+            {fields.map((field) => (
+              <div key={field}>
+                {field}:{" "}
+                <ModalInput
+                  type="number"
+                  value={entry[field]}
+                  placeholder={`{${field}}`}
+                  onChange={(v) => handleChange(i, field, v)}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="text-right">
+            <Button
+              size="small"
+              onClick={() => {
+                if (confirm("Are you sure?")) {
+                  dispatch({ type: "removeClassEntry", payload: { index: i } });
+                }
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        </React.Fragment>
+      ))}
+      <Button className="mt-2" block onClick={() => dispatch({ type: "addClassEntry" })}>
+        Add entry
+      </Button>
+    </div>
   );
 }

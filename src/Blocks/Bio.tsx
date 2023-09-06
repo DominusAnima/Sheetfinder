@@ -122,14 +122,14 @@ interface Props {
 
 const BioSummary: React.FC<Props> = ({ state }) => {
   const value = (v: string, suffix?: string) => (
-    <span className="font-bold text-secondary-800">
+    <span className="value">
       {v ?? "??"}
       {suffix && ` ${suffix}`}
     </span>
   );
   return (
     <div className="mt-4">
-      <div className="text-xl font-bold text-secondary-800">{state.name}</div>
+      <div className="text-xl value">{state.name}</div>
       <div className="">
         {value(state.age)} years old {value(state.race)} {value(state.gender)}.{" "}
       </div>

@@ -1,3 +1,6 @@
+import Field from "../Components/Field";
+import InlineInput from "../Components/InlineInput";
+import SectionTitle from "../Components/SectionTitle";
 import { HPBlock } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
@@ -7,38 +10,42 @@ export function HitPoints({ state }: { state: HPBlock }) {
     dispatch({ type: "changeHPField", payload: { field, value } });
   }
 
-  function handleSubmit(event: { preventDefault: any }) {
-    event.preventDefault;
-  }
-
   return (
-    <div onSubmit={handleSubmit}>
-      <h2>Hit Points</h2>
-      <label>
-        Max HP bonus:
-        <input
-          type="number"
-          value={state.bonusMaxPoints}
-          onChange={(e) => handleChange("bonusMaxPoints", e.target.value)}
-        />
-      </label>
-      <label>Total HP: {state.maxPoints}</label>
-      <label>
-        Current HP:
-        <input
-          type="number"
-          value={state.currentPoints}
-          onChange={(e) => handleChange("currentPoints", e.target.value)}
-        />
-      </label>
-      <label>
-        Temporary HP:
-        <input type="number" value={state.tempPoints} onChange={(e) => handleChange("tempPoints", e.target.value)} />
-      </label>
-      <label>
-        Nonlethal damage:{" "}
-        <input type="number" value={state.nonLethal} onChange={(e) => handleChange("nonLethal", e.target.value)} />
-      </label>
+    <div className="mt-4">
+      <SectionTitle title="Hit Points" />
+      <div className="space-y-2 mt-4">
+        <Field label="Max HP bonus" horizontal>
+          <InlineInput
+            type="number"
+            value={state.bonusMaxPoints}
+            onChange={(e) => handleChange("bonusMaxPoints", e.target.value)}
+          />
+        </Field>
+        <Field label="Total HP:" horizontal>
+          <p className="flex-1 text-center value">{state.maxPoints}</p>
+        </Field>
+        <Field label="Current HP:" horizontal>
+          <InlineInput
+            type="number"
+            value={state.currentPoints}
+            onChange={(e) => handleChange("currentPoints", e.target.value)}
+          />
+        </Field>
+        <Field label="Temporary HP:" horizontal>
+          <InlineInput
+            type="number"
+            value={state.tempPoints}
+            onChange={(e) => handleChange("tempPoints", e.target.value)}
+          />
+        </Field>
+        <Field label="Nonlethal damage:" horizontal>
+          <InlineInput
+            type="number"
+            value={state.nonLethal}
+            onChange={(e) => handleChange("nonLethal", e.target.value)}
+          />
+        </Field>
+      </div>
     </div>
   );
 }

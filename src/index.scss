@@ -12,11 +12,6 @@
       }
     }
 
-    .value {
-      font-weight: bold;
-      @apply text-secondary-700;
-    }
-
     &.table--striped {
       tbody tr:nth-child(odd) {
         th,
@@ -25,6 +20,11 @@
         }
       }
     }
+  }
+
+  .value {
+    font-weight: bold;
+    @apply text-secondary-700;
   }
 }
 

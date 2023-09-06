@@ -1,6 +1,7 @@
 import cx from "classnames";
 import React, { useState } from "react";
-import Button from "../Components/Button";
+import FlatButton from "../Components/FlatButton";
+import InlineInput from "../Components/InlineInput";
 import SectionTitle from "../Components/SectionTitle";
 import { Abilities, AbilityBlock } from "../charSheet";
 import { ABILITY_TYPES } from "../constants";
@@ -31,9 +32,8 @@ export function AbilityScores({ state }: { state: AbilityBlock }) {
     return (
       <div className="flex flex-col flex-1">
         <span className="text-xs text-center">{value}</span>
-        <input
+        <InlineInput
           type="number"
-          className="w-full appearance-none inline-block p-0 text-sm text-center border border-slate-400 m-0"
           value={state.abilities[ability][value]}
           onChange={(e) => handleChange(ability, value, e.target.value)}
         />
@@ -44,7 +44,9 @@ export function AbilityScores({ state }: { state: AbilityBlock }) {
   return (
     <div className="mt-4">
       <SectionTitle title="Ability scores">
-        <Button onClick={() => setShowDetails((v) => !v)}>{showDetails ? "Hide details" : "Show details"}</Button>
+        <FlatButton onClick={() => setShowDetails((v) => !v)}>
+          {showDetails ? "Hide details" : "Show details"}
+        </FlatButton>
       </SectionTitle>
 
       <table className="w-full mt-4 table table--striped">

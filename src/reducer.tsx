@@ -1,3 +1,4 @@
+import { buildClassRecordEntry } from "./DefaultState";
 import { Abilities, BioBlock, Blocks, Skill, SpecialEntry } from "./charSheet";
 import { ABILITY_TYPES } from "./constants";
 
@@ -14,6 +15,8 @@ export type ReducerAction =
   | toggleSkillAction
   | ChangeSkillFieldAction
   | ChangeClassEntryFieldAction
+  | AddClassEntryAction
+  | RemoveClassEntryAction
   | ChangeHPFieldAction
   | AbilToggleAction
   | ChangeBioAction
@@ -66,6 +69,16 @@ type ChangeClassEntryFieldAction = {
       | "will"
       | "levels";
     value: string;
+  };
+};
+
+type AddClassEntryAction = {
+  type: "addClassEntry";
+};
+type RemoveClassEntryAction = {
+  type: "removeClassEntry";
+  payload: {
+    index: number;
   };
 };
 
@@ -380,6 +393,29 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
       return newState;
     }
+
+    case "addClassEntry": {
+      const newState: Blocks = {
+        ...state,
+        classRecorder: {
+          ...state.classRecorder,
+          entries: [...state.classRecorder.entries, buildClassRecordEntry()],
+        },
+      };
+      return newState;
+    }
+
+    case "removeClassEntry": {
+      const newState: Blocks = {
+        ...state,
+        classRecorder: {
+          ...state.classRecorder,
+          entries: state.classRecorder.entries.filter((_e, i) => i !== action.payload.index),
+        },
+      };
+      return newState;
+    }
+
     case "changeSkillField": {
       const newState: Blocks = {
         ...state,
