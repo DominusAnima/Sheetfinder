@@ -1,12 +1,12 @@
 import React, { InputHTMLAttributes, useState } from "react";
-import { Alignment, BioBlock, CharacterSize } from "../charSheet";
-import Input from "../Components/Input";
-import Select from "../Components/Select";
-import { useFormDispatch } from "../lib/useFormDispatch";
-import Button from "../Components/Button";
 import Field from "../Components/Field";
+import Input from "../Components/Input";
+import SectionTitle from "../Components/SectionTitle";
+import Select from "../Components/Select";
 import Textarea from "../Components/Textarea";
-import { FaEdit, FaTimesCircle } from "react-icons/fa";
+import { Alignment, BioBlock, CharacterSize } from "../charSheet";
+import { useFormDispatch } from "../lib/useFormDispatch";
+import EditButton from "../Components/EditButton";
 
 const LABELS: { [K in keyof BioBlock]: string } = {
   age: "Age",
@@ -150,13 +150,10 @@ const Bio: React.FC<Props> = ({ state }) => {
   const [editing, setEditing] = useState(false);
 
   return (
-    <div className="relative">
-      <h2 className="border-b-2 border-primary-800 text-primary-800">
-        Character info
-        <Button className="float-right" onClick={() => setEditing((v) => !v)}>
-          {editing ? <FaTimesCircle /> : <FaEdit />}
-        </Button>
-      </h2>
+    <div>
+      <SectionTitle title="Character info">
+        <EditButton editing={editing} onClick={() => setEditing((v) => !v)} />
+      </SectionTitle>
       {editing ? <BioForm state={state} /> : <BioSummary state={state} />}
     </div>
   );

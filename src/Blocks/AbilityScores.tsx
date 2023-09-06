@@ -1,102 +1,99 @@
+import cx from "classnames";
+import React, { useState } from "react";
+import Button from "../Components/Button";
+import SectionTitle from "../Components/SectionTitle";
 import { Abilities, AbilityBlock } from "../charSheet";
 import { ABILITY_TYPES } from "../constants";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
+const ABILITY_LABELS: { [key in keyof Abilities]: string } = {
+  cha: "Charisma",
+  con: "Constitution",
+  dex: "Dexterity",
+  int: "Intelligence",
+  str: "Strength",
+  wis: "Wisdom",
+};
+
+type ValueKey = "base" | "enh" | "size" | "misc" | "damage" | "drain";
+
 export function AbilityScores({ state }: { state: AbilityBlock }) {
+  const [showDetails, setShowDetails] = useState(false);
   const dispatch = useFormDispatch();
-  const handleChange = (
-    ability: keyof Abilities,
-    valueKey: "base" | "enh" | "size" | "misc" | "damage" | "drain",
-    value: string
-  ) => {
+  const handleChange = (ability: keyof Abilities, valueKey: ValueKey, value: string) => {
     dispatch({
       type: "changeAbilities",
       payload: { ability, field: valueKey, value },
     });
   };
 
-  const handleClick = () => {
-    dispatch({ type: "abilToggle" });
+  const input = (ability: keyof Abilities, value: ValueKey) => {
+    return (
+      <div className="flex flex-col flex-1">
+        <span className="text-xs text-center">{value}</span>
+        <input
+          type="number"
+          className="w-full appearance-none inline-block p-0 text-sm text-center border border-slate-400 m-0"
+          value={state.abilities[ability][value]}
+          onChange={(e) => handleChange(ability, value, e.target.value)}
+        />
+      </div>
+    );
   };
 
   return (
-    <>
-      <h2>Ability scores</h2>
-      <button onClick={handleClick}>toggle detailed stats</button>
-      <table>
-        <thead>
-          <tr>
-            <th>Ability Score</th>
-            <th>Total</th>
-            <th>Mod</th>
-            {state.toggleDetail && (
-              <>
-                <th>Base</th>
-                <th>Enhance</th>
-                <th>Size</th>
-                <th>Misc</th>
-                <th>Damage</th>
-                <th>Drain</th>
-              </>
-            )}
-          </tr>
-        </thead>
+    <div className="mt-4">
+      <SectionTitle title="Ability scores">
+        <Button onClick={() => setShowDetails((v) => !v)}>{showDetails ? "Hide details" : "Show details"}</Button>
+      </SectionTitle>
+
+      <table className="w-full mt-4 table table--striped">
+        {!showDetails && (
+          <thead>
+            <tr>
+              <th />
+              <th>Total</th>
+              <th>Mod</th>
+            </tr>
+          </thead>
+        )}
         <tbody>
           {ABILITY_TYPES.map((ability) => (
-            <tr key={ability}>
-              <td>{ability}</td>
-              <td>{state.abilities[ability].total}</td>
-              <td>{state.abilities[ability].mod}</td>
-              {state.toggleDetail && (
-                <>
-                  <td>
-                    <input
-                      type="number"
-                      value={state.abilities[ability].base}
-                      onChange={(e) => handleChange(ability, "base", e.target.value)}
-                    />
+            <React.Fragment key={ability}>
+              <tr>
+                <th
+                  className={cx("text-left text-sm", { "font-normal": !showDetails })}
+                  title={ABILITY_LABELS[ability]}
+                >
+                  {ABILITY_LABELS[ability]}
+                </th>
+                <td className="text-center value">
+                  {showDetails && "Total: "}
+                  {state.abilities[ability].total}
+                </td>
+                <td className="text-center value">
+                  {showDetails && "Mod: "}
+                  {state.abilities[ability].mod}
+                </td>
+              </tr>
+              {showDetails && (
+                <tr>
+                  <td colSpan={3}>
+                    <div className="flex justify-end gap-1 pb-4">
+                      {input(ability, "base")}
+                      {input(ability, "enh")}
+                      {input(ability, "size")}
+                      {input(ability, "misc")}
+                      {input(ability, "damage")}
+                      {input(ability, "drain")}
+                    </div>
                   </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={state.abilities[ability].enh}
-                      onChange={(e) => handleChange(ability, "enh", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={state.abilities[ability].size}
-                      onChange={(e) => handleChange(ability, "size", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={state.abilities[ability].misc}
-                      onChange={(e) => handleChange(ability, "misc", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={state.abilities[ability].damage}
-                      onChange={(e) => handleChange(ability, "damage", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={state.abilities[ability].drain}
-                      onChange={(e) => handleChange(ability, "drain", e.target.value)}
-                    />
-                  </td>
-                </>
+                </tr>
               )}
-            </tr>
+            </React.Fragment>
           ))}
         </tbody>
       </table>
-    </>
+    </div>
   );
 }
