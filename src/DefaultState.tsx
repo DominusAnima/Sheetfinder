@@ -18,6 +18,7 @@ import {
   EquipBlock,
   MoneyType,
   ClassEntry,
+  EquipSlot,
 } from "./charSheet";
 
 const DEFAULT_EQUIP_BLOCK: EquipBlock = {
@@ -29,18 +30,10 @@ const DEFAULT_EQUIP_BLOCK: EquipBlock = {
       description: "-",
       value: "0",
       weight: "0",
+      slot: EquipSlot.NONE,
     },
   ],
-  worn: [
-    {
-      name: "-",
-      hp: "0",
-      toggleDescr: true,
-      description: "-",
-      value: "0",
-      weight: "0",
-    },
-  ],
+  worn: new Map(),
   bags: [
     {
       name: "-",
@@ -50,6 +43,7 @@ const DEFAULT_EQUIP_BLOCK: EquipBlock = {
       value: "0",
       weight: "0",
       capacity: "0",
+      slot: EquipSlot.NONE,
     },
   ],
   coinPurse: [{ amount: "0", type: MoneyType.GOLD, weight: "0" }],
@@ -134,6 +128,7 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
       description: "-",
       weight: "0",
       value: "0",
+      slot: EquipSlot.CHEST,
       baseACBonus: "0",
       maxDex: "99",
       checkPenalty: "0",
@@ -148,6 +143,7 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
       description: "-",
       weight: "0",
       value: "0",
+      slot: EquipSlot.NONE,
       baseACBonus: "0",
       enh: "0",
       maxDex: "0",
@@ -168,6 +164,7 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
         range: "5",
         type: WeaponType.SIMPLE,
         category: WeaponCategory.LIGHT,
+        slot: EquipSlot.NONE,
       },
     ],
   },

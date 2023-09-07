@@ -40,10 +40,15 @@ export default function App() {
     saveState(state);
   }, [state]);
 
+  function resetSheet() {
+    dispatch({ type: "reset" });
+  }
+
   return (
     <FormContextProvider dispatch={dispatch}>
       <Container>
         <h1 className="text-lg font-bold text-center mb-4">Pathfinder digital character sheet prototype</h1>
+        <button onClick={resetSheet}>Reset character sheet</button>
         <Bio state={state.bio} />
         <AbilityScores state={state.abilityBlock} />
         <HitPoints state={state.hitPoints} />

@@ -1,8 +1,12 @@
-import { buildClassRecordEntry } from "./DefaultState";
+import { Skills } from "./Blocks/Skills";
+import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
 import { Abilities, BioBlock, Blocks, Skill, SpecialEntry } from "./charSheet";
 import { ABILITY_TYPES } from "./constants";
 
 export type ReducerAction =
+  | RemoveSpecialEntryAction
+  | RemoveSkillAction
+  | ResetAction
   | changeSkillAbilAction
   | AddSkillAction
   | AddSpecialEntryAction
@@ -25,6 +29,10 @@ export type ReducerAction =
 
 type RecalculateAction = {
   type: "recalculate";
+};
+
+type ResetAction = {
+  type: "reset";
 };
 
 type ChangeBioAction = {
@@ -159,6 +167,20 @@ type AddSkillAction = {
   type: "addSkill";
 };
 
+type RemoveSkillAction = {
+  type: "removeSkill";
+  payload: {
+    skillIndex: number;
+  };
+};
+
+type RemoveSpecialEntryAction = {
+  type: "removeSpecialEntry";
+  payload: {
+    entry: SpecialEntry;
+  };
+};
+
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
   switch (action.type) {
     case "recalculate": {
@@ -199,11 +221,11 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         newClassRecTot.skill += Number(entry.skill) * Number(entry.levels);
         newClassRecTot.levels += Number(entry.levels);
         //calculate max HP
-        newHP.maxPoints += Number(entry.levels) * newState.abilityBlock.abilities.con.mod;
         entry.hpGained.forEach((element) => {
           newHP.maxPoints += Number(element);
         });
       });
+      newHP.maxPoints += Number(newState.classRecorder.totals.levels * newState.abilityBlock.abilities.con.mod);
       newHP.maxPoints += Number(newState.hitPoints.bonusMaxPoints);
 
       //calculate armor classes
@@ -290,8 +312,10 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         Number(newCombatBlock.combatDefense.misc);
 
       //calculate skill rank amounts and skill bonus totals
-      newState.skills.totalRanks =
-        newClassRecTot.skill + newClassRecTot.levels * newState.abilityBlock.abilities.int.mod;
+      newState.skills.totalRanks = Math.max(
+        0,
+        newClassRecTot.skill + newClassRecTot.levels * newState.abilityBlock.abilities.int.mod
+      );
       newState.skills.remainRanks = newState.skills.totalRanks;
       newState.skills.skills.forEach((element) => {
         newState.skills.remainRanks -= Number(element.ranks);
@@ -310,10 +334,13 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       newState.equipment.coinPurse.forEach(
         (currency) => (newWeight.currLoad += Number(currency.weight) * Number(currency.amount))
       );
-      newState.equipment.worn.forEach((element) => (newWeight.currLoad += Number(element.weight)));
+      Array.from(newState.equipment.worn.values()).forEach((element) => (newWeight.currLoad += Number(element.weight))); //throws an error here "newState.equipment.worn.values is not a function"
       newState.equipment.inventory.forEach((element) => (newWeight.currLoad += Number(element.weight)));
 
       return newState;
+    }
+    case "reset": {
+      return reducer(DEFAULT_STATE, { type: "recalculate" });
     }
     case "changeBio": {
       const newState: Blocks = {
@@ -413,6 +440,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           entries: state.classRecorder.entries.filter((_e, i) => i !== action.payload.index),
         },
       };
+      reducer(newState, { type: "recalculate" });
       return newState;
     }
 
@@ -604,6 +632,52 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         skills: {
           ...state.skills,
           skills: [...state.skills.skills, newSkill],
+        },
+      };
+
+      return newState;
+    }
+    case "changeSkillAbil": {
+      const newState: Blocks = {
+        ...state,
+        skills: {
+          ...state.skills,
+          skills: [
+            ...state.skills.skills.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  ability: action.payload.value,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      reducer(newState, { type: "recalculate" });
+
+      return newState;
+    }
+    case "removeSkill": {
+      const newState: Blocks = {
+        ...state,
+        skills: {
+          ...state.skills,
+          skills: [...state.skills.skills.filter((skill) => skill !== state.skills.skills[action.payload.skillIndex])],
+        },
+      };
+      reducer(newState, { type: "recalculate" });
+      return newState;
+    }
+    case "removeSpecialEntry": {
+      const newState: Blocks = {
+        ...state,
+        special: {
+          ...state.special,
+          entries: [...state.special.entries.filter((entry) => entry !== action.payload.entry)],
         },
       };
 

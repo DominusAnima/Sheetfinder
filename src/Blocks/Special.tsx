@@ -1,4 +1,4 @@
-import { SpecialBlock } from "../charSheet";
+import { SpecialBlock, SpecialEntry } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
 export function Special({ state }: { state: SpecialBlock }) {
@@ -22,6 +22,10 @@ export function Special({ state }: { state: SpecialBlock }) {
     dispatch({ type: "addSpecialEntry" });
   }
 
+  function removeEntry(entry: SpecialEntry) {
+    dispatch({ type: "removeSpecialEntry", payload: { entry } });
+  }
+
   return (
     <div onSubmit={handleSubmit}>
       <h2>Special Usable Abilities</h2>
@@ -42,12 +46,17 @@ export function Special({ state }: { state: SpecialBlock }) {
                 <td>
                   <button onClick={() => handleClick(i)}>Toggle</button>
                 </td>
-                <td>{entry.name}</td>
+                <td>
+                  <input value={entry.name} onChange={(e) => handleChange("name", i, e.target.value)} />
+                </td>
                 <td>
                   <input value={entry.usesLimit} onChange={(e) => handleChange("usesLimit", i, e.target.value)} />
                 </td>
                 <td>
                   <input value={entry.used} onChange={(e) => handleChange("used", i, e.target.value)} />
+                </td>
+                <td>
+                  <button onClick={() => removeEntry(entry)}>Remove</button>
                 </td>
               </tr>
               {entry.toggleDescr && (

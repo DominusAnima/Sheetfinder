@@ -1,14 +1,23 @@
-import { Blocks } from "../charSheet";
+import { Abilities, Blocks } from "../charSheet";
 import { ABILITY_TYPES } from "../constants";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
 export function Skills({ state }: { state: Blocks }) {
   const dispatch = useFormDispatch();
   function handleChange(skillIndex: number, field: "name" | "ranks" | "misc", value: string) {
-    dispatch({
-      type: "changeSkillField",
-      payload: { skillIndex, field, value },
-    });
+    if (
+      !(
+        field === "ranks" &&
+        (Number(value) - Number(state.skills.skills[skillIndex].ranks) > Number(state.skills.remainRanks) ||
+          Number(value) > state.classRecorder.totals.levels ||
+          Number(value) < 0)
+      )
+    ) {
+      dispatch({
+        type: "changeSkillField",
+        payload: { skillIndex, field, value },
+      });
+    }
   }
 
   function handleSkillToggle(skillIndex: number, field: "classSkill" | "trained") {
@@ -27,8 +36,12 @@ export function Skills({ state }: { state: Blocks }) {
     dispatch({ type: "addSkill" });
   }
 
-  function handleSelectChange(index: number, value: string) {
+  function handleSelectChange(index: number, value: keyof Abilities) {
     dispatch({ type: "changeSkillAbil", payload: { index, value } });
+  }
+
+  function removeSkill(skillIndex: number) {
+    dispatch({ type: "removeSkill", payload: { skillIndex } });
   }
 
   return (
@@ -71,7 +84,7 @@ export function Skills({ state }: { state: Blocks }) {
                         <input
                           type="checkbox"
                           defaultChecked={skill.trained}
-                          onChange={(e) => handleSkillToggle(i, "trained")}
+                          onChange={() => handleSkillToggle(i, "trained")}
                         />
                       </th>
                     ) : (
@@ -93,7 +106,10 @@ export function Skills({ state }: { state: Blocks }) {
                     </th>
                     <th>
                       {skill.editable ? (
-                        <select value={skill.ability} onChange={(e) => handleSelectChange(i, e.target.value)}>
+                        <select
+                          value={skill.ability}
+                          onChange={(e) => handleSelectChange(i, e.target.value as keyof Abilities)}
+                        >
                           {Object.values(ABILITY_TYPES).map((abilType) => {
                             return (
                               <option key={abilType} value={abilType}>
@@ -123,6 +139,11 @@ export function Skills({ state }: { state: Blocks }) {
                         onChange={(e) => handleChange(i, "misc", e.target.value)}
                       />
                     </th>
+                    {skill.editable && (
+                      <th>
+                        <button onClick={() => removeSkill(i)}>Remove</button>
+                      </th>
+                    )}
                   </tr>
                 );
               })

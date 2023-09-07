@@ -271,9 +271,26 @@ export interface Feat {
   description: string;
 }
 
+export enum EquipSlot {
+  BELT = "belt",
+  BODY = "body",
+  CHEST = "chest",
+  EYES = "eyes",
+  FEET = "feet",
+  HANDS = "hands",
+  HEAD = "head",
+  HEADBAND = "headband",
+  NECK = "neck",
+  RING_1 = "ring 1",
+  RING_2 = "ring 2",
+  SHOULDERS = "shoulders",
+  WRIST = "wrist",
+  NONE = "none",
+}
+
 export interface EquipBlock {
   inventory: Array<Item>;
-  worn: Array<Item>;
+  worn: Map<EquipSlot, Item>;
   bags: Array<Bag>;
   coinPurse: Array<Money>;
   weight: CarriedLoad;
@@ -286,6 +303,7 @@ export interface Item {
   description: string;
   weight: string;
   value: string;
+  slot: EquipSlot;
 }
 
 export interface Armor extends Item {
