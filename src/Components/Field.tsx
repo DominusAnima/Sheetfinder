@@ -14,7 +14,7 @@ const Field: React.FC<IProps> = ({ className, children, label, id, horizontal })
     {label && (
       <label
         htmlFor={id}
-        className={cx("block text-sm font-medium text-gray-900 dark:text-white", {
+        className={cx("block text-sm font-medium text-gray-900", {
           "mb-2": !horizontal,
           "flex-shrink-0 w-52": horizontal,
         })}

@@ -6,7 +6,7 @@ const Button: React.FC<
 > = ({ className, size = "default", block, ...props }) => (
   <button
     className={cx(
-      "appearance-none text-gray-900 border border-gray-300 bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+      "appearance-none text-gray-900 border border-gray-300 bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500",
       {
         "p-2 rounded-lg": size === "default",
         "p-0 px-2 text-sm rounded-md": size === "small",
