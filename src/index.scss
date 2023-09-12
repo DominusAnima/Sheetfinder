@@ -7,8 +7,19 @@
 
     thead {
       th {
+        text-align: center;
         font-size: 0.8em;
         font-weight: bold;
+
+        &:first-child {
+          text-align: left;
+        }
+      }
+    }
+
+    tbody {
+      th {
+        text-align: left;
       }
     }
 
@@ -25,6 +36,14 @@
   .value {
     font-weight: bold;
     @apply text-secondary-700;
+  }
+
+  input {
+    background-color: #eeeeee;
+  }
+
+  hr {
+    @apply border-primary-800;
   }
 }
 

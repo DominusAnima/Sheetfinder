@@ -1,9 +1,11 @@
 import React from "react";
+import { FaPlusCircle } from "react-icons/fa";
+import Button from "../Components/Button";
+import FlatButton from "../Components/FlatButton";
+import ModalInput from "../Components/ModalInput";
 import SectionTitle from "../Components/SectionTitle";
 import { ClassRecordBlock } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
-import ModalInput from "../Components/ModalInput";
-import Button from "../Components/Button";
 
 const fields = ["bab", "skill", "favClassBonusType", "favClassBonus", "fort", "ref", "will", "levels"] as const;
 
@@ -32,13 +34,29 @@ export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
 
   return (
     <div className="mt-4">
-      <SectionTitle title="Class Recorder" />
+      <SectionTitle title="Class Recorder">
+        <FlatButton onClick={() => dispatch({ type: "addClassEntry" })}>
+          <FaPlusCircle />
+        </FlatButton>
+      </SectionTitle>
       {state.entries.map((entry, i) => (
         <React.Fragment key={i}>
-          <div className="text-xs mt-4">
-            <ModalInput value={entry.hitDie} placeholder="{HD}" onChange={(v) => handleChange(i, "hitDie", v)} />
-            {" - "}
-            <ModalInput value={entry.name} placeholder="{Class Name}" onChange={(v) => handleChange(i, "name", v)} />
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-xs">
+              <ModalInput value={entry.hitDie} placeholder="{HD}" onChange={(v) => handleChange(i, "hitDie", v)} />
+              {" - "}
+              <ModalInput value={entry.name} placeholder="{Class Name}" onChange={(v) => handleChange(i, "name", v)} />
+            </div>
+            <Button
+              size="small"
+              onClick={() => {
+                if (confirm("Are you sure?")) {
+                  dispatch({ type: "removeClassEntry", payload: { index: i } });
+                }
+              }}
+            >
+              Remove
+            </Button>
           </div>
           <div className="flex flex-wrap gap-x-2">
             {fields.map((field) => (
@@ -53,23 +71,8 @@ export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
               </div>
             ))}
           </div>
-          <div className="text-right">
-            <Button
-              size="small"
-              onClick={() => {
-                if (confirm("Are you sure?")) {
-                  dispatch({ type: "removeClassEntry", payload: { index: i } });
-                }
-              }}
-            >
-              Remove
-            </Button>
-          </div>
         </React.Fragment>
       ))}
-      <Button className="mt-2" block onClick={() => dispatch({ type: "addClassEntry" })}>
-        Add entry
-      </Button>
     </div>
   );
 }

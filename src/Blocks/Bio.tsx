@@ -1,4 +1,5 @@
 import React, { InputHTMLAttributes, useState } from "react";
+import EditButton from "../Components/EditButton";
 import Field from "../Components/Field";
 import Input from "../Components/Input";
 import SectionTitle from "../Components/SectionTitle";
@@ -6,7 +7,6 @@ import Select from "../Components/Select";
 import Textarea from "../Components/Textarea";
 import { Alignment, BioBlock, CharacterSize } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
-import EditButton from "../Components/EditButton";
 
 const LABELS: { [K in keyof BioBlock]: string } = {
   age: "Age",
@@ -151,7 +151,7 @@ const Bio: React.FC<Props> = ({ state }) => {
 
   return (
     <div>
-      <SectionTitle title="Character info">
+      <SectionTitle title="Character Info">
         <EditButton editing={editing} onClick={() => setEditing((v) => !v)} />
       </SectionTitle>
       {editing ? <BioForm state={state} /> : <BioSummary state={state} />}

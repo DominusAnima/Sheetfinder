@@ -1,6 +1,6 @@
 import cx from "classnames";
 import React, { useState } from "react";
-import FlatButton from "../Components/FlatButton";
+import EditButton from "../Components/EditButton";
 import InlineInput from "../Components/InlineInput";
 import SectionTitle from "../Components/SectionTitle";
 import { Abilities, AbilityBlock } from "../charSheet";
@@ -43,10 +43,8 @@ export function AbilityScores({ state }: { state: AbilityBlock }) {
 
   return (
     <div className="mt-4">
-      <SectionTitle title="Ability scores">
-        <FlatButton onClick={() => setShowDetails((v) => !v)}>
-          {showDetails ? "Hide details" : "Show details"}
-        </FlatButton>
+      <SectionTitle title="Ability Scores">
+        <EditButton editing={showDetails} onClick={() => setShowDetails((v) => !v)} />
       </SectionTitle>
 
       <table className="w-full mt-4 table table--striped">
@@ -54,8 +52,8 @@ export function AbilityScores({ state }: { state: AbilityBlock }) {
           <thead>
             <tr>
               <th />
-              <th>Total</th>
-              <th>Mod</th>
+              <th className="w-20">Total</th>
+              <th className="w-20">Mod</th>
             </tr>
           </thead>
         )}
