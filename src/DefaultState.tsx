@@ -33,7 +33,7 @@ const DEFAULT_EQUIP_BLOCK: EquipBlock = {
       slot: EquipSlot.NONE,
     },
   ],
-  worn: new Map(),
+  worn: {},
   bags: [
     {
       name: "-",

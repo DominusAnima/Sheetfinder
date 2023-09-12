@@ -290,7 +290,7 @@ export enum EquipSlot {
 
 export interface EquipBlock {
   inventory: Array<Item>;
-  worn: Map<EquipSlot, Item>;
+  worn: Partial<Record<EquipSlot, Item>>;
   bags: Array<Bag>;
   coinPurse: Array<Money>;
   weight: CarriedLoad;

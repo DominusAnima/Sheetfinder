@@ -334,7 +334,9 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       newState.equipment.coinPurse.forEach(
         (currency) => (newWeight.currLoad += Number(currency.weight) * Number(currency.amount))
       );
-      Array.from(newState.equipment.worn.values()).forEach((element) => (newWeight.currLoad += Number(element.weight))); //throws an error here "newState.equipment.worn.values is not a function"
+      Array.from(Object.values(newState.equipment.worn)).forEach(
+        (element) => (newWeight.currLoad += Number(element.weight))
+      );
       newState.equipment.inventory.forEach((element) => (newWeight.currLoad += Number(element.weight)));
 
       return newState;
