@@ -4,17 +4,8 @@ import EditButton from "../Components/EditButton";
 import InlineInput from "../Components/InlineInput";
 import SectionTitle from "../Components/SectionTitle";
 import { Abilities, AbilityBlock } from "../charSheet";
-import { ABILITY_TYPES } from "../constants";
+import { ABILITY_LABELS, ABILITY_TYPES } from "../constants";
 import { useFormDispatch } from "../lib/useFormDispatch";
-
-const ABILITY_LABELS: { [key in keyof Abilities]: string } = {
-  cha: "Charisma",
-  con: "Constitution",
-  dex: "Dexterity",
-  int: "Intelligence",
-  str: "Strength",
-  wis: "Wisdom",
-};
 
 type ValueKey = "base" | "enh" | "size" | "misc" | "damage" | "drain";
 
