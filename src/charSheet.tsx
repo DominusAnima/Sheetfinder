@@ -285,7 +285,7 @@ export enum EquipSlot {
   RING_2 = "ring 2",
   SHOULDERS = "shoulders",
   WRIST = "wrist",
-  NONE = "none",
+  NONE = "-",
 }
 
 export interface EquipBlock {

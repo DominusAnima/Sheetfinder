@@ -2,7 +2,6 @@ IMPORTANT:
   figure out class recorder
   add fields for equipped weapons, armor and shield to combat block
   magic Blocks
-  feat block
   equipment block
 
 NON-ESSENTIAL:

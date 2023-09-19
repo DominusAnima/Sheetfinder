@@ -1,9 +1,17 @@
-import { Skills } from "./Blocks/Skills";
 import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
-import { Abilities, BioBlock, Blocks, Skill, SpecialEntry } from "./charSheet";
+import { Abilities, BioBlock, Blocks, EquipSlot, Feat, Item, Skill, SpecialEntry } from "./charSheet";
 import { ABILITY_TYPES } from "./constants";
 
 export type ReducerAction =
+  | AddInventoryEntryAction
+  | RemoveInventoryEntryAction
+  | ChangeInventoryEntrySlotAction
+  | ChangeInventoryEntryFieldAction
+  | ToggleEquipItemDetailAction
+  | ChangeFeatEntryFieldAction
+  | ToggleFeatDetailAction
+  | RemoveFeatEntryAction
+  | AddFeatEntryAction
   | RemoveSpecialEntryAction
   | RemoveSkillAction
   | ResetAction
@@ -179,6 +187,68 @@ type RemoveSpecialEntryAction = {
   payload: {
     entry: SpecialEntry;
   };
+};
+
+type AddFeatEntryAction = {
+  type: "addFeatEntry";
+};
+
+type RemoveFeatEntryAction = {
+  type: "removeFeatEntry";
+  payload: {
+    entry: Feat;
+  };
+};
+
+type ToggleFeatDetailAction = {
+  type: "toggleFeatDetail";
+  payload: {
+    index: number;
+  };
+};
+
+type ChangeFeatEntryFieldAction = {
+  type: "changeFeatEntryField";
+  payload: {
+    field: "name" | "description";
+    index: number;
+    value: string;
+  };
+};
+
+type ToggleEquipItemDetailAction = {
+  type: "toggleEquipItemDetail";
+  payload: {
+    index: number;
+  };
+};
+
+type ChangeInventoryEntryFieldAction = {
+  type: "changeInventoryEntryField";
+  payload: {
+    field: "name" | "hp" | "weight" | "value" | "description";
+    index: number;
+    value: string;
+  };
+};
+
+type ChangeInventoryEntrySlotAction = {
+  type: "changeInventoryEntrySlot";
+  payload: {
+    index: number;
+    value: keyof EquipSlot;
+  };
+};
+
+type RemoveInventoryEntryAction = {
+  type: "removeInventoryEntry";
+  payload: {
+    entry: Item;
+  };
+};
+
+type AddInventoryEntryAction = {
+  type: "addInventoryEntry";
 };
 
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
@@ -680,6 +750,176 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         special: {
           ...state.special,
           entries: [...state.special.entries.filter((entry) => entry !== action.payload.entry)],
+        },
+      };
+
+      return newState;
+    }
+    case "addFeatEntry": {
+      const newFeat: Feat = {
+        toggleDescr: true,
+        description: "-",
+        name: "-",
+      };
+
+      const newState: Blocks = {
+        ...state,
+        featList: {
+          ...state.featList,
+          entries: [...state.featList.entries, newFeat],
+        },
+      };
+
+      return newState;
+    }
+    case "removeFeatEntry": {
+      const newState: Blocks = {
+        ...state,
+        featList: {
+          ...state.featList,
+          entries: [...state.featList.entries.filter((entry) => entry !== action.payload.entry)],
+        },
+      };
+
+      return newState;
+    }
+    case "changeFeatEntryField": {
+      const newState: Blocks = {
+        ...state,
+        featList: {
+          ...state.featList,
+          entries: [
+            ...state.featList.entries.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "toggleFeatDetail": {
+      const newState: Blocks = {
+        ...state,
+        featList: {
+          ...state.featList,
+          entries: [
+            ...state.featList.entries.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  toggleDescr: !state.featList.entries[i].toggleDescr,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "addInventoryEntry": {
+      const newEntry: Item = {
+        description: "-",
+        hp: "-",
+        name: "New Item",
+        slot: EquipSlot.NONE,
+        toggleDescr: true,
+        value: "0",
+        weight: "0",
+      };
+
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          inventory: [...state.equipment.inventory, newEntry],
+        },
+      };
+
+      return newState;
+    }
+    case "changeInventoryEntryField": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          inventory: [
+            ...state.equipment.inventory.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "changeInventoryEntrySlot": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          inventory: [
+            ...state.equipment.inventory.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  ability: action.payload.value,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "removeInventoryEntry": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          inventory: [...state.equipment.inventory.filter((entry) => entry !== action.payload.entry)],
+        },
+      };
+
+      return newState;
+    }
+    case "toggleEquipItemDetail": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          inventory: [
+            ...state.equipment.inventory.map((e, i) => {
+              if (i === action.payload.index) {
+                return {
+                  ...e,
+                  toggleDescr: !state.equipment.inventory[i].toggleDescr,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
         },
       };
 

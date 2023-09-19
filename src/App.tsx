@@ -12,6 +12,8 @@ import "./constants.tsx";
 import { FormContextProvider } from "./lib/FormContext.tsx";
 import { reducer } from "./reducer.tsx";
 import { Special } from "./Blocks/Special.tsx";
+import { Feats } from "./Blocks/Feats.tsx";
+import { Equipment } from "./Blocks/Equipment.tsx";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
@@ -56,6 +58,8 @@ export default function App() {
         <CombatBlock state={state} />
         <Skills state={state} />
         <Special state={state.special} />
+        <Feats state={state.featList} />
+        <Equipment state={state} />
       </Container>
     </FormContextProvider>
   );
