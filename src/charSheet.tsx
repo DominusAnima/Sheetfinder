@@ -281,11 +281,11 @@ export enum EquipSlot {
   HEAD = "head",
   HEADBAND = "headband",
   NECK = "neck",
-  RING_1 = "ring 1",
-  RING_2 = "ring 2",
+  RING_1 = "ring_1",
+  RING_2 = "ring_2",
   SHOULDERS = "shoulders",
   WRIST = "wrist",
-  NONE = "-",
+  NONE = "none",
 }
 
 export interface EquipBlock {
@@ -294,6 +294,7 @@ export interface EquipBlock {
   bags: Array<Bag>;
   coinPurse: Array<Money>;
   weight: CarriedLoad;
+  toggleDetail: boolean;
 }
 
 export interface Item {
@@ -304,6 +305,7 @@ export interface Item {
   weight: string;
   value: string;
   slot: EquipSlot;
+  qtyOrUses: string;
 }
 
 export interface Armor extends Item {

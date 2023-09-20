@@ -22,6 +22,7 @@ import {
 } from "./charSheet";
 
 const DEFAULT_EQUIP_BLOCK: EquipBlock = {
+  toggleDetail: true,
   inventory: [
     {
       name: "-",
@@ -31,9 +32,24 @@ const DEFAULT_EQUIP_BLOCK: EquipBlock = {
       value: "0",
       weight: "0",
       slot: EquipSlot.NONE,
+      qtyOrUses: "1",
     },
   ],
-  worn: {},
+  worn: {
+    belt: undefined,
+    body: undefined,
+    chest: undefined,
+    eyes: undefined,
+    feet: undefined,
+    hands: undefined,
+    head: undefined,
+    headband: undefined,
+    neck: undefined,
+    ring_1: undefined,
+    ring_2: undefined,
+    shoulders: undefined,
+    wrist: undefined,
+  },
   bags: [
     {
       name: "-",
@@ -44,6 +60,7 @@ const DEFAULT_EQUIP_BLOCK: EquipBlock = {
       weight: "0",
       capacity: "0",
       slot: EquipSlot.NONE,
+      qtyOrUses: "1",
     },
   ],
   coinPurse: [{ amount: "0", type: MoneyType.GOLD, weight: "0" }],
@@ -135,6 +152,7 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
       armorType: ArmorType.NONE,
       enh: "0",
       spellFail: "0",
+      qtyOrUses: "1",
     },
     shield: {
       name: "-",
@@ -149,6 +167,7 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
       maxDex: "0",
       checkPenalty: "0",
       spellFail: "0",
+      qtyOrUses: "1",
     },
     weapons: [
       {
@@ -165,6 +184,7 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
         type: WeaponType.SIMPLE,
         category: WeaponCategory.LIGHT,
         slot: EquipSlot.NONE,
+        qtyOrUses: "1",
       },
     ],
   },

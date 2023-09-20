@@ -3,11 +3,14 @@ import { Abilities, BioBlock, Blocks, EquipSlot, Feat, Item, Skill, SpecialEntry
 import { ABILITY_TYPES } from "./constants";
 
 export type ReducerAction =
+  | unequipItemAction
+  | equipItemAction
+  | ToggleEquipDetailAction
   | AddInventoryEntryAction
   | RemoveInventoryEntryAction
   | ChangeInventoryEntrySlotAction
   | ChangeInventoryEntryFieldAction
-  | ToggleEquipItemDetailAction
+  | ToggleEquipItemDescrAction
   | ChangeFeatEntryFieldAction
   | ToggleFeatDetailAction
   | RemoveFeatEntryAction
@@ -216,17 +219,17 @@ type ChangeFeatEntryFieldAction = {
   };
 };
 
-type ToggleEquipItemDetailAction = {
-  type: "toggleEquipItemDetail";
+type ToggleEquipItemDescrAction = {
+  type: "toggleEquipItemDescr";
   payload: {
-    index: number;
+    entry: Item;
   };
 };
 
 type ChangeInventoryEntryFieldAction = {
   type: "changeInventoryEntryField";
   payload: {
-    field: "name" | "hp" | "weight" | "value" | "description";
+    field: "name" | "hp" | "weight" | "value" | "qtyOrUses" | "description";
     index: number;
     value: string;
   };
@@ -236,7 +239,7 @@ type ChangeInventoryEntrySlotAction = {
   type: "changeInventoryEntrySlot";
   payload: {
     index: number;
-    value: keyof EquipSlot;
+    value: EquipSlot;
   };
 };
 
@@ -249,6 +252,24 @@ type RemoveInventoryEntryAction = {
 
 type AddInventoryEntryAction = {
   type: "addInventoryEntry";
+};
+
+type ToggleEquipDetailAction = {
+  type: "toggleEquipDetail";
+};
+
+type equipItemAction = {
+  type: "equipItem";
+  payload: {
+    item: Item;
+  };
+};
+
+type unequipItemAction = {
+  type: "unequipItem";
+  payload: {
+    slot: EquipSlot;
+  };
 };
 
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
@@ -404,9 +425,9 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       newState.equipment.coinPurse.forEach(
         (currency) => (newWeight.currLoad += Number(currency.weight) * Number(currency.amount))
       );
-      Array.from(Object.values(newState.equipment.worn)).forEach(
-        (element) => (newWeight.currLoad += Number(element.weight))
-      );
+      // Array.from(Object.values(newState.equipment.worn)).forEach(
+      //   (element) => (newWeight.currLoad += Number(element.weight))
+      // );
       newState.equipment.inventory.forEach((element) => (newWeight.currLoad += Number(element.weight)));
 
       return newState;
@@ -836,6 +857,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         toggleDescr: true,
         value: "0",
         weight: "0",
+        qtyOrUses: "1",
       };
 
       const newState: Blocks = {
@@ -880,7 +902,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
               if (i === action.payload.index) {
                 return {
                   ...e,
-                  ability: action.payload.value,
+                  slot: action.payload.value,
                 };
               } else {
                 return e;
@@ -903,23 +925,62 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
       return newState;
     }
-    case "toggleEquipItemDetail": {
+    case "toggleEquipItemDescr": {
       const newState: Blocks = {
         ...state,
         equipment: {
           ...state.equipment,
           inventory: [
-            ...state.equipment.inventory.map((e, i) => {
-              if (i === action.payload.index) {
+            ...state.equipment.inventory.map((e) => {
+              if (e === action.payload.entry) {
                 return {
                   ...e,
-                  toggleDescr: !state.equipment.inventory[i].toggleDescr,
+                  toggleDescr: !action.payload.entry.toggleDescr,
                 };
               } else {
                 return e;
               }
             }),
           ],
+        },
+      };
+
+      return newState;
+    }
+    case "toggleEquipDetail": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          toggleDetail: !state.equipment.toggleDetail,
+        },
+      };
+
+      return newState;
+    }
+    case "equipItem": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          worn: {
+            ...state.equipment.worn,
+            [action.payload.item.slot]: action.payload.item,
+          },
+        },
+      };
+
+      return newState;
+    }
+    case "unequipItem": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          worn: {
+            ...state.equipment.worn,
+            [action.payload.slot]: undefined,
+          },
         },
       };
 
