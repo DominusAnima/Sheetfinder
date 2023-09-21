@@ -1,8 +1,10 @@
 import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
 import { Abilities, BioBlock, Blocks, EquipSlot, Feat, Item, Skill, SpecialEntry } from "./charSheet";
-import { ABILITY_TYPES } from "./constants";
+import { ABILITY_TYPES, makeEmptyItem } from "./constants";
 
 export type ReducerAction =
+  | ChangeWornItemFieldAction
+  | ToggleWornDescrAction
   | unequipItemAction
   | equipItemAction
   | ToggleEquipDetailAction
@@ -268,7 +270,23 @@ type equipItemAction = {
 type unequipItemAction = {
   type: "unequipItem";
   payload: {
-    slot: EquipSlot;
+    item: Item;
+  };
+};
+
+type ToggleWornDescrAction = {
+  type: "toggleWornDesc";
+  payload: {
+    item: Item;
+  };
+};
+
+type ChangeWornItemFieldAction = {
+  type: "changeWornItemField";
+  payload: {
+    field: "name" | "hp" | "weight" | "value" | "qtyOrUses" | "description";
+    item: Item;
+    value: string;
   };
 };
 
@@ -425,9 +443,9 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       newState.equipment.coinPurse.forEach(
         (currency) => (newWeight.currLoad += Number(currency.weight) * Number(currency.amount))
       );
-      // Array.from(Object.values(newState.equipment.worn)).forEach(
-      //   (element) => (newWeight.currLoad += Number(element.weight))
-      // );
+      Array.from(Object.values(newState.equipment.worn)).forEach(
+        (element) => (newWeight.currLoad += Number(element.weight))
+      );
       newState.equipment.inventory.forEach((element) => (newWeight.currLoad += Number(element.weight)));
 
       return newState;
@@ -967,6 +985,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
             ...state.equipment.worn,
             [action.payload.item.slot]: action.payload.item,
           },
+          inventory: [...state.equipment.inventory.filter((entry) => entry !== action.payload.item)],
         },
       };
 
@@ -979,7 +998,42 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           ...state.equipment,
           worn: {
             ...state.equipment.worn,
-            [action.payload.slot]: undefined,
+            [action.payload.item.slot]: makeEmptyItem(action.payload.item.slot),
+          },
+          inventory: [...state.equipment.inventory, action.payload.item],
+        },
+      };
+
+      return newState;
+    }
+    case "changeWornItemField": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          worn: {
+            ...state.equipment.worn,
+            [action.payload.item.slot]: {
+              ...action.payload.item,
+              [action.payload.field]: action.payload.value,
+            },
+          },
+        },
+      };
+
+      return newState;
+    }
+    case "toggleWornDesc": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          worn: {
+            ...state.equipment.worn,
+            [action.payload.item.slot]: {
+              ...action.payload.item,
+              toggleDescr: !action.payload.item.toggleDescr,
+            },
           },
         },
       };
