@@ -1,8 +1,11 @@
 import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
-import { Abilities, BioBlock, Blocks, EquipSlot, Feat, Item, Skill, SpecialEntry } from "./charSheet";
+import { Abilities, Bag, BioBlock, Blocks, EquipSlot, Feat, Item, Skill, SpecialEntry } from "./charSheet";
 import { ABILITY_TYPES, makeEmptyItem } from "./constants";
 
 export type ReducerAction =
+  | ToggleBagDescrAction
+  | ChangeBagFieldAction
+  | RemoveWornItemAction
   | ChangeWornItemFieldAction
   | ToggleWornDescrAction
   | unequipItemAction
@@ -287,6 +290,29 @@ type ChangeWornItemFieldAction = {
     field: "name" | "hp" | "weight" | "value" | "qtyOrUses" | "description";
     item: Item;
     value: string;
+  };
+};
+
+type RemoveWornItemAction = {
+  type: "removeWornItem";
+  payload: {
+    item: Item;
+  };
+};
+
+type ChangeBagFieldAction = {
+  type: "changeBagField";
+  payload: {
+    field: "name" | "hp" | "weight" | "value" | "qtyOrUses" | "description" | "capacity";
+    bag: Bag;
+    value: string;
+  };
+};
+
+type ToggleBagDescrAction = {
+  type: "toggleBagDescr";
+  payload: {
+    bag: Bag;
   };
 };
 
@@ -977,19 +1003,41 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       return newState;
     }
     case "equipItem": {
-      const newState: Blocks = {
-        ...state,
-        equipment: {
-          ...state.equipment,
-          worn: {
-            ...state.equipment.worn,
-            [action.payload.item.slot]: action.payload.item,
+      if (
+        JSON.stringify(state.equipment.worn[action.payload.item.slot] as Item) !==
+        JSON.stringify(makeEmptyItem(action.payload.item.slot))
+      ) {
+        const newState: Blocks = {
+          ...state,
+          equipment: {
+            ...state.equipment,
+            worn: {
+              ...state.equipment.worn,
+              [action.payload.item.slot]: action.payload.item,
+            },
+            inventory: [
+              ...state.equipment.inventory.filter((entry) => entry !== action.payload.item),
+              state.equipment.worn[action.payload.item.slot] as Item,
+            ],
           },
-          inventory: [...state.equipment.inventory.filter((entry) => entry !== action.payload.item)],
-        },
-      };
+        };
 
-      return newState;
+        return newState;
+      } else {
+        const newState: Blocks = {
+          ...state,
+          equipment: {
+            ...state.equipment,
+            worn: {
+              ...state.equipment.worn,
+              [action.payload.item.slot]: action.payload.item,
+            },
+            inventory: [...state.equipment.inventory.filter((entry) => entry !== action.payload.item)],
+          },
+        };
+
+        return newState;
+      }
     }
     case "unequipItem": {
       const newState: Blocks = {
@@ -1035,6 +1083,64 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
               toggleDescr: !action.payload.item.toggleDescr,
             },
           },
+        },
+      };
+
+      return newState;
+    }
+    case "removeWornItem": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          worn: {
+            ...state.equipment.worn,
+            [action.payload.item.slot]: makeEmptyItem(action.payload.item.slot),
+          },
+        },
+      };
+
+      return newState;
+    }
+    case "changeBagField": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          bags: [
+            ...state.equipment.bags.map((e) => {
+              if (e === action.payload.bag) {
+                return {
+                  ...e,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "toggleBagDescr": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          bags: [
+            ...state.equipment.bags.map((e) => {
+              if (e === action.payload.bag) {
+                return {
+                  ...e,
+                  toggleDescr: !action.payload.bag.toggleDescr,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
         },
       };
 

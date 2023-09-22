@@ -1,4 +1,4 @@
-import { Blocks, EquipSlot, Item } from "../charSheet";
+import { Bag, Blocks, EquipSlot, Item } from "../charSheet";
 import { makeEmptyItem } from "../constants";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
@@ -70,6 +70,22 @@ export function Equipment({ state }: { state: Blocks }) {
     dispatch({ type: "changeWornItemField", payload: { field, item, value } });
   }
 
+  function removeWornItem(item: Item) {
+    dispatch({ type: "removeWornItem", payload: { item } });
+  }
+
+  function handleBagChange(
+    field: "name" | "hp" | "weight" | "value" | "qtyOrUses" | "description" | "capacity",
+    bag: Bag,
+    value: string
+  ) {
+    dispatch({ type: "changeBagField", payload: { field, bag, value } });
+  }
+
+  function toggleBagDescr(bag: Bag) {
+    dispatch({ type: "toggleBagDescr", payload: { bag } });
+  }
+
   function handleSubmit(event: { preventDefault: any }) {
     event.preventDefault;
   }
@@ -79,7 +95,7 @@ export function Equipment({ state }: { state: Blocks }) {
       <h2>Equipment</h2>
       <button onClick={toggleDetail}>Toggle Detail</button>
       <h3>Carried Items</h3>
-      <button onClick={addEntry}>Add Entry</button>
+      <button onClick={addEntry}>Add Item</button>
       <table>
         <thead>
           <tr>
@@ -218,9 +234,14 @@ export function Equipment({ state }: { state: Blocks }) {
                   </>
                 )}
                 {JSON.stringify(item) !== JSON.stringify(makeEmptyItem(item.slot)) && (
-                  <td>
-                    <button onClick={() => unequipItem(item)}>Unequip</button>
-                  </td>
+                  <>
+                    <td>
+                      <button onClick={() => unequipItem(item)}>Unequip</button>
+                    </td>
+                    <td>
+                      <button onClick={() => removeWornItem(item)}>Remove</button>
+                    </td>
+                  </>
                 )}
               </tr>
               {item.toggleDescr && (
@@ -229,6 +250,68 @@ export function Equipment({ state }: { state: Blocks }) {
                     <input
                       value={item.description}
                       onChange={(e) => handleWornChange("description", item, e.target.value)}
+                    />
+                  </td>
+                </tr>
+              )}
+            </>
+          ))}
+        </tbody>
+      </table>
+
+      <h3>Bags & Containers</h3>
+      <table>
+        <thead>
+          <tr>
+            <td>Toggle Description</td>
+            <td>Quantity</td>
+            <td>Name</td>
+            <td>Volume / Weight Limit</td>
+            {state.equipment.toggleDetail && (
+              <>
+                <td>HP</td>
+                <td>Weight</td>
+                <td>Value</td>
+              </>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {state.equipment.bags.map((bag) => (
+            <>
+              <tr>
+                <td>
+                  <button onClick={() => toggleBagDescr(bag)}>Toggle</button>
+                </td>
+                <td>
+                  <input value={bag.qtyOrUses} onChange={(e) => handleBagChange("qtyOrUses", bag, e.target.value)} />
+                </td>
+                <td>
+                  <input value={bag.name} onChange={(e) => handleBagChange("name", bag, e.target.value)} />
+                </td>
+                <td>
+                  <input value={bag.capacity} onChange={(e) => handleBagChange("capacity", bag, e.target.value)} />
+                </td>
+                {state.equipment.toggleDetail && (
+                  <>
+                    <td>
+                      <input value={bag.hp} onChange={(e) => handleBagChange("hp", bag, e.target.value)} />
+                    </td>
+                    <td>
+                      <input value={bag.weight} onChange={(e) => handleBagChange("weight", bag, e.target.value)} />
+                    </td>
+                    <td>
+                      <input value={bag.value} onChange={(e) => handleBagChange("value", bag, e.target.value)} />
+                    </td>
+                  </>
+                )}
+              </tr>
+              {bag.toggleDescr && (
+                <tr>
+                  <td>
+                    <input
+                      value={bag.description}
+                      onChange={(e) => handleBagChange("description", bag, e.target.value)}
                     />
                   </td>
                 </tr>
