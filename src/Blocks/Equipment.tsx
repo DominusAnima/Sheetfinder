@@ -1,4 +1,4 @@
-import { Bag, Blocks, EquipSlot, Item } from "../charSheet";
+import { Bag, Blocks, EquipSlot, Item, Money } from "../charSheet";
 import { makeEmptyItem } from "../constants";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
@@ -84,6 +84,18 @@ export function Equipment({ state }: { state: Blocks }) {
 
   function toggleBagDescr(bag: Bag) {
     dispatch({ type: "toggleBagDescr", payload: { bag } });
+  }
+
+  function handleMoneyChange(field: "amount" | "weight", entry: Money, value: string) {
+    dispatch({ type: "changeMoneyField", payload: { field, entry, value } });
+  }
+
+  function removeBag(bag: Bag) {
+    dispatch({ type: "removeBag", payload: { bag } });
+  }
+
+  function addBag() {
+    dispatch({ type: "addBag" });
   }
 
   function handleSubmit(event: { preventDefault: any }) {
@@ -260,6 +272,7 @@ export function Equipment({ state }: { state: Blocks }) {
       </table>
 
       <h3>Bags & Containers</h3>
+      <button onClick={addBag}>Add Bag</button>
       <table>
         <thead>
           <tr>
@@ -284,7 +297,11 @@ export function Equipment({ state }: { state: Blocks }) {
                   <button onClick={() => toggleBagDescr(bag)}>Toggle</button>
                 </td>
                 <td>
-                  <input value={bag.qtyOrUses} onChange={(e) => handleBagChange("qtyOrUses", bag, e.target.value)} />
+                  <input
+                    type="number"
+                    value={bag.qtyOrUses}
+                    onChange={(e) => handleBagChange("qtyOrUses", bag, e.target.value)}
+                  />
                 </td>
                 <td>
                   <input value={bag.name} onChange={(e) => handleBagChange("name", bag, e.target.value)} />
@@ -295,16 +312,27 @@ export function Equipment({ state }: { state: Blocks }) {
                 {state.equipment.toggleDetail && (
                   <>
                     <td>
-                      <input value={bag.hp} onChange={(e) => handleBagChange("hp", bag, e.target.value)} />
+                      <input
+                        type="number"
+                        value={bag.hp}
+                        onChange={(e) => handleBagChange("hp", bag, e.target.value)}
+                      />
                     </td>
                     <td>
-                      <input value={bag.weight} onChange={(e) => handleBagChange("weight", bag, e.target.value)} />
+                      <input
+                        type="number"
+                        value={bag.weight}
+                        onChange={(e) => handleBagChange("weight", bag, e.target.value)}
+                      />
                     </td>
                     <td>
                       <input value={bag.value} onChange={(e) => handleBagChange("value", bag, e.target.value)} />
                     </td>
                   </>
                 )}
+                <td>
+                  <button onClick={() => removeBag(bag)}>Remove</button>
+                </td>
               </tr>
               {bag.toggleDescr && (
                 <tr>
@@ -317,6 +345,40 @@ export function Equipment({ state }: { state: Blocks }) {
                 </tr>
               )}
             </>
+          ))}
+        </tbody>
+      </table>
+
+      <h3>Currency</h3>
+      <table>
+        <thead>
+          <tr>
+            <td>Type</td>
+            <td>Quantity</td>
+            {state.equipment.toggleDetail && <td>Weight per Coin</td>}
+          </tr>
+        </thead>
+        <tbody>
+          {state.equipment.coinPurse.map((entry) => (
+            <tr>
+              <td>{entry.type}</td>
+              <td>
+                <input
+                  type="number"
+                  value={entry.amount}
+                  onChange={(e) => handleMoneyChange("amount", entry, e.target.value)}
+                />
+              </td>
+              {state.equipment.toggleDetail && (
+                <td>
+                  <input
+                    type="number"
+                    value={entry.weight}
+                    onChange={(e) => handleMoneyChange("weight", entry, e.target.value)}
+                  />
+                </td>
+              )}
+            </tr>
           ))}
         </tbody>
       </table>

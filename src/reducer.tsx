@@ -1,8 +1,11 @@
 import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
-import { Abilities, Bag, BioBlock, Blocks, EquipSlot, Feat, Item, Skill, SpecialEntry } from "./charSheet";
+import { Abilities, Bag, BioBlock, Blocks, EquipSlot, Feat, Item, Money, Skill, SpecialEntry } from "./charSheet";
 import { ABILITY_TYPES, makeEmptyItem } from "./constants";
 
 export type ReducerAction =
+  | AddBagAction
+  | RemoveBagAction
+  | ChangeMoneyFieldAction
   | ToggleBagDescrAction
   | ChangeBagFieldAction
   | RemoveWornItemAction
@@ -314,6 +317,26 @@ type ToggleBagDescrAction = {
   payload: {
     bag: Bag;
   };
+};
+
+type ChangeMoneyFieldAction = {
+  type: "changeMoneyField";
+  payload: {
+    field: "amount" | "weight";
+    entry: Money;
+    value: string;
+  };
+};
+
+type RemoveBagAction = {
+  type: "removeBag";
+  payload: {
+    bag: Bag;
+  };
+};
+
+type AddBagAction = {
+  type: "addBag";
 };
 
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
@@ -1141,6 +1164,55 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
               }
             }),
           ],
+        },
+      };
+
+      return newState;
+    }
+    case "changeMoneyField": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          coinPurse: [
+            ...state.equipment.coinPurse.map((e) => {
+              if (e === action.payload.entry) {
+                return {
+                  ...e,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return e;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "removeBag": {
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          bags: [...state.equipment.bags.filter((entry) => entry !== action.payload.bag)],
+        },
+      };
+
+      return newState;
+    }
+    case "addBag": {
+      const newBag: Bag = {
+        ...makeEmptyItem(EquipSlot.NONE),
+        capacity: "0",
+      };
+
+      const newState: Blocks = {
+        ...state,
+        equipment: {
+          ...state.equipment,
+          bags: [...state.equipment.bags, newBag],
         },
       };
 

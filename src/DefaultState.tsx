@@ -46,7 +46,12 @@ const DEFAULT_EQUIP_BLOCK: EquipBlock = {
       capacity: "0",
     },
   ],
-  coinPurse: [{ amount: "0", type: MoneyType.GOLD, weight: "0" }],
+  coinPurse: [
+    { amount: "0", type: MoneyType.PLATINUM, weight: "0" },
+    { amount: "0", type: MoneyType.GOLD, weight: "0" },
+    { amount: "0", type: MoneyType.SILVER, weight: "0" },
+    { amount: "0", type: MoneyType.COPPER, weight: "0" },
+  ],
   weight: { lightLoad: "0", medLoad: "0", heavyLoad: "0", currLoad: 0 },
 };
 
