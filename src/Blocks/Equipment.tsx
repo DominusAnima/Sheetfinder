@@ -102,6 +102,48 @@ export function Equipment({ state }: { state: Blocks }) {
     event.preventDefault;
   }
 
+  const combatWeight = (): number => {
+    let weight: number = Number(state.combat.equipment.armor.weight) + Number(state.combat.equipment.shield.weight);
+    state.combat.equipment.weapons.forEach((weapon) => {
+      weight += Number(weapon.weight);
+    });
+
+    return weight;
+  };
+
+  const currencyWeight = (): number => {
+    let weight: number = 0;
+    state.equipment.coinPurse.forEach((element) => {
+      weight += Number(element.weight) * Number(element.amount);
+    });
+
+    return weight;
+  };
+
+  const equipWeight = (): number => {
+    let weight: number = 0;
+    state.equipment.inventory.forEach((item) => {
+      weight += Number(item.weight);
+    });
+    Object.values(state.equipment.worn).forEach((item) => {
+      weight += Number(item.weight);
+    });
+
+    return weight;
+  };
+
+  const getLoadCategory = (): string => {
+    if (state.equipment.weight.currLoad <= state.equipment.weight.lightLoad) {
+      return "Light";
+    } else if (state.equipment.weight.currLoad <= state.equipment.weight.medLoad) {
+      return "Medium";
+    } else if (state.equipment.weight.currLoad <= state.equipment.weight.heavyLoad) {
+      return "Heavy";
+    } else {
+      return "Overloaded";
+    }
+  };
+
   return (
     <div onSubmit={handleSubmit}>
       <h2>Equipment</h2>
@@ -380,6 +422,51 @@ export function Equipment({ state }: { state: Blocks }) {
               )}
             </tr>
           ))}
+        </tbody>
+      </table>
+
+      <h3>Carried Weight</h3>
+      <table>
+        <thead>
+          <tr>
+            <td>Armor & Weapons</td>
+            <td>Currency</td>
+            <td>Equipment</td>
+            <td>Total</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{combatWeight()}</td>
+            <td>{currencyWeight()}</td>
+            <td>{equipWeight()}</td>
+            <td>{state.equipment.weight.currLoad}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Loads & Lift</h3>
+      <label>Current Load: {getLoadCategory()}</label>
+      <table>
+        <thead>
+          <tr>
+            <td>Light Load</td>
+            <td>Medium Load</td>
+            <td>Heavy Load</td>
+            <td>Lift above Head</td>
+            <td>Lift off Ground</td>
+            <td>Drag & Push</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{"<=" + state.equipment.weight.lightLoad}</td>
+            <td>{"<=" + state.equipment.weight.medLoad}</td>
+            <td>{"<=" + state.equipment.weight.heavyLoad}</td>
+            <td>{state.equipment.weight.heavyLoad}</td>
+            <td>{Number(state.equipment.weight.heavyLoad) * 2}</td>
+            <td>{Number(state.equipment.weight.heavyLoad) * 5}</td>
+          </tr>
         </tbody>
       </table>
     </div>

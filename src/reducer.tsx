@@ -1,6 +1,6 @@
 import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
 import { Abilities, Bag, BioBlock, Blocks, EquipSlot, Feat, Item, Money, Skill, SpecialEntry } from "./charSheet";
-import { ABILITY_TYPES, makeEmptyItem } from "./constants";
+import { ABILITY_TYPES, LOADS, makeEmptyItem } from "./constants";
 
 export type ReducerAction =
   | AddBagAction
@@ -497,6 +497,11 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       );
       newState.equipment.inventory.forEach((element) => (newWeight.currLoad += Number(element.weight)));
 
+      //calculate loads
+      newState.equipment.weight.lightLoad = LOADS["light"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
+      newState.equipment.weight.medLoad = LOADS["medium"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
+      newState.equipment.weight.heavyLoad = LOADS["heavy"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
+
       return newState;
     }
     case "reset": {
@@ -957,6 +962,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         },
       };
 
+      reducer(newState, { type: "recalculate" });
+
       return newState;
     }
     case "changeInventoryEntrySlot": {
@@ -989,6 +996,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           inventory: [...state.equipment.inventory.filter((entry) => entry !== action.payload.entry)],
         },
       };
+
+      reducer(newState, { type: "recalculate" });
 
       return newState;
     }
@@ -1092,6 +1101,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         },
       };
 
+      reducer(newState, { type: "recalculate" });
+
       return newState;
     }
     case "toggleWornDesc": {
@@ -1123,6 +1134,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         },
       };
 
+      reducer(newState, { type: "recalculate" });
+
       return newState;
     }
     case "changeBagField": {
@@ -1144,6 +1157,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           ],
         },
       };
+
+      reducer(newState, { type: "recalculate" });
 
       return newState;
     }
@@ -1189,6 +1204,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         },
       };
 
+      reducer(newState, { type: "recalculate" });
+
       return newState;
     }
     case "removeBag": {
@@ -1199,6 +1216,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           bags: [...state.equipment.bags.filter((entry) => entry !== action.payload.bag)],
         },
       };
+
+      reducer(newState, { type: "recalculate" });
 
       return newState;
     }

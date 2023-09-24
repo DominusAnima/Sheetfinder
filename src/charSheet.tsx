@@ -373,8 +373,8 @@ export enum MoneyType {
 }
 
 export interface CarriedLoad {
-  lightLoad: string;
-  medLoad: string;
-  heavyLoad: string;
+  lightLoad: number;
+  medLoad: number;
+  heavyLoad: number;
   currLoad: number;
 }
