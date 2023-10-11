@@ -52,7 +52,7 @@ const DEFAULT_EQUIP_BLOCK: EquipBlock = {
     { amount: "0", type: MoneyType.SILVER, weight: "0" },
     { amount: "0", type: MoneyType.COPPER, weight: "0" },
   ],
-  weight: { lightLoad: "0", medLoad: "0", heavyLoad: "0", currLoad: 0 },
+  weight: { lightLoad: 0, medLoad: 0, heavyLoad: 0, currLoad: 0 },
 };
 
 const DEFAULT_FEAT_BLOCK: FeatBlock = {

@@ -296,6 +296,23 @@ export function CombatBlock({ state }: { state: Blocks }) {
           </tr>
         </tfoot>
       </table>
+
+      <hr className="my-4" />
+
+      <table className="table table--striped w-full">
+        <thead>
+          <tr>
+            <th className="whitespace-nowrap">Combat Maneuver</th>
+            <th className="whitespace-nowrap w-20">Offense</th>
+            <th className="whitespace-nowrap w-20">Defense</th>
+          </tr>
+        </thead>
+        {editing && (
+          <tbody>
+            <tr></tr>
+          </tbody>
+        )}
+      </table>
     </div>
   );
 }
