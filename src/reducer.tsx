@@ -1,8 +1,21 @@
 import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
-import { Abilities, Bag, BioBlock, Blocks, EquipSlot, Feat, Item, Money, Skill, SpecialEntry } from "./charSheet";
-import { ABILITY_TYPES, LOADS, makeEmptyItem } from "./constants";
+import {
+  Abilities,
+  Bag,
+  BioBlock,
+  Blocks,
+  CharacterSize,
+  EquipSlot,
+  Feat,
+  Item,
+  Money,
+  Skill,
+  SpecialEntry,
+} from "./charSheet";
+import { ABILITY_TYPES, LOADS, SPECIAL_SIZE_MODIFIER, makeEmptyItem } from "./constants";
 
 export type ReducerAction =
+  | changeManeuverBonusAction
   | AddBagAction
   | RemoveBagAction
   | ChangeMoneyFieldAction
@@ -160,6 +173,14 @@ type changeAttackBonusAction = {
   payload: {
     attackType: "melee" | "ranged" | "combatDefense" | "combatBonus";
     field: "misc";
+    value: string;
+  };
+};
+
+type changeManeuverBonusAction = {
+  type: "changeManeuverBonus";
+  payload: {
+    maneuverType: "combatBonus" | "combatDefense";
     value: string;
   };
 };
@@ -456,10 +477,20 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         Number(newCombatBlock.ranged.misc);
 
       //calculate combat manuevers
+      if (
+        newState.bio.size === CharacterSize.TINY ||
+        newState.bio.size === CharacterSize.DIMINUTIVE ||
+        newState.bio.size === CharacterSize.FINE
+      ) {
+        newCombatBlock.combatBonus.ability = "dex";
+      } else {
+        newCombatBlock.combatBonus.ability = "str";
+      }
       newCombatBlock.combatBonus.total =
         newState.abilityBlock.abilities[newCombatBlock.combatBonus.ability].mod +
         newClassRecTot.bab +
-        Number(newCombatBlock.combatBonus.misc);
+        Number(newCombatBlock.combatBonus.misc) +
+        SPECIAL_SIZE_MODIFIER[newState.bio.size];
       newCombatBlock.combatDefense.total =
         10 +
         newState.abilityBlock.abilities.str.mod +
@@ -467,7 +498,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         newClassRecTot.bab +
         Number(newCombatBlock.acBonuses.dodge) +
         Number(newCombatBlock.acBonuses.deflect) +
-        Number(newCombatBlock.combatDefense.misc);
+        Number(newCombatBlock.combatDefense.misc) +
+        SPECIAL_SIZE_MODIFIER[newState.bio.size];
 
       //calculate skill rank amounts and skill bonus totals
       newState.skills.totalRanks = Math.max(
@@ -708,6 +740,22 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           [action.payload.attackType]: {
             ...state.combat[action.payload.attackType],
             [action.payload.field]: action.payload.value,
+          },
+        },
+      };
+
+      reducer(newState, { type: "recalculate" });
+
+      return newState;
+    }
+    case "changeManeuverBonus": {
+      const newState: Blocks = {
+        ...state,
+        combat: {
+          ...state.combat,
+          [action.payload.maneuverType]: {
+            ...state.combat[action.payload.maneuverType],
+            misc: action.payload.value,
           },
         },
       };

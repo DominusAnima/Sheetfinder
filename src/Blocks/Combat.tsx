@@ -5,6 +5,7 @@ import InlineInput from "../Components/InlineInput";
 import SectionTitle from "../Components/SectionTitle";
 import { Blocks } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
+import { SPECIAL_SIZE_MODIFIER } from "../constants";
 
 export function CombatBlock({ state }: { state: Blocks }) {
   const [editing, setEditing] = useState(false);
@@ -21,6 +22,13 @@ export function CombatBlock({ state }: { state: Blocks }) {
     dispatch({
       type: "changeAttackBonus",
       payload: { attackType, field, value },
+    });
+  }
+
+  function handleManeuverMiscChange(maneuverType: "combatBonus" | "combatDefense", value: string) {
+    dispatch({
+      type: "changeManeuverBonus",
+      payload: { maneuverType, value },
     });
   }
 
@@ -309,9 +317,63 @@ export function CombatBlock({ state }: { state: Blocks }) {
         </thead>
         {editing && (
           <tbody>
-            <tr></tr>
+            <tr>
+              <td>CMD base value</td>
+              <td></td>
+              <td className="text-center value">10</td>
+            </tr>
+            <tr>
+              <td>Base Attack Bonus</td>
+              <td className="text-center value">{state.classRecorder.totals.bab}</td>
+              <td className="text-center value">{state.classRecorder.totals.bab}</td>
+            </tr>
+            <tr>
+              <td>Ability Bonus</td>
+              <td className="text-center value">
+                {state.abilityBlock.abilities[state.combat.combatBonus.ability].mod}
+              </td>
+              <td className="text-center value">
+                {state.abilityBlock.abilities.str.mod + state.abilityBlock.abilities.dex.mod}
+              </td>
+            </tr>
+            <tr>
+              <td>Ability bonus to CMB / Dodge and Deflect Bonus</td>
+              <td className="text-center value">{state.combat.combatBonus.ability}</td>
+              <td className="text-center value">
+                {Number(state.combat.acBonuses.dodge) + Number(state.combat.acBonuses.deflect)}
+              </td>
+            </tr>
+            <tr>
+              <td>Special Size Modifier</td>
+              <td className="text-center value">{SPECIAL_SIZE_MODIFIER[state.bio.size]}</td>
+              <td className="text-center value">{SPECIAL_SIZE_MODIFIER[state.bio.size]}</td>
+            </tr>
+            <tr>
+              <td>Misc</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.combatBonus.misc}
+                  onChange={(e) => handleManeuverMiscChange("combatBonus", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.combatDefense.misc}
+                  onChange={(e) => handleManeuverMiscChange("combatDefense", e.target.value)}
+                />
+              </td>
+            </tr>
           </tbody>
         )}
+        <tfoot>
+          <tr>
+            <td className="font-bold">Total</td>
+            <td className="text-center value">{state.combat.combatBonus.total}</td>
+            <td className="text-center value">{state.combat.combatDefense.total}</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   );

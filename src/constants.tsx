@@ -41,3 +41,15 @@ export const LOADS: Record<string, number[]> = {
     800, 920, 1040, 1200, 1400,
   ],
 };
+
+export const SPECIAL_SIZE_MODIFIER: Record<CharacterSize, number> = {
+  fine: -8,
+  diminutive: -4,
+  tiny: -2,
+  small: -1,
+  medium: 0,
+  large: 1,
+  huge: 2,
+  gargantuan: 4,
+  colossal: 8,
+};
