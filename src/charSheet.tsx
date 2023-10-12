@@ -247,6 +247,7 @@ export interface SpellSlot {
   total: string;
   classAmount: string;
   misc: string;
+  available: string;
 }
 
 export interface Spell {
@@ -258,7 +259,7 @@ export interface Spell {
   school: string;
   duration: string;
   range: SpellRange;
-  saveDC: string;
+  saveType: string;
 }
 
 export interface FeatBlock {
