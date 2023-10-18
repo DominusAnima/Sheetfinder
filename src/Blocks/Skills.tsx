@@ -80,31 +80,31 @@ export function Skills({ state }: { state: Blocks }) {
                 return (
                   <tr key={i}>
                     {skill.editable ? (
-                      <th>
+                      <td>
                         <input
                           type="checkbox"
                           defaultChecked={skill.trained}
                           onChange={() => handleSkillToggle(i, "trained")}
                         />
-                      </th>
+                      </td>
                     ) : (
-                      <th>{skill.trained ? "*" : ""}</th>
+                      <td>{skill.trained ? "*" : ""}</td>
                     )}
-                    <th>
+                    <td>
                       <input
                         type="checkbox"
                         defaultChecked={skill.classSkill}
                         onChange={() => handleSkillToggle(i, "classSkill")}
                       />
-                    </th>
-                    <th>
+                    </td>
+                    <td>
                       {skill.editable ? (
                         <input value={skill.name} onChange={(e) => handleChange(i, "name", e.target.value)} />
                       ) : (
                         skill.name
                       )}
-                    </th>
-                    <th>
+                    </td>
+                    <td>
                       {skill.editable ? (
                         <select
                           value={skill.ability}
@@ -121,28 +121,28 @@ export function Skills({ state }: { state: Blocks }) {
                       ) : (
                         skill.ability
                       )}
-                    </th>
-                    <th>{!skill.trained || (skill.trained && Number(skill.ranks) > 0) ? skill.totalBonus : "-"}</th>
-                    <th>{state.abilityBlock.abilities[skill.ability].mod}</th>
-                    <th>{skill.armorPenalty ? state.combat.armorCheckPenalty : "-"}</th>
-                    <th>
+                    </td>
+                    <td>{!skill.trained || (skill.trained && Number(skill.ranks) > 0) ? skill.totalBonus : "-"}</td>
+                    <td>{state.abilityBlock.abilities[skill.ability].mod}</td>
+                    <td>{skill.armorPenalty ? state.combat.armorCheckPenalty : "-"}</td>
+                    <td>
                       <input
                         type="number"
                         value={skill.ranks}
                         onChange={(e) => handleChange(i, "ranks", e.target.value)}
                       />
-                    </th>
-                    <th>
+                    </td>
+                    <td>
                       <input
                         type="number"
                         value={skill.misc}
                         onChange={(e) => handleChange(i, "misc", e.target.value)}
                       />
-                    </th>
+                    </td>
                     {skill.editable && (
-                      <th>
+                      <td>
                         <button onClick={() => removeSkill(i)}>Remove</button>
-                      </th>
+                      </td>
                     )}
                   </tr>
                 );
@@ -150,9 +150,9 @@ export function Skills({ state }: { state: Blocks }) {
             : state.skills.skills.map((skill, i) => {
                 return (
                   <tr key={i}>
-                    <th>{skill.trained ? "*" : ""}</th>
-                    <th>{skill.name}</th>
-                    <th>{!skill.trained || (skill.trained && Number(skill.ranks) > 0) ? skill.totalBonus : "-"}</th>
+                    <td>{skill.trained ? "*" : ""}</td>
+                    <td>{skill.name}</td>
+                    <td>{!skill.trained || (skill.trained && Number(skill.ranks) > 0) ? skill.totalBonus : "-"}</td>
                   </tr>
                 );
               })}

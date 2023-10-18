@@ -14,6 +14,7 @@ import { reducer } from "./reducer.tsx";
 import { Special } from "./Blocks/Special.tsx";
 import { Feats } from "./Blocks/Feats.tsx";
 import { Equipment } from "./Blocks/Equipment.tsx";
+import { Magic } from "./Blocks/Magic.tsx";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
@@ -60,6 +61,7 @@ export default function App() {
         <Special state={state.special} />
         <Feats state={state.featList} />
         <Equipment state={state} />
+        <Magic state={state.magic} />
       </Container>
     </FormContextProvider>
   );

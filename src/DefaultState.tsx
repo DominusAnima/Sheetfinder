@@ -59,30 +59,29 @@ const DEFAULT_FEAT_BLOCK: FeatBlock = {
   entries: [{ name: "-", toggleDescr: true, description: "-" }],
 };
 
-const DEFAULT_MAGIC: Array<MagicBlock> = [
-  {
-    casterClass: "-",
-    specialty: { mainSpecial: ["-"], subSpecial: ["-"] },
-    casterLvl: "0",
-    spellSlots: [{ saveDC: "0", lvl: "0", total: "0", classAmount: "0", misc: "0", available: "0" }],
-    closeRange: "0",
-    medRange: "0",
-    longRange: "0",
-    spellsKnown: [
-      {
-        lvl: "0",
-        prepared: "0",
-        name: "0",
-        toggleDescr: true,
-        description: "-",
-        school: "-",
-        duration: "0",
-        range: SpellRange.CLOSE,
-        saveType: "0",
-      },
-    ],
-  },
-];
+const DEFAULT_MAGIC: MagicBlock = {
+  detailToggle: true,
+  casterClass: "-",
+  specialty: { mainSpecial: [{ name: "-" }], subSpecial: [{ name: "-" }] },
+  casterLvl: "0",
+  spellSlots: [{ saveDC: "0", lvl: "0", total: "0", classAmount: "0", misc: "0", available: "0" }],
+  closeRange: "0",
+  medRange: "0",
+  longRange: "0",
+  spellsKnown: [
+    {
+      lvl: "0",
+      prepared: "0",
+      name: "0",
+      toggleDescr: true,
+      description: "-",
+      school: "-",
+      duration: "0",
+      range: SpellRange.CLOSE,
+      saveType: "0",
+    },
+  ],
+};
 
 const DEFAULT_SPECIAL_BLOCK: SpecialBlock = {
   entries: [

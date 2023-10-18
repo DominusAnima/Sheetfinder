@@ -33,10 +33,10 @@ export function Special({ state }: { state: SpecialBlock }) {
       <table>
         <thead>
           <tr>
-            <td>Toggle Description</td>
-            <td>Name</td>
-            <td>Uses/Day</td>
-            <td>Used</td>
+            <th>Toggle Description</th>
+            <th>Name</th>
+            <th>Uses/Day</th>
+            <th>Used</th>
           </tr>
         </thead>
         <tbody>

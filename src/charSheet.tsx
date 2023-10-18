@@ -6,7 +6,7 @@ export interface Blocks {
   skills: SkillBlock;
   combat: CombatBlock;
   special: SpecialBlock; //active abilities
-  magic: Array<MagicBlock>;
+  magic: MagicBlock;
   featList: FeatBlock;
   equipment: EquipBlock;
 }
@@ -220,6 +220,7 @@ export interface SpecialEntry {
 }
 
 export interface MagicBlock {
+  detailToggle: boolean;
   casterClass: string;
   specialty: CasterSpecialty;
   casterLvl: string;
@@ -231,8 +232,12 @@ export interface MagicBlock {
 }
 
 export interface CasterSpecialty {
-  mainSpecial: Array<string>;
-  subSpecial: Array<string>;
+  mainSpecial: Array<CasterSpecialEntry>;
+  subSpecial: Array<CasterSpecialEntry>;
+}
+
+export interface CasterSpecialEntry {
+  name: string;
 }
 
 export enum SpellRange {

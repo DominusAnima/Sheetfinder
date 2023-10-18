@@ -153,15 +153,15 @@ export function Equipment({ state }: { state: Blocks }) {
       <table>
         <thead>
           <tr>
-            <td>Toggle Description</td>
-            <td>Name</td>
-            <td>Qty / Uses</td>
+            <th>Toggle Description</th>
+            <th>Name</th>
+            <th>Qty / Uses</th>
             {state.equipment.toggleDetail && (
               <>
-                <td>HP</td>
-                <td>Weight</td>
-                <td>Value</td>
-                <td>Slot</td>
+                <th>HP</th>
+                <th>Weight</th>
+                <th>Value</th>
+                <th>Slot</th>
               </>
             )}
           </tr>
@@ -239,15 +239,15 @@ export function Equipment({ state }: { state: Blocks }) {
       <table>
         <thead>
           <tr>
-            <td>Toggle Description</td>
-            <td>Slot</td>
-            <td>Name</td>
-            <td>Qty / Uses</td>
+            <th>Toggle Description</th>
+            <th>Slot</th>
+            <th>Name</th>
+            <th>Qty / Uses</th>
             {state.equipment.toggleDetail && (
               <>
-                <td>HP</td>
-                <td>Weight</td>
-                <td>Value</td>
+                <th>HP</th>
+                <th>Weight</th>
+                <th>Value</th>
               </>
             )}
           </tr>
@@ -318,15 +318,15 @@ export function Equipment({ state }: { state: Blocks }) {
       <table>
         <thead>
           <tr>
-            <td>Toggle Description</td>
-            <td>Quantity</td>
-            <td>Name</td>
-            <td>Volume / Weight Limit</td>
+            <th>Toggle Description</th>
+            <th>Quantity</th>
+            <th>Name</th>
+            <th>Volume / Weight Limit</th>
             {state.equipment.toggleDetail && (
               <>
-                <td>HP</td>
-                <td>Weight</td>
-                <td>Value</td>
+                <th>HP</th>
+                <th>Weight</th>
+                <th>Value</th>
               </>
             )}
           </tr>
@@ -395,8 +395,8 @@ export function Equipment({ state }: { state: Blocks }) {
       <table>
         <thead>
           <tr>
-            <td>Type</td>
-            <td>Quantity</td>
+            <th>Type</th>
+            <th>Quantity</th>
             {state.equipment.toggleDetail && <td>Weight per Coin</td>}
           </tr>
         </thead>
@@ -429,10 +429,10 @@ export function Equipment({ state }: { state: Blocks }) {
       <table>
         <thead>
           <tr>
-            <td>Armor & Weapons</td>
-            <td>Currency</td>
-            <td>Equipment</td>
-            <td>Total</td>
+            <th>Armor & Weapons</th>
+            <th>Currency</th>
+            <th>Equipment</th>
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -450,12 +450,12 @@ export function Equipment({ state }: { state: Blocks }) {
       <table>
         <thead>
           <tr>
-            <td>Light Load</td>
-            <td>Medium Load</td>
-            <td>Heavy Load</td>
-            <td>Lift above Head</td>
-            <td>Lift off Ground</td>
-            <td>Drag & Push</td>
+            <th>Light Load</th>
+            <th>Medium Load</th>
+            <th>Heavy Load</th>
+            <th>Lift above Head</th>
+            <th>Lift off Ground</th>
+            <th>Drag & Push</th>
           </tr>
         </thead>
         <tbody>

@@ -4,6 +4,8 @@ import {
   Bag,
   BioBlock,
   Blocks,
+  CasterSpecialEntry,
+  CasterSpecialty,
   CharacterSize,
   EquipSlot,
   Feat,
@@ -12,9 +14,14 @@ import {
   Skill,
   SpecialEntry,
 } from "./charSheet";
-import { ABILITY_TYPES, LOADS, SPECIAL_SIZE_MODIFIER, makeEmptyItem } from "./constants";
+import { ABILITY_TYPES, EmptyCasterSpecialEntry, LOADS, SPECIAL_SIZE_MODIFIER, makeEmptyItem } from "./constants";
 
 export type ReducerAction =
+  | RemoveCasterSpecialAction
+  | ChangeCasterSpecialFieldAction
+  | AddCasterSpecialAction
+  | ChangeMagicFieldAction
+  | ToggleMagicDetailAction
   | changeManeuverBonusAction
   | AddBagAction
   | RemoveBagAction
@@ -358,6 +365,42 @@ type RemoveBagAction = {
 
 type AddBagAction = {
   type: "addBag";
+};
+
+type ToggleMagicDetailAction = {
+  type: "toggleMagicDetail";
+};
+
+type ChangeMagicFieldAction = {
+  type: "changeMagicField";
+  payload: {
+    field: "casterClass" | "casterLvl";
+    value: string;
+  };
+};
+
+type AddCasterSpecialAction = {
+  type: "addCasterSpecial";
+  payload: {
+    specialType: keyof CasterSpecialty;
+  };
+};
+
+type ChangeCasterSpecialFieldAction = {
+  type: "changeCasterSpecialField";
+  payload: {
+    specialType: keyof CasterSpecialty;
+    entry: CasterSpecialEntry;
+    value: string;
+  };
+};
+
+type RemoveCasterSpecialAction = {
+  type: "removeCasterSpecial";
+  payload: {
+    specialType: keyof CasterSpecialty;
+    entry: CasterSpecialEntry;
+  };
 };
 
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
@@ -1280,6 +1323,86 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         equipment: {
           ...state.equipment,
           bags: [...state.equipment.bags, newBag],
+        },
+      };
+
+      return newState;
+    }
+    case "addCasterSpecial": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          specialty: {
+            ...state.magic.specialty,
+            [action.payload.specialType]: [
+              ...state.magic.specialty[action.payload.specialType],
+              EmptyCasterSpecialEntry,
+            ],
+          },
+        },
+      };
+
+      return newState;
+    }
+    case "changeCasterSpecialField": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          specialty: {
+            ...state.magic.specialty,
+            [action.payload.specialType]: {
+              ...state.magic.specialty[action.payload.specialType].map((e) => {
+                if (e === action.payload.entry) {
+                  return {
+                    ...e,
+                    name: action.payload.value,
+                  };
+                } else {
+                  return e;
+                }
+              }),
+            },
+          },
+        },
+      };
+
+      return newState;
+    }
+    case "changeMagicField": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          [action.payload.field]: action.payload.value,
+        },
+      };
+
+      return newState;
+    }
+    case "toggleMagicDetail": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          detailToggle: !state.magic.detailToggle,
+        },
+      };
+
+      return newState;
+    }
+    case "removeCasterSpecial": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          specialty: {
+            ...state.magic.specialty,
+            [action.payload.specialType]: [
+              ...state.magic.specialty[action.payload.specialType].filter((entry) => entry !== action.payload.entry),
+            ],
+          },
         },
       };
 

@@ -31,8 +31,8 @@ export function Feats({ state }: { state: FeatBlock }) {
       <table>
         <thead>
           <tr>
-            <td>Toggle Description</td>
-            <td>Name</td>
+            <th>Toggle Description</th>
+            <th>Name</th>
           </tr>
         </thead>
         <tbody>

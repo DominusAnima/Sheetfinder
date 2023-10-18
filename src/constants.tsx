@@ -1,4 +1,4 @@
-import { Abilities, CharacterSize, EquipSlot, Item } from "./charSheet";
+import { Abilities, CasterSpecialEntry, CharacterSize, EquipSlot, Item } from "./charSheet";
 
 export const ABILITY_TYPES: Array<keyof Abilities> = ["str", "dex", "con", "int", "wis", "cha"];
 
@@ -20,6 +20,12 @@ export const makeEmptyItem = (slot: EquipSlot): Item => {
     toggleDescr: false,
     value: "",
     weight: "",
+  };
+};
+
+export const EmptyCasterSpecialEntry = (): CasterSpecialEntry => {
+  return {
+    name: "-",
   };
 };
 
