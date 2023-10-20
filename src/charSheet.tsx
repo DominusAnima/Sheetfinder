@@ -251,6 +251,7 @@ export interface SpellSlot {
   lvl: string;
   total: string;
   classAmount: string;
+  abilityBonus: string;
   misc: string;
   available: string;
 }

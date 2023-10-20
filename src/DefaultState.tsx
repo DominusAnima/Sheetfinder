@@ -20,7 +20,7 @@ import {
   ClassEntry,
   EquipSlot,
 } from "./charSheet";
-import { makeEmptyItem } from "./constants";
+import { initSpellSlot, makeEmptyItem } from "./constants";
 
 const DEFAULT_EQUIP_BLOCK: EquipBlock = {
   toggleDetail: true,
@@ -64,7 +64,18 @@ const DEFAULT_MAGIC: MagicBlock = {
   casterClass: "-",
   specialty: { mainSpecial: [{ name: "-" }], subSpecial: [{ name: "-" }] },
   casterLvl: "0",
-  spellSlots: [{ saveDC: "0", lvl: "0", total: "0", classAmount: "0", misc: "0", available: "0" }],
+  spellSlots: [
+    initSpellSlot("0"),
+    initSpellSlot("1"),
+    initSpellSlot("2"),
+    initSpellSlot("3"),
+    initSpellSlot("4"),
+    initSpellSlot("5"),
+    initSpellSlot("6"),
+    initSpellSlot("7"),
+    initSpellSlot("8"),
+    initSpellSlot("9"),
+  ],
   closeRange: "0",
   medRange: "0",
   longRange: "0",

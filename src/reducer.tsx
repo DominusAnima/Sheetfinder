@@ -13,10 +13,12 @@ import {
   Money,
   Skill,
   SpecialEntry,
+  SpellSlot,
 } from "./charSheet";
 import { ABILITY_TYPES, EmptyCasterSpecialEntry, LOADS, SPECIAL_SIZE_MODIFIER, makeEmptyItem } from "./constants";
 
 export type ReducerAction =
+  | ChangeSpellSlotFieldAction
   | RemoveCasterSpecialAction
   | ChangeCasterSpecialFieldAction
   | AddCasterSpecialAction
@@ -403,6 +405,15 @@ type RemoveCasterSpecialAction = {
   };
 };
 
+type ChangeSpellSlotFieldAction = {
+  type: "changeSpellSlotField";
+  payload: {
+    slot: SpellSlot;
+    field: keyof SpellSlot;
+    value: string;
+  };
+};
+
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
   switch (action.type) {
     case "recalculate": {
@@ -576,6 +587,14 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       newState.equipment.weight.lightLoad = LOADS["light"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
       newState.equipment.weight.medLoad = LOADS["medium"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
       newState.equipment.weight.heavyLoad = LOADS["heavy"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
+
+      //calculate total spell slots and limit available spell slots
+      newState.magic.spellSlots.forEach(
+        (slot) => (
+          (slot.total = String(Number(slot.classAmount) + Number(slot.abilityBonus) + Number(slot.misc))),
+          (slot.available = String(Math.min(Number(slot.available), Number(slot.total))))
+        )
+      );
 
       return newState;
     }
@@ -1405,6 +1424,30 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           },
         },
       };
+
+      return newState;
+    }
+    case "changeSpellSlotField": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          spellSlots: [
+            ...state.magic.spellSlots.map((slot) => {
+              if (slot === action.payload.slot) {
+                return {
+                  ...slot,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return slot;
+              }
+            }),
+          ],
+        },
+      };
+
+      reducer(newState, { type: "recalculate" });
 
       return newState;
     }

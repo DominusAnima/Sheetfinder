@@ -1,4 +1,4 @@
-import { CasterSpecialEntry, CasterSpecialty, MagicBlock } from "../charSheet";
+import { CasterSpecialEntry, CasterSpecialty, MagicBlock, SpellSlot } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
 export function Magic({ state }: { state: MagicBlock }) {
@@ -26,6 +26,10 @@ export function Magic({ state }: { state: MagicBlock }) {
 
   function removeSpecialty(specialType: keyof CasterSpecialty, entry: CasterSpecialEntry) {
     dispatch({ type: "removeCasterSpecial", payload: { specialType, entry } });
+  }
+
+  function handleSlotChange(slot: SpellSlot, field: keyof SpellSlot, value: string) {
+    dispatch({ type: "changeSpellSlotField", payload: { slot, field, value } });
   }
 
   return (
@@ -90,6 +94,66 @@ export function Magic({ state }: { state: MagicBlock }) {
                 </td>
                 <td>
                   <button onClick={() => removeSpecialty("subSpecial", specialEntry)}>remove</button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <h3>Spells per Day</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Save DC</th>
+            <th>Level</th>
+            <th>Total</th>
+            <th>Class</th>
+            <th>Ability Bonus</th>
+            <th>Misc</th>
+            <th>Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          {state.spellSlots.map((slot) => {
+            return (
+              <tr>
+                <td>
+                  <input
+                    type="number"
+                    onChange={(e) => handleSlotChange(slot, "saveDC", e.target.value)}
+                    value={slot.saveDC}
+                  />
+                </td>
+                <td>{slot.lvl}</td>
+                <td>{slot.total}</td>
+                <td>
+                  <input
+                    type="number"
+                    onChange={(e) => handleSlotChange(slot, "classAmount", e.target.value)}
+                    value={slot.classAmount}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    onChange={(e) => handleSlotChange(slot, "abilityBonus", e.target.value)}
+                    value={slot.abilityBonus}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    onChange={(e) => handleSlotChange(slot, "misc", e.target.value)}
+                    value={slot.misc}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    onChange={(e) => handleSlotChange(slot, "available", e.target.value)}
+                    value={slot.available}
+                  />
                 </td>
               </tr>
             );

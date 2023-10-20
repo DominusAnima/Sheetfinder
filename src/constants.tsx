@@ -1,4 +1,4 @@
-import { Abilities, CasterSpecialEntry, CharacterSize, EquipSlot, Item } from "./charSheet";
+import { Abilities, CasterSpecialEntry, CharacterSize, EquipSlot, Item, SpellSlot } from "./charSheet";
 
 export const ABILITY_TYPES: Array<keyof Abilities> = ["str", "dex", "con", "int", "wis", "cha"];
 
@@ -26,6 +26,18 @@ export const makeEmptyItem = (slot: EquipSlot): Item => {
 export const EmptyCasterSpecialEntry = (): CasterSpecialEntry => {
   return {
     name: "-",
+  };
+};
+
+export const initSpellSlot = (level: string): SpellSlot => {
+  return {
+    saveDC: "0",
+    lvl: level,
+    total: "0",
+    classAmount: "0",
+    abilityBonus: "0",
+    misc: "0",
+    available: "0",
   };
 };
 
