@@ -1337,7 +1337,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
             ...state.magic.specialty,
             [action.payload.specialType]: [
               ...state.magic.specialty[action.payload.specialType],
-              EmptyCasterSpecialEntry,
+              EmptyCasterSpecialEntry(),
             ],
           },
         },
@@ -1352,7 +1352,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           ...state.magic,
           specialty: {
             ...state.magic.specialty,
-            [action.payload.specialType]: {
+            [action.payload.specialType]: [
               ...state.magic.specialty[action.payload.specialType].map((e) => {
                 if (e === action.payload.entry) {
                   return {
@@ -1363,7 +1363,7 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
                   return e;
                 }
               }),
-            },
+            ],
           },
         },
       };
