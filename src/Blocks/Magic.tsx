@@ -1,4 +1,4 @@
-import { CasterSpecialEntry, CasterSpecialty, MagicBlock, SpellSlot } from "../charSheet";
+import { CasterSpecialEntry, CasterSpecialty, MagicBlock, Spell, SpellSlot } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
 export function Magic({ state }: { state: MagicBlock }) {
@@ -30,6 +30,26 @@ export function Magic({ state }: { state: MagicBlock }) {
 
   function handleSlotChange(slot: SpellSlot, field: keyof SpellSlot, value: string) {
     dispatch({ type: "changeSpellSlotField", payload: { slot, field, value } });
+  }
+
+  function toggleSpellDescr(spell: Spell) {
+    dispatch({ type: "toggleSpellDescr", payload: { spell } });
+  }
+
+  function handleSpellChange(
+    field: "lvl" | "prepared" | "name" | "description" | "school" | "duration" | "range" | "saveType" | "spellRes",
+    spell: Spell,
+    value: string
+  ) {
+    dispatch({ type: "changeSpellField", payload: { field, spell, value } });
+  }
+
+  function addSpell() {
+    dispatch({ type: "addSpell" });
+  }
+
+  function removeSpell(spell: Spell) {
+    dispatch({ type: "removeSpell", payload: { spell } });
   }
 
   return (
@@ -192,12 +212,102 @@ export function Magic({ state }: { state: MagicBlock }) {
       )}
 
       <h3>Spells</h3>
+      <button onClick={() => addSpell()}>Add Spell</button>
       <table>
         <thead>
           <tr>
-            <th></th>
+            <th>Toggle Description</th>
+            <th>lvl</th>
+            <th>Prepared</th>
+            <th>Name</th>
+            {state.detailToggle && (
+              <>
+                <th>School</th>
+                <th>Duration</th>
+                <th>Range</th>
+                <th>Save</th>
+                <th>Spell Resistance</th>
+              </>
+            )}
           </tr>
         </thead>
+        <tbody>
+          {state.spellsKnown.map((spell) => {
+            return (
+              <>
+                <tr>
+                  <td>
+                    <button onClick={() => toggleSpellDescr(spell)}>Toggle</button>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      onChange={(e) => handleSpellChange("lvl", spell, e.target.value)}
+                      value={spell.lvl}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      onChange={(e) => handleSpellChange("prepared", spell, e.target.value)}
+                      value={spell.prepared}
+                    />
+                  </td>
+                  <td>
+                    <input onChange={(e) => handleSpellChange("name", spell, e.target.value)} value={spell.name} />
+                  </td>
+                  {state.detailToggle && (
+                    <>
+                      <td>
+                        <input
+                          onChange={(e) => handleSpellChange("school", spell, e.target.value)}
+                          value={spell.school}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          onChange={(e) => handleSpellChange("duration", spell, e.target.value)}
+                          value={spell.duration}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          onChange={(e) => handleSpellChange("range", spell, e.target.value)}
+                          value={spell.range}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          onChange={(e) => handleSpellChange("saveType", spell, e.target.value)}
+                          value={spell.saveType}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          onChange={(e) => handleSpellChange("spellRes", spell, e.target.value)}
+                          value={spell.spellRes}
+                        />
+                      </td>
+                    </>
+                  )}
+                  <td>
+                    <button onClick={() => removeSpell(spell)}>Remove</button>
+                  </td>
+                </tr>
+                {spell.toggleDescr && (
+                  <tr>
+                    <td>
+                      <input
+                        onChange={(e) => handleSpellChange("description", spell, e.target.value)}
+                        value={spell.description}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </>
+            );
+          })}
+        </tbody>
       </table>
     </div>
   );

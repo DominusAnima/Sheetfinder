@@ -239,12 +239,6 @@ export interface CasterSpecialEntry {
   name: string;
 }
 
-export enum SpellRange {
-  CLOSE = "close",
-  MEDIUM = "medium",
-  LONG = "long",
-}
-
 export interface SpellSlot {
   saveDC: string;
   lvl: string;
@@ -263,8 +257,9 @@ export interface Spell {
   description: string;
   school: string;
   duration: string;
-  range: SpellRange;
+  range: string;
   saveType: string;
+  spellRes: string;
 }
 
 export interface FeatBlock {

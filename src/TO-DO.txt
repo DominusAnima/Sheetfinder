@@ -1,8 +1,6 @@
 IMPORTANT:
-  figure out class recorder
   add fields for equipped weapons, armor and shield to combat block
   combat block also needs CMD and CMB
-  magic Blocks
 
 NON-ESSENTIAL:
   update the state structure graph and export an image, so others can see it without special software (structure is still being changed, so any graph made now wouldn't reflect it correctly)

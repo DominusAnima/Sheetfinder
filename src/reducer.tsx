@@ -14,11 +14,23 @@ import {
   Money,
   Skill,
   SpecialEntry,
+  Spell,
   SpellSlot,
 } from "./charSheet";
-import { ABILITY_TYPES, EmptyCasterSpecialEntry, LOADS, SPECIAL_SIZE_MODIFIER, makeEmptyItem } from "./constants";
+import {
+  ABILITY_TYPES,
+  EmptyCasterSpecialEntry,
+  LOADS,
+  SPECIAL_SIZE_MODIFIER,
+  emptySpell,
+  makeEmptyItem,
+} from "./constants";
 
 export type ReducerAction =
+  | RemoveSpellAction
+  | AddSpellAction
+  | ChangeSpellFieldAction
+  | ToggleSpellDescrAction
   | ChangeSpellSlotFieldAction
   | RemoveCasterSpecialAction
   | ChangeCasterSpecialFieldAction
@@ -402,6 +414,33 @@ type ChangeSpellSlotFieldAction = {
     slot: SpellSlot;
     field: keyof SpellSlot;
     value: string;
+  };
+};
+
+type ToggleSpellDescrAction = {
+  type: "toggleSpellDescr";
+  payload: {
+    spell: Spell;
+  };
+};
+
+type ChangeSpellFieldAction = {
+  type: "changeSpellField";
+  payload: {
+    field: "lvl" | "prepared" | "name" | "description" | "school" | "duration" | "range" | "saveType" | "spellRes";
+    spell: Spell;
+    value: string;
+  };
+};
+
+type AddSpellAction = {
+  type: "addSpell";
+};
+
+type RemoveSpellAction = {
+  type: "removeSpell";
+  payload: {
+    spell: Spell;
   };
 };
 
@@ -1395,6 +1434,8 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         },
       };
 
+      reducer(newState, { type: "recalculate" });
+
       return newState;
     }
     case "toggleMagicDetail": {
@@ -1445,6 +1486,72 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       };
 
       reducer(newState, { type: "recalculate" });
+
+      return newState;
+    }
+    case "toggleSpellDescr": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          spellsKnown: [
+            ...state.magic.spellsKnown.map((spell) => {
+              if (spell === action.payload.spell) {
+                return {
+                  ...spell,
+                  toggleDescr: !spell.toggleDescr,
+                };
+              } else {
+                return spell;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "changeSpellField": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          spellsKnown: [
+            ...state.magic.spellsKnown.map((spell) => {
+              if (spell === action.payload.spell) {
+                return {
+                  ...spell,
+                  [action.payload.field]: action.payload.value,
+                };
+              } else {
+                return spell;
+              }
+            }),
+          ],
+        },
+      };
+
+      return newState;
+    }
+    case "addSpell": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          spellsKnown: [...state.magic.spellsKnown, emptySpell()],
+        },
+      };
+
+      return newState;
+    }
+    case "removeSpell": {
+      const newState: Blocks = {
+        ...state,
+        magic: {
+          ...state.magic,
+          spellsKnown: state.magic.spellsKnown.filter((spell) => spell !== action.payload.spell),
+        },
+      };
 
       return newState;
     }

@@ -13,14 +13,13 @@ import {
   CombatBlock,
   SpecialBlock,
   MagicBlock,
-  SpellRange,
   FeatBlock,
   EquipBlock,
   MoneyType,
   ClassEntry,
   EquipSlot,
 } from "./charSheet";
-import { initSpellSlot, makeEmptyItem } from "./constants";
+import { emptySpell, initSpellSlot, makeEmptyItem } from "./constants";
 
 const DEFAULT_EQUIP_BLOCK: EquipBlock = {
   toggleDetail: true,
@@ -79,19 +78,7 @@ const DEFAULT_MAGIC: MagicBlock = {
   closeRange: "0",
   medRange: "0",
   longRange: "0",
-  spellsKnown: [
-    {
-      lvl: "0",
-      prepared: "0",
-      name: "0",
-      toggleDescr: true,
-      description: "-",
-      school: "-",
-      duration: "0",
-      range: SpellRange.CLOSE,
-      saveType: "0",
-    },
-  ],
+  spellsKnown: [emptySpell()],
 };
 
 const DEFAULT_SPECIAL_BLOCK: SpecialBlock = {
