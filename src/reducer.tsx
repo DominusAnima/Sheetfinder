@@ -588,6 +588,11 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         )
       );
 
+      //claculate spell ranges
+      newState.magic.closeRange = String(25 + Math.floor(Number(state.magic.casterLvl) / 2) * 5);
+      newState.magic.medRange = String(100 + Number(state.magic.casterLvl) * 10);
+      newState.magic.longRange = String(400 + Number(state.magic.casterLvl) * 40);
+
       return newState;
     }
     case "reset": {

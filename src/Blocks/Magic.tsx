@@ -120,9 +120,9 @@ export function Magic({ state }: { state: MagicBlock }) {
         </thead>
         <tbody>
           <tr>
-            <td>{25 + Math.floor(Number(state.casterLvl) / 2) * 5} ft</td>
-            <td>{100 + Number(state.casterLvl) * 10} ft</td>
-            <td>{400 + Number(state.casterLvl) * 40} ft</td>
+            <td>{state.closeRange} ft</td>
+            <td>{state.medRange} ft</td>
+            <td>{state.longRange} ft</td>
           </tr>
         </tbody>
       </table>
@@ -190,6 +190,15 @@ export function Magic({ state }: { state: MagicBlock }) {
           </table>
         </>
       )}
+
+      <h3>Spells</h3>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+          </tr>
+        </thead>
+      </table>
     </div>
   );
 }
