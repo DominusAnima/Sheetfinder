@@ -94,7 +94,6 @@ export interface ClassEntry {
   ref: string;
   will: string;
   levels: string;
-  hpGained: Array<string>;
 }
 
 //summed up from entries, no ability modifiers

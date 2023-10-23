@@ -458,7 +458,6 @@ export const buildClassRecordEntry = (): ClassEntry => {
     ref: "0",
     will: "0",
     levels: "0",
-    hpGained: ["0"],
   };
 };
 

@@ -4,28 +4,14 @@ import Button from "../Components/Button";
 import FlatButton from "../Components/FlatButton";
 import ModalInput from "../Components/ModalInput";
 import SectionTitle from "../Components/SectionTitle";
-import { ClassRecordBlock } from "../charSheet";
+import { ClassEntry, ClassRecordBlock } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 
 const fields = ["bab", "skill", "favClassBonusType", "favClassBonus", "fort", "ref", "will", "levels"] as const;
 
 export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
   const dispatch = useFormDispatch();
-  function handleChange(
-    entryIndex: number,
-    field:
-      | "hitDie"
-      | "name"
-      | "bab"
-      | "skill"
-      | "favClassBonusType"
-      | "favClassBonus"
-      | "fort"
-      | "ref"
-      | "will"
-      | "levels",
-    value: string
-  ) {
+  function handleChange(entryIndex: number, field: keyof ClassEntry, value: string) {
     dispatch({
       type: "changeClassEntryField",
       payload: { entryIndex, field, value },

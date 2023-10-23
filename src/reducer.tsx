@@ -7,6 +7,7 @@ import {
   CasterSpecialEntry,
   CasterSpecialty,
   CharacterSize,
+  ClassEntry,
   EquipSlot,
   Feat,
   Item,
@@ -106,17 +107,7 @@ type ChangeClassEntryFieldAction = {
   type: "changeClassEntryField";
   payload: {
     entryIndex: number;
-    field:
-      | "hitDie"
-      | "name"
-      | "bab"
-      | "skill"
-      | "favClassBonusType"
-      | "favClassBonus"
-      | "fort"
-      | "ref"
-      | "will"
-      | "levels";
+    field: keyof ClassEntry;
     value: string;
   };
 };
@@ -454,9 +445,10 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         newClassRecTot.skill += Number(entry.skill) * Number(entry.levels);
         newClassRecTot.levels += Number(entry.levels);
         //calculate max HP
-        entry.hpGained.forEach((element) => {
-          newHP.maxPoints += Number(element);
-        });
+        let classHP = entry.hitDie.match(/(\d+)/); //extracts numbers from a string
+        if (classHP && Number(entry.levels) > 0) {
+          newHP.maxPoints += Number(classHP[0]) + (Math.floor(Number(classHP[0]) / 2) + 1) * (Number(entry.levels) - 1);
+        }
       });
       newHP.maxPoints += Number(newState.classRecorder.totals.levels * newState.abilityBlock.abilities.con.mod);
       newHP.maxPoints += Number(newState.hitPoints.bonusMaxPoints);
