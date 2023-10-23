@@ -41,66 +41,6 @@ export function Magic({ state }: { state: MagicBlock }) {
       <label>Caster Level: </label>
       <input type="number" onChange={(e) => handleFieldChange("casterLvl", e.target.value)} value={state.casterLvl} />
 
-      <table>
-        <thead>
-          <tr>
-            <th>
-              <h3>Main Magic Specialty</h3>
-            </th>
-            <td>
-              <button onClick={() => addSpecialty("mainSpecial")}>Add Main Specialty</button>
-            </td>
-          </tr>
-        </thead>
-        <tbody>
-          {state.specialty.mainSpecial.map((specialEntry) => {
-            return (
-              <tr>
-                <td>
-                  <input
-                    onChange={(e) => handleSpecialChange("mainSpecial", specialEntry, e.target.value)}
-                    value={specialEntry.name}
-                  />
-                </td>
-                <td>
-                  <button onClick={() => removeSpecialty("mainSpecial", specialEntry)}>Remove</button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      <table>
-        <thead>
-          <tr>
-            <th>
-              <h3>Secondary / Restricted Specialties</h3>
-            </th>
-            <td>
-              <button onClick={() => addSpecialty("subSpecial")}>Add Sub Specialty</button>
-            </td>
-          </tr>
-        </thead>
-        <tbody>
-          {state.specialty.subSpecial.map((specialEntry) => {
-            return (
-              <tr>
-                <td>
-                  <input
-                    onChange={(e) => handleSpecialChange("subSpecial", specialEntry, e.target.value)}
-                    value={specialEntry.name}
-                  />
-                </td>
-                <td>
-                  <button onClick={() => removeSpecialty("subSpecial", specialEntry)}>remove</button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
       <h3>Spells per Day</h3>
       <table>
         <thead>
@@ -108,9 +48,13 @@ export function Magic({ state }: { state: MagicBlock }) {
             <th>Save DC</th>
             <th>Level</th>
             <th>Total</th>
-            <th>Class</th>
-            <th>Ability Bonus</th>
-            <th>Misc</th>
+            {state.detailToggle && (
+              <>
+                <th>Class</th>
+                <th>Ability Bonus</th>
+                <th>Misc</th>
+              </>
+            )}
             <th>Available</th>
           </tr>
         </thead>
@@ -127,27 +71,31 @@ export function Magic({ state }: { state: MagicBlock }) {
                 </td>
                 <td>{slot.lvl}</td>
                 <td>{slot.total}</td>
-                <td>
-                  <input
-                    type="number"
-                    onChange={(e) => handleSlotChange(slot, "classAmount", e.target.value)}
-                    value={slot.classAmount}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    onChange={(e) => handleSlotChange(slot, "abilityBonus", e.target.value)}
-                    value={slot.abilityBonus}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    onChange={(e) => handleSlotChange(slot, "misc", e.target.value)}
-                    value={slot.misc}
-                  />
-                </td>
+                {state.detailToggle && (
+                  <>
+                    <td>
+                      <input
+                        type="number"
+                        onChange={(e) => handleSlotChange(slot, "classAmount", e.target.value)}
+                        value={slot.classAmount}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        onChange={(e) => handleSlotChange(slot, "abilityBonus", e.target.value)}
+                        value={slot.abilityBonus}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        onChange={(e) => handleSlotChange(slot, "misc", e.target.value)}
+                        value={slot.misc}
+                      />
+                    </td>
+                  </>
+                )}
                 <td>
                   <input
                     type="number"
@@ -160,6 +108,88 @@ export function Magic({ state }: { state: MagicBlock }) {
           })}
         </tbody>
       </table>
+
+      <h3>Spell Ranges</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Close</th>
+            <th>Medium</th>
+            <th>Long</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{25 + Math.floor(Number(state.casterLvl) / 2) * 5} ft</td>
+            <td>{100 + Number(state.casterLvl) * 10} ft</td>
+            <td>{400 + Number(state.casterLvl) * 40} ft</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {state.detailToggle && (
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <h3>Main Magic Specialty</h3>
+                </th>
+                <td>
+                  <button onClick={() => addSpecialty("mainSpecial")}>Add Main Specialty</button>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              {state.specialty.mainSpecial.map((specialEntry) => {
+                return (
+                  <tr>
+                    <td>
+                      <input
+                        onChange={(e) => handleSpecialChange("mainSpecial", specialEntry, e.target.value)}
+                        value={specialEntry.name}
+                      />
+                    </td>
+                    <td>
+                      <button onClick={() => removeSpecialty("mainSpecial", specialEntry)}>Remove</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <h3>Secondary / Restricted Specialties</h3>
+                </th>
+                <td>
+                  <button onClick={() => addSpecialty("subSpecial")}>Add Sub Specialty</button>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              {state.specialty.subSpecial.map((specialEntry) => {
+                return (
+                  <tr>
+                    <td>
+                      <input
+                        onChange={(e) => handleSpecialChange("subSpecial", specialEntry, e.target.value)}
+                        value={specialEntry.name}
+                      />
+                    </td>
+                    <td>
+                      <button onClick={() => removeSpecialty("subSpecial", specialEntry)}>remove</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
+      )}
     </div>
   );
 }
