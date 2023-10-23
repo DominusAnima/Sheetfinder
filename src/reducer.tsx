@@ -14,6 +14,7 @@ import {
   Money,
   Skill,
   SpecialEntry,
+  SpeedList,
   Spell,
   SpellSlot,
 } from "./charSheet";
@@ -27,6 +28,8 @@ import {
 } from "./constants";
 
 export type ReducerAction =
+  | ChangeInitAction
+  | ChangeSpeedAction
   | RemoveSpellAction
   | AddSpellAction
   | ChangeSpellFieldAction
@@ -441,6 +444,21 @@ type RemoveSpellAction = {
   type: "removeSpell";
   payload: {
     spell: Spell;
+  };
+};
+
+type ChangeSpeedAction = {
+  type: "changeSpeed";
+  payload: {
+    speedType: keyof SpeedList;
+    value: string;
+  };
+};
+
+type ChangeInitAction = {
+  type: "changeInit";
+  payload: {
+    value: string;
   };
 };
 
@@ -1550,6 +1568,31 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         magic: {
           ...state.magic,
           spellsKnown: state.magic.spellsKnown.filter((spell) => spell !== action.payload.spell),
+        },
+      };
+
+      return newState;
+    }
+    case "changeSpeed": {
+      const newState: Blocks = {
+        ...state,
+        combat: {
+          ...state.combat,
+          speed: {
+            ...state.combat.speed,
+            [action.payload.speedType]: action.payload.value,
+          },
+        },
+      };
+
+      return newState;
+    }
+    case "changeInit": {
+      const newState: Blocks = {
+        ...state,
+        combat: {
+          ...state.combat,
+          initBonus: action.payload.value,
         },
       };
 

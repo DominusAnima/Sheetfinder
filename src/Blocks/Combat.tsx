@@ -3,7 +3,7 @@ import EditButton from "../Components/EditButton";
 import Field from "../Components/Field";
 import InlineInput from "../Components/InlineInput";
 import SectionTitle from "../Components/SectionTitle";
-import { Blocks } from "../charSheet";
+import { Blocks, SpeedList } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 import { SPECIAL_SIZE_MODIFIER } from "../constants";
 
@@ -32,6 +32,14 @@ export function CombatBlock({ state }: { state: Blocks }) {
     });
   }
 
+  function handleSpeedChange(speedType: keyof SpeedList, value: string) {
+    dispatch({ type: "changeSpeed", payload: { speedType, value } });
+  }
+
+  function handleInitChange(value: string) {
+    dispatch({ type: "changeInit", payload: { value } });
+  }
+
   return (
     <div className="mt-4">
       <SectionTitle title="Attacks & Defense">
@@ -47,6 +55,75 @@ export function CombatBlock({ state }: { state: Blocks }) {
         </Field>
         <Field label="Spell Failure Chance" horizontal>
           <p className="flex-1 text-center value">{state.combat.spellFail}</p>
+        </Field>
+      </div>
+
+      <hr className="my-4" />
+
+      <div className="space-y-2 mt-4">
+        <Field label="Initiative" horizontal>
+          <p className="flex-1 text-center value">{state.combat.initiative}</p>
+          {editing && (
+            <InlineInput
+              className="flex-1 text-center"
+              type="number"
+              value={state.combat.initBonus}
+              onChange={(e) => handleInitChange(e.target.value)}
+            />
+          )}
+        </Field>
+        <Field label="Speed" horizontal>
+          <table>
+            <thead>
+              <tr>
+                <th className="whitespace-nowrap w-20">Base</th>
+                <th className="whitespace-nowrap w-20">Fly</th>
+                <th className="whitespace-nowrap w-20">Swim</th>
+                <th className="whitespace-nowrap w-20">Climb</th>
+              </tr>
+            </thead>
+            <tbody>
+              {editing ? (
+                <tr>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={state.combat.speed.base}
+                      onChange={(e) => handleSpeedChange("base", e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={state.combat.speed.fly}
+                      onChange={(e) => handleSpeedChange("fly", e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={state.combat.speed.swim}
+                      onChange={(e) => handleSpeedChange("swim", e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={state.combat.speed.climb}
+                      onChange={(e) => handleSpeedChange("climb", e.target.value)}
+                    />
+                  </td>
+                </tr>
+              ) : (
+                <tr>
+                  <td className="text-center value">{state.combat.speed.base}</td>
+                  <td className="text-center value">{state.combat.speed.fly}</td>
+                  <td className="text-center value">{state.combat.speed.swim}</td>
+                  <td className="text-center value">{state.combat.speed.climb}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </Field>
       </div>
 
@@ -328,6 +405,11 @@ export function CombatBlock({ state }: { state: Blocks }) {
               <td className="text-center value">{state.classRecorder.totals.bab}</td>
             </tr>
             <tr>
+              <td>Ability Type</td>
+              <td className="text-center value">{state.combat.combatBonus.ability}</td>
+              <td className="text-center value">str & dex</td>
+            </tr>
+            <tr>
               <td>Ability Bonus</td>
               <td className="text-center value">
                 {state.abilityBlock.abilities[state.combat.combatBonus.ability].mod}
@@ -337,8 +419,8 @@ export function CombatBlock({ state }: { state: Blocks }) {
               </td>
             </tr>
             <tr>
-              <td>Ability bonus to CMB / Dodge and Deflect Bonus</td>
-              <td className="text-center value">{state.combat.combatBonus.ability}</td>
+              <td>Dodge and Deflect Bonus</td>
+              <td className="text-center value"></td>
               <td className="text-center value">
                 {Number(state.combat.acBonuses.dodge) + Number(state.combat.acBonuses.deflect)}
               </td>
