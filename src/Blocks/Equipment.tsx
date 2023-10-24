@@ -103,12 +103,12 @@ export function Equipment({ state }: { state: Blocks }) {
   }
 
   const combatWeight = (): number => {
-    let weight: number = Number(state.combat.equipment.armor.weight) + Number(state.combat.equipment.shield.weight);
-    state.combat.equipment.weapons.forEach((weapon) => {
-      weight += Number(weapon.weight);
-    });
-
-    return weight;
+    return (
+      Number(state.combat.equipment.armor.weight) +
+      Number(state.combat.equipment.shield.weight) +
+      Number(state.combat.equipment.mainWeapon.weight) +
+      Number(state.combat.equipment.offhand.weight)
+    );
   };
 
   const currencyWeight = (): number => {

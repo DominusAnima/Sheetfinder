@@ -53,9 +53,9 @@ export default function App() {
         <h1 className="text-lg font-bold text-center mb-4">Pathfinder digital character sheet prototype</h1>
         <button onClick={resetSheet}>Reset character sheet</button>
         <Bio state={state.bio} />
+        <ClassRecorder state={state.classRecorder} />
         <AbilityScores state={state.abilityBlock} />
         <HitPoints state={state.hitPoints} />
-        <ClassRecorder state={state.classRecorder} />
         <CombatBlock state={state} />
         <Skills state={state} />
         <Special state={state.special} />

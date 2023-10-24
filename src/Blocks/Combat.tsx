@@ -3,9 +3,10 @@ import EditButton from "../Components/EditButton";
 import Field from "../Components/Field";
 import InlineInput from "../Components/InlineInput";
 import SectionTitle from "../Components/SectionTitle";
-import { Blocks, SpeedList } from "../charSheet";
+import { ArmorType, Blocks, SpeedList } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 import { SPECIAL_SIZE_MODIFIER } from "../constants";
+import Select from "../Components/Select";
 
 export function CombatBlock({ state }: { state: Blocks }) {
   const [editing, setEditing] = useState(false);
@@ -36,9 +37,36 @@ export function CombatBlock({ state }: { state: Blocks }) {
     dispatch({ type: "changeSpeed", payload: { speedType, value } });
   }
 
-  function handleInitChange(value: string) {
-    dispatch({ type: "changeInit", payload: { value } });
+  function handleCombatFieldChange(field: "initBonus" | "spellres" | "dmgRed" | "res", value: string) {
+    dispatch({ type: "changeCombatField", payload: { field, value } });
   }
+
+  function handleArmorChange(
+    equipType: "armor" | "shield",
+    field: "name" | "baseACBonus" | "maxDex" | "checkPenalty" | "spellFail" | "weight" | "description",
+    value: string
+  ) {
+    dispatch({ type: "changeArmorField", payload: { equipType, field, value } });
+  }
+
+  function handleArmorTypeChange(value: ArmorType) {
+    dispatch({ type: "changeArmorType", payload: { value } });
+  }
+
+  function handleWeaponChange(
+    weaponType: "mainWeapon" | "offhand",
+    field: "name" | "damage" | "enh" | "crit" | "range" | "weight" | "description",
+    value: string
+  ) {
+    dispatch({ type: "changeWeaponField", payload: { weaponType, field, value } });
+  }
+
+  const ARMOR_TYPES: { [K in ArmorType]: string } = {
+    none: "",
+    light: "Light",
+    medium: "Medium",
+    heavy: "Heavy",
+  };
 
   return (
     <div className="mt-4">
@@ -68,12 +96,12 @@ export function CombatBlock({ state }: { state: Blocks }) {
               className="flex-1 text-center"
               type="number"
               value={state.combat.initBonus}
-              onChange={(e) => handleInitChange(e.target.value)}
+              onChange={(e) => handleCombatFieldChange("initBonus", e.target.value)}
             />
           )}
         </Field>
         <Field label="Speed" horizontal>
-          <table>
+          <table className="flex-1 text-center">
             <thead>
               <tr>
                 <th className="whitespace-nowrap w-20">Base</th>
@@ -124,6 +152,39 @@ export function CombatBlock({ state }: { state: Blocks }) {
               )}
             </tbody>
           </table>
+        </Field>
+      </div>
+
+      <hr className="my-4" />
+
+      <div className="space-y-2 mt-4">
+        <Field label="Spell Resistance" horizontal>
+          {editing ? (
+            <InlineInput
+              type="number"
+              value={state.combat.spellres}
+              onChange={(e) => handleCombatFieldChange("spellres", e.target.value)}
+            />
+          ) : (
+            <p className="flex-1 text-center value">{state.combat.spellres}</p>
+          )}
+        </Field>
+        <Field label="Damage Reduction" horizontal>
+          {editing ? (
+            <InlineInput
+              value={state.combat.dmgRed}
+              onChange={(e) => handleCombatFieldChange("dmgRed", e.target.value)}
+            />
+          ) : (
+            <p className="flex-1 text-center value">{state.combat.dmgRed}</p>
+          )}
+        </Field>
+        <Field label="Energy Resistance" horizontal>
+          {editing ? (
+            <InlineInput value={state.combat.res} onChange={(e) => handleCombatFieldChange("res", e.target.value)} />
+          ) : (
+            <p className="flex-1 text-center value">{state.combat.res}</p>
+          )}
         </Field>
       </div>
 
@@ -456,6 +517,314 @@ export function CombatBlock({ state }: { state: Blocks }) {
             <td className="text-center value">{state.combat.combatDefense.total}</td>
           </tr>
         </tfoot>
+      </table>
+
+      <hr className="my-4" />
+
+      <table className="table table--striped w-full">
+        <thead>
+          <tr>
+            <th className="whitespace-nowrap">Defensive Equipment</th>
+            <th className="whitespace-nowrap w-20">Armor</th>
+            <th className="whitespace-nowrap w-20">Shield</th>
+          </tr>
+        </thead>
+        {editing ? (
+          <tbody>
+            <tr>
+              <td>Name</td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.armor.name}
+                  onChange={(e) => handleArmorChange("armor", "name", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.shield.name}
+                  onChange={(e) => handleArmorChange("shield", "name", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>AC Bonus</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.armor.baseACBonus}
+                  onChange={(e) => handleArmorChange("armor", "baseACBonus", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.shield.baseACBonus}
+                  onChange={(e) => handleArmorChange("shield", "baseACBonus", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Max Dex</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.armor.maxDex}
+                  onChange={(e) => handleArmorChange("armor", "maxDex", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.shield.maxDex}
+                  onChange={(e) => handleArmorChange("shield", "maxDex", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Armor Check Penalty</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.armor.checkPenalty}
+                  onChange={(e) => handleArmorChange("armor", "checkPenalty", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.shield.checkPenalty}
+                  onChange={(e) => handleArmorChange("shield", "checkPenalty", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Spell Fail</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.armor.spellFail}
+                  onChange={(e) => handleArmorChange("armor", "spellFail", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.shield.spellFail}
+                  onChange={(e) => handleArmorChange("shield", "spellFail", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Type</td>
+              <td>
+                <Select
+                  value={state.combat.equipment.armor.armorType}
+                  onChange={(e) => handleArmorTypeChange(e.target.value as ArmorType)}
+                >
+                  {Object.values(ArmorType).map((type) => (
+                    <option key={type} value={type}>
+                      {ARMOR_TYPES[type]}
+                    </option>
+                  ))}
+                </Select>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Weight</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.armor.weight}
+                  onChange={(e) => handleArmorChange("armor", "weight", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.shield.weight}
+                  onChange={(e) => handleArmorChange("shield", "weight", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Notes</td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.armor.description}
+                  onChange={(e) => handleArmorChange("armor", "description", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.shield.description}
+                  onChange={(e) => handleArmorChange("shield", "description", e.target.value)}
+                />
+              </td>
+            </tr>
+          </tbody>
+        ) : (
+          <tbody>
+            <tr>
+              <td>Name</td>
+              <td className="text-center value">{state.combat.equipment.armor.name}</td>
+              <td className="text-center value">{state.combat.equipment.shield.name}</td>
+            </tr>
+            <tr>
+              <td>Notes</td>
+              <td className="text-center value">{state.combat.equipment.armor.description}</td>
+              <td className="text-center value">{state.combat.equipment.shield.description}</td>
+            </tr>
+          </tbody>
+        )}
+      </table>
+
+      <hr className="my-4" />
+
+      <table className="table table--striped w-full">
+        <thead>
+          <tr>
+            <th className="whitespace-nowrap">Weapons</th>
+            <th className="whitespace-nowrap w-20">Main</th>
+            <th className="whitespace-nowrap w-20">Offhand</th>
+          </tr>
+        </thead>
+        {editing ? (
+          <tbody>
+            <tr>
+              <td>Name</td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.mainWeapon.name}
+                  onChange={(e) => handleWeaponChange("mainWeapon", "name", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.offhand.name}
+                  onChange={(e) => handleWeaponChange("offhand", "name", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Attack Modifier</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.mainWeapon.enh}
+                  onChange={(e) => handleWeaponChange("mainWeapon", "enh", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.offhand.enh}
+                  onChange={(e) => handleWeaponChange("offhand", "enh", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Damage</td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.mainWeapon.damage}
+                  onChange={(e) => handleWeaponChange("mainWeapon", "damage", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.offhand.damage}
+                  onChange={(e) => handleWeaponChange("offhand", "damage", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Critical</td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.mainWeapon.crit}
+                  onChange={(e) => handleWeaponChange("mainWeapon", "crit", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.offhand.crit}
+                  onChange={(e) => handleWeaponChange("offhand", "crit", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Range</td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.mainWeapon.range}
+                  onChange={(e) => handleWeaponChange("mainWeapon", "range", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.offhand.range}
+                  onChange={(e) => handleWeaponChange("offhand", "range", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Weight</td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.mainWeapon.weight}
+                  onChange={(e) => handleWeaponChange("mainWeapon", "weight", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  type="number"
+                  value={state.combat.equipment.offhand.weight}
+                  onChange={(e) => handleWeaponChange("offhand", "weight", e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Notes</td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.mainWeapon.description}
+                  onChange={(e) => handleWeaponChange("mainWeapon", "description", e.target.value)}
+                />
+              </td>
+              <td>
+                <InlineInput
+                  value={state.combat.equipment.offhand.description}
+                  onChange={(e) => handleWeaponChange("offhand", "description", e.target.value)}
+                />
+              </td>
+            </tr>
+          </tbody>
+        ) : (
+          <tbody>
+            <tr>
+              <td>Name</td>
+              <td className="text-center value">{state.combat.equipment.mainWeapon.name}</td>
+              <td className="text-center value">{state.combat.equipment.offhand.name}</td>
+            </tr>
+            <tr>
+              <td>Attack Modifiers</td>
+              <td className="text-center value">{state.combat.equipment.mainWeapon.enh}</td>
+              <td className="text-center value">{state.combat.equipment.offhand.enh}</td>
+            </tr>
+            <tr>
+              <td>Damage</td>
+              <td className="text-center value">{state.combat.equipment.mainWeapon.damage}</td>
+              <td className="text-center value">{state.combat.equipment.offhand.damage}</td>
+            </tr>
+            <tr>
+              <td>Critical</td>
+              <td className="text-center value">{state.combat.equipment.mainWeapon.crit}</td>
+              <td className="text-center value">{state.combat.equipment.offhand.crit}</td>
+            </tr>
+          </tbody>
+        )}
       </table>
     </div>
   );

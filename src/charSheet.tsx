@@ -203,7 +203,8 @@ export interface SpeedList {
 export interface CombatEquip {
   armor: Armor;
   shield: Shield;
-  weapons: Array<Weapon>;
+  mainWeapon: Weapon;
+  offhand: Weapon;
 }
 
 export interface SpecialBlock {
@@ -314,7 +315,6 @@ export interface Armor extends Item {
   maxDex: string;
   checkPenalty: string;
   armorType: ArmorType;
-  enh: string;
   spellFail: string;
 }
 

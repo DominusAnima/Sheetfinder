@@ -1,6 +1,7 @@
 import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
 import {
   Abilities,
+  ArmorType,
   Bag,
   BioBlock,
   Blocks,
@@ -28,7 +29,10 @@ import {
 } from "./constants";
 
 export type ReducerAction =
-  | ChangeInitAction
+  | ChangeWeaponFieldAction
+  | ChangeArmorTypeAction
+  | ChangeArmorFieldAction
+  | ChangeCombatFieldAction
   | ChangeSpeedAction
   | RemoveSpellAction
   | AddSpellAction
@@ -455,9 +459,35 @@ type ChangeSpeedAction = {
   };
 };
 
-type ChangeInitAction = {
-  type: "changeInit";
+type ChangeCombatFieldAction = {
+  type: "changeCombatField";
   payload: {
+    field: "initBonus" | "spellres" | "dmgRed" | "res";
+    value: string;
+  };
+};
+
+type ChangeArmorFieldAction = {
+  type: "changeArmorField";
+  payload: {
+    equipType: "armor" | "shield";
+    field: "name" | "baseACBonus" | "maxDex" | "checkPenalty" | "spellFail" | "weight" | "description";
+    value: string;
+  };
+};
+
+type ChangeArmorTypeAction = {
+  type: "changeArmorType";
+  payload: {
+    value: ArmorType;
+  };
+};
+
+type ChangeWeaponFieldAction = {
+  type: "changeWeaponField";
+  payload: {
+    weaponType: "mainWeapon" | "offhand";
+    field: "name" | "damage" | "enh" | "crit" | "range" | "weight" | "description";
     value: string;
   };
 };
@@ -621,8 +651,10 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       //calculate weight
       const newWeight = newState.equipment.weight;
       newWeight.currLoad =
-        Number(newCombatBlock.equipment.armor.weight) + Number(newCombatBlock.equipment.shield.weight);
-      newCombatBlock.equipment.weapons.forEach((weapon) => (newWeight.currLoad += Number(weapon.weight)));
+        Number(newCombatBlock.equipment.armor.weight) +
+        Number(newCombatBlock.equipment.shield.weight) +
+        Number(newCombatBlock.equipment.mainWeapon.weight) +
+        Number(newCombatBlock.equipment.offhand.weight);
       newState.equipment.bags.forEach((bag) => (newWeight.currLoad += Number(bag.weight)));
       newState.equipment.coinPurse.forEach(
         (currency) => (newWeight.currLoad += Number(currency.weight) * Number(currency.amount))
@@ -1587,14 +1619,69 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
       return newState;
     }
-    case "changeInit": {
+    case "changeCombatField": {
       const newState: Blocks = {
         ...state,
         combat: {
           ...state.combat,
-          initBonus: action.payload.value,
+          [action.payload.field]: action.payload.value,
         },
       };
+
+      return newState;
+    }
+    case "changeArmorField": {
+      const newState: Blocks = {
+        ...state,
+        combat: {
+          ...state.combat,
+          equipment: {
+            ...state.combat.equipment,
+            [action.payload.equipType]: {
+              ...state.combat.equipment[action.payload.equipType],
+              [action.payload.field]: action.payload.value,
+            },
+          },
+        },
+      };
+
+      reducer(newState, { type: "recalculate" });
+
+      return newState;
+    }
+    case "changeArmorType": {
+      const newState: Blocks = {
+        ...state,
+        combat: {
+          ...state.combat,
+          equipment: {
+            ...state.combat.equipment,
+            armor: {
+              ...state.combat.equipment.armor,
+              armorType: action.payload.value,
+            },
+          },
+        },
+      };
+
+      return newState;
+    }
+    case "changeWeaponField": {
+      const newState: Blocks = {
+        ...state,
+        combat: {
+          ...state.combat,
+          equipment: {
+            ...state.combat.equipment,
+            [action.payload.weaponType]: {
+              ...state.combat.equipment[action.payload.weaponType],
+              [action.payload.field]: action.payload.value,
+            },
+          },
+        },
+      };
+
+      reducer(newState, { type: "recalculate" });
 
       return newState;
     }
