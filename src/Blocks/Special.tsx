@@ -101,7 +101,7 @@ export function Special({ state }: { state: SpecialBlock }) {
                     </Button>
                   </td>
                   <td className="text-center">{entry.name}</td>
-                  <td className="text-center">{entry.usesLimit}</td>
+                  <td className="text-center value">{entry.usesLimit}</td>
                   <td>
                     <InlineInput value={entry.used} onChange={(e) => handleChange("used", i, e.target.value)} />
                   </td>

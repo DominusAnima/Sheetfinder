@@ -11,29 +11,25 @@ import Button from "../Components/Button";
 import InlineInput from "../Components/InlineInput";
 
 const SLOTS: { [K in EquipSlot]: string } = {
-  belt: "belt",
-  body: "body",
-  chest: "chest",
-  eyes: "eyes",
-  feet: "feet",
-  hands: "hands",
-  head: "head",
-  headband: "headband",
-  neck: "neck",
-  ring_1: "ring 1",
-  ring_2: "ring 2",
-  shoulders: "shoulders",
-  wrist: "wrist",
+  belt: "Belt",
+  body: "Body",
+  chest: "Chest",
+  eyes: "Eyes",
+  feet: "Feet",
+  hands: "Hands",
+  head: "Head",
+  headband: "Headband",
+  neck: "Neck",
+  ring_1: "Ring 1",
+  ring_2: "Ring 2",
+  shoulders: "Shoulders",
+  wrist: "Wrist",
   none: "-",
 };
 
 export function Equipment({ state }: { state: Blocks }) {
   const [editing, setEditing] = useState(false);
   const dispatch = useFormDispatch();
-
-  function toggleItemDescr(entry: Item) {
-    dispatch({ type: "toggleEquipItemDescr", payload: { entry } });
-  }
 
   function handleInvChange(
     field: "name" | "hp" | "weight" | "value" | "qtyOrUses" | "description",
@@ -47,40 +43,12 @@ export function Equipment({ state }: { state: Blocks }) {
     dispatch({ type: "changeInventoryEntrySlot", payload: { index, value } });
   }
 
-  function removeEntry(entry: Item) {
-    dispatch({ type: "removeInventoryEntry", payload: { entry } });
-  }
-
-  function addEntry() {
-    dispatch({ type: "addInventoryEntry" });
-  }
-
-  function toggleDetail() {
-    dispatch({ type: "toggleEquipDetail" });
-  }
-
-  function equipItem(item: Item) {
-    dispatch({ type: "equipItem", payload: { item } });
-  }
-
-  function unequipItem(item: Item) {
-    dispatch({ type: "unequipItem", payload: { item } });
-  }
-
-  function toggleWornDescr(item: Item) {
-    dispatch({ type: "toggleWornDesc", payload: { item } });
-  }
-
   function handleWornChange(
     field: "name" | "hp" | "weight" | "value" | "qtyOrUses" | "description",
     item: Item,
     value: string
   ) {
     dispatch({ type: "changeWornItemField", payload: { field, item, value } });
-  }
-
-  function removeWornItem(item: Item) {
-    dispatch({ type: "removeWornItem", payload: { item } });
   }
 
   function handleBagChange(
@@ -91,20 +59,8 @@ export function Equipment({ state }: { state: Blocks }) {
     dispatch({ type: "changeBagField", payload: { field, bag, value } });
   }
 
-  function toggleBagDescr(bag: Bag) {
-    dispatch({ type: "toggleBagDescr", payload: { bag } });
-  }
-
   function handleMoneyChange(field: "amount" | "weight", entry: Money, value: string) {
     dispatch({ type: "changeMoneyField", payload: { field, entry, value } });
-  }
-
-  function removeBag(bag: Bag) {
-    dispatch({ type: "removeBag", payload: { bag } });
-  }
-
-  function addBag() {
-    dispatch({ type: "addBag" });
   }
 
   const combatWeight = (): number => {
@@ -176,89 +132,117 @@ export function Equipment({ state }: { state: Blocks }) {
             )}
           </tr>
         </thead>
-        <tbody>
-          {state.equipment.inventory.map((entry, i) => (
-            <>
-              <tr>
-                <td>
-                  <Button size="small" onClick={() => dispatch({ type: "toggleEquipItemDescr", payload: { entry } })}>
-                    Toggle
-                  </Button>
-                </td>
-                <td>
-                  <InlineInput value={entry.name} onChange={(e) => handleInvChange("name", i, e.target.value)} />
-                </td>
-                <td>
-                  <InlineInput
-                    value={entry.qtyOrUses}
-                    onChange={(e) => handleInvChange("qtyOrUses", i, e.target.value)}
-                  />
-                </td>
-                {editing && (
-                  <>
-                    <td>
-                      <InlineInput
-                        type="number"
-                        value={entry.hp}
-                        onChange={(e) => handleInvChange("hp", i, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <InlineInput
-                        type="number"
-                        value={entry.weight}
-                        onChange={(e) => handleInvChange("weight", i, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <InlineInput value={entry.value} onChange={(e) => handleInvChange("value", i, e.target.value)} />
-                    </td>
-                    <td>
-                      <select value={entry.slot} onChange={(e) => handleSelectChange(i, e.target.value as EquipSlot)}>
-                        {Object.values(EquipSlot).map((slot) => {
-                          return (
-                            <option key={slot} value={slot}>
-                              {SLOTS[slot]}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </td>
-                  </>
-                )}
-                {entry.slot !== EquipSlot.NONE && (
-                  <td>
-                    <Button size="small" onClick={() => dispatch({ type: "equipItem", payload: { item: entry } })}>
-                      Equip
-                    </Button>
-                  </td>
-                )}
-                <td>
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      if (confirm("Are you sure?")) {
-                        dispatch({ type: "unequipItem", payload: { item: entry } });
-                      }
-                    }}
-                  >
-                    Remove
-                  </Button>
-                </td>
-              </tr>
-              {entry.toggleDescr && (
+        {editing ? (
+          <tbody>
+            {state.equipment.inventory.map((entry, i) => (
+              <>
                 <tr>
                   <td>
+                    <Button size="small" onClick={() => dispatch({ type: "toggleEquipItemDescr", payload: { entry } })}>
+                      Toggle
+                    </Button>
+                  </td>
+                  <td>
+                    <InlineInput value={entry.name} onChange={(e) => handleInvChange("name", i, e.target.value)} />
+                  </td>
+                  <td>
                     <InlineInput
-                      value={entry.description}
-                      onChange={(e) => handleInvChange("description", i, e.target.value)}
+                      value={entry.qtyOrUses}
+                      onChange={(e) => handleInvChange("qtyOrUses", i, e.target.value)}
                     />
                   </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={entry.hp}
+                      onChange={(e) => handleInvChange("hp", i, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={entry.weight}
+                      onChange={(e) => handleInvChange("weight", i, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput value={entry.value} onChange={(e) => handleInvChange("value", i, e.target.value)} />
+                  </td>
+                  <td>
+                    <select value={entry.slot} onChange={(e) => handleSelectChange(i, e.target.value as EquipSlot)}>
+                      {Object.values(EquipSlot).map((slot) => {
+                        return (
+                          <option key={slot} value={slot}>
+                            {SLOTS[slot]}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </td>
+                  {entry.slot !== EquipSlot.NONE && (
+                    <td>
+                      <Button size="small" onClick={() => dispatch({ type: "equipItem", payload: { item: entry } })}>
+                        Equip
+                      </Button>
+                    </td>
+                  )}
+                  <td>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        if (confirm("Are you sure?")) {
+                          dispatch({ type: "unequipItem", payload: { item: entry } });
+                        }
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </td>
                 </tr>
-              )}
-            </>
-          ))}
-        </tbody>
+                {entry.toggleDescr && (
+                  <tr>
+                    <td colSpan={6}>
+                      <InlineInput
+                        value={entry.description}
+                        onChange={(e) => handleInvChange("description", i, e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        ) : (
+          <tbody>
+            {state.equipment.inventory.map((entry) => (
+              <>
+                <tr>
+                  <td>
+                    <Button size="small" onClick={() => dispatch({ type: "toggleEquipItemDescr", payload: { entry } })}>
+                      Toggle
+                    </Button>
+                  </td>
+                  <td className="text-center">{entry.name}</td>
+                  <td className="text-center value">{entry.qtyOrUses}</td>
+                  {entry.slot !== EquipSlot.NONE && (
+                    <td>
+                      <Button size="small" onClick={() => dispatch({ type: "equipItem", payload: { item: entry } })}>
+                        Equip
+                      </Button>
+                    </td>
+                  )}
+                </tr>
+                {entry.toggleDescr && (
+                  <tr>
+                    <td className="text-center" colSpan={3}>
+                      {entry.description}
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        )}
       </table>
 
       <hr className="my-4" />
@@ -270,7 +254,7 @@ export function Equipment({ state }: { state: Blocks }) {
             <th className="whitespace-nowrap">Description</th>
             <th className="whitespace-nowrap">Slot</th>
             <th className="whitespace-nowrap">Name</th>
-            <th className="whitespace-nowrap">Qty / Uses</th>
+            <th className="whitespace-nowrap">Uses</th>
             {editing && (
               <>
                 <th className="whitespace-nowrap">HP</th>
@@ -280,84 +264,120 @@ export function Equipment({ state }: { state: Blocks }) {
             )}
           </tr>
         </thead>
-        <tbody>
-          {Object.values(state.equipment.worn).map((item) => (
-            <>
-              <tr>
-                <td>
-                  <Button size="small" onClick={() => dispatch({ type: "toggleWornDesc", payload: { item } })}>
-                    Toggle
-                  </Button>
-                </td>
-                <td className="text-center">{SLOTS[item.slot]}</td>
-                <td>
-                  <InlineInput value={item.name} onChange={(e) => handleWornChange("name", item, e.target.value)} />
-                </td>
-                <td>
-                  <InlineInput
-                    value={item.qtyOrUses}
-                    onChange={(e) => handleWornChange("qtyOrUses", item, e.target.value)}
-                  />
-                </td>
-                {state.equipment.toggleDetail && (
-                  <>
-                    <td>
+        {editing ? (
+          <tbody>
+            {Object.values(state.equipment.worn).map((item) => (
+              <>
+                <tr>
+                  <td>
+                    <Button size="small" onClick={() => dispatch({ type: "toggleWornDesc", payload: { item } })}>
+                      Toggle
+                    </Button>
+                  </td>
+                  <td className="text-center">{SLOTS[item.slot]}</td>
+                  <td>
+                    <InlineInput value={item.name} onChange={(e) => handleWornChange("name", item, e.target.value)} />
+                  </td>
+                  <td>
+                    <InlineInput
+                      value={item.qtyOrUses}
+                      onChange={(e) => handleWornChange("qtyOrUses", item, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={item.hp}
+                      onChange={(e) => handleWornChange("hp", item, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={item.weight}
+                      onChange={(e) => handleWornChange("weight", item, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput value={item.value} onChange={(e) => handleWornChange("value", item, e.target.value)} />
+                  </td>
+                  {JSON.stringify(item) !== JSON.stringify(makeEmptyItem(item.slot)) && (
+                    <>
+                      <td>
+                        <Button size="small" onClick={() => dispatch({ type: "unequipItem", payload: { item } })}>
+                          Unequip
+                        </Button>
+                      </td>
+                      <td>
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            if (confirm("Are you sure?")) {
+                              dispatch({ type: "removeWornItem", payload: { item } });
+                            }
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </td>
+                    </>
+                  )}
+                </tr>
+                {item.toggleDescr && (
+                  <tr>
+                    <td colSpan={7}>
                       <InlineInput
-                        type="number"
-                        value={item.hp}
-                        onChange={(e) => handleWornChange("hp", item, e.target.value)}
+                        value={item.description}
+                        onChange={(e) => handleWornChange("description", item, e.target.value)}
                       />
                     </td>
-                    <td>
-                      <InlineInput
-                        type="number"
-                        value={item.weight}
-                        onChange={(e) => handleWornChange("weight", item, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <InlineInput
-                        value={item.value}
-                        onChange={(e) => handleWornChange("value", item, e.target.value)}
-                      />
-                    </td>
-                  </>
+                  </tr>
                 )}
-                {JSON.stringify(item) !== JSON.stringify(makeEmptyItem(item.slot)) && (
-                  <>
+              </>
+            ))}
+          </tbody>
+        ) : (
+          <tbody>
+            {Object.values(state.equipment.worn).map((item) => (
+              <>
+                <tr>
+                  <td>
+                    <Button size="small" onClick={() => dispatch({ type: "toggleWornDesc", payload: { item } })}>
+                      Toggle
+                    </Button>
+                  </td>
+                  <td className="text-center font-bold">{SLOTS[item.slot]}</td>
+                  <td className="text-center">{item.name}</td>
+                  <td className="text-center value">{item.qtyOrUses}</td>
+                  {state.equipment.toggleDetail && (
+                    <>
+                      <td className="text-center">{item.hp}</td>
+                      <td className="text-center">{item.weight}</td>
+                      <td className="text-center">{item.value}</td>
+                    </>
+                  )}
+                  {JSON.stringify(item) !== JSON.stringify(makeEmptyItem(item.slot)) && (
                     <td>
                       <Button size="small" onClick={() => dispatch({ type: "unequipItem", payload: { item } })}>
                         Unequip
                       </Button>
                     </td>
-                    <td>
-                      <Button
-                        size="small"
-                        onClick={() => {
-                          if (confirm("Are you sure?")) {
-                            dispatch({ type: "removeWornItem", payload: { item } });
-                          }
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    </td>
-                  </>
-                )}
-              </tr>
-              {item.toggleDescr && (
-                <tr>
-                  <td colSpan={4}>
-                    <InlineInput
-                      value={item.description}
-                      onChange={(e) => handleWornChange("description", item, e.target.value)}
-                    />
-                  </td>
+                  )}
                 </tr>
-              )}
-            </>
-          ))}
-        </tbody>
+                {item.toggleDescr && (
+                  <tr>
+                    <td colSpan={4}>
+                      <InlineInput
+                        value={item.description}
+                        onChange={(e) => handleWornChange("description", item, e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        )}
       </table>
 
       <hr className="my-4" />
@@ -383,103 +403,124 @@ export function Equipment({ state }: { state: Blocks }) {
             )}
           </tr>
         </thead>
-        <tbody>
-          {state.equipment.bags.map((bag) => (
-            <>
-              <tr>
-                <td>
-                  <Button size="small" onClick={() => dispatch({ type: "toggleBagDescr", payload: { bag } })}>
-                    Toggle
-                  </Button>
-                </td>
-                <td>
-                  <InlineInput
-                    type="number"
-                    value={bag.qtyOrUses}
-                    onChange={(e) => handleBagChange("qtyOrUses", bag, e.target.value)}
-                  />
-                </td>
-                <td>
-                  <InlineInput value={bag.name} onChange={(e) => handleBagChange("name", bag, e.target.value)} />
-                </td>
-                <td>
-                  <InlineInput
-                    value={bag.capacity}
-                    onChange={(e) => handleBagChange("capacity", bag, e.target.value)}
-                  />
-                </td>
-                {editing && (
-                  <>
-                    <td>
-                      <InlineInput
-                        type="number"
-                        value={bag.hp}
-                        onChange={(e) => handleBagChange("hp", bag, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <InlineInput
-                        type="number"
-                        value={bag.weight}
-                        onChange={(e) => handleBagChange("weight", bag, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <InlineInput value={bag.value} onChange={(e) => handleBagChange("value", bag, e.target.value)} />
-                    </td>
-                  </>
-                )}
-                <td>
-                  <Button
-                    size="small"
-                    onClick={() => {
-                      if (confirm("Are you sure?")) {
-                        dispatch({ type: "removeBag", payload: { bag } });
-                      }
-                    }}
-                  >
-                    Remove
-                  </Button>
-                </td>
-              </tr>
-              {bag.toggleDescr && (
+        {editing ? (
+          <tbody>
+            {state.equipment.bags.map((bag) => (
+              <>
                 <tr>
                   <td>
+                    <Button size="small" onClick={() => dispatch({ type: "toggleBagDescr", payload: { bag } })}>
+                      Toggle
+                    </Button>
+                  </td>
+                  <td>
                     <InlineInput
-                      value={bag.description}
-                      onChange={(e) => handleBagChange("description", bag, e.target.value)}
+                      type="number"
+                      value={bag.qtyOrUses}
+                      onChange={(e) => handleBagChange("qtyOrUses", bag, e.target.value)}
                     />
                   </td>
+                  <td>
+                    <InlineInput value={bag.name} onChange={(e) => handleBagChange("name", bag, e.target.value)} />
+                  </td>
+                  <td>
+                    <InlineInput
+                      value={bag.capacity}
+                      onChange={(e) => handleBagChange("capacity", bag, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={bag.hp}
+                      onChange={(e) => handleBagChange("hp", bag, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput
+                      type="number"
+                      value={bag.weight}
+                      onChange={(e) => handleBagChange("weight", bag, e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <InlineInput value={bag.value} onChange={(e) => handleBagChange("value", bag, e.target.value)} />
+                  </td>
+                  <td>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        if (confirm("Are you sure?")) {
+                          dispatch({ type: "removeBag", payload: { bag } });
+                        }
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </td>
                 </tr>
-              )}
-            </>
-          ))}
-        </tbody>
+                {bag.toggleDescr && (
+                  <tr>
+                    <td colSpan={7}>
+                      <InlineInput
+                        value={bag.description}
+                        onChange={(e) => handleBagChange("description", bag, e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        ) : (
+          <tbody>
+            {state.equipment.bags.map((bag) => (
+              <>
+                <tr>
+                  <td className="text-center">
+                    <Button size="small" onClick={() => dispatch({ type: "toggleBagDescr", payload: { bag } })}>
+                      Toggle
+                    </Button>
+                  </td>
+                  <td className="text-center">{bag.qtyOrUses}</td>
+                  <td className="text-center">{bag.name}</td>
+                  <td className="text-center value">{bag.capacity}</td>
+                </tr>
+                {bag.toggleDescr && (
+                  <tr>
+                    <td className="text-center" colSpan={4}>
+                      {bag.description}
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        )}
       </table>
 
       <hr className="my-4" />
 
-      <Field label="Currency" horizontal />
       <table className="table table--striped w-full mt-4">
         <thead>
           <tr>
-            <th className="whitespace-nowrap"></th>
-            <th className="whitespace-nowrap">Quantity</th>
-            {editing && <th className="whitespace-nowrap">Weight per Coin</th>}
+            <th className="whitespace-nowrap">Currency</th>
+            <th className="whitespace-nowrap w-20">Quantity</th>
+            {editing && <th className="whitespace-nowrap w-20">Weight per Coin</th>}
           </tr>
         </thead>
-        <tbody>
-          {state.equipment.coinPurse.map((entry) => (
-            <tr>
-              <td className="text-center">{entry.type}</td>
-              <td>
-                <InlineInput
-                  type="number"
-                  value={entry.amount}
-                  onChange={(e) => handleMoneyChange("amount", entry, e.target.value)}
-                />
-              </td>
-              {editing && (
+        {editing ? (
+          <tbody>
+            {state.equipment.coinPurse.map((entry) => (
+              <tr>
+                <td>{entry.type}</td>
+                <td>
+                  <InlineInput
+                    type="number"
+                    value={entry.amount}
+                    onChange={(e) => handleMoneyChange("amount", entry, e.target.value)}
+                  />
+                </td>
                 <td>
                   <InlineInput
                     type="number"
@@ -487,58 +528,87 @@ export function Equipment({ state }: { state: Blocks }) {
                     onChange={(e) => handleMoneyChange("weight", entry, e.target.value)}
                   />
                 </td>
-              )}
-            </tr>
-          ))}
+              </tr>
+            ))}
+          </tbody>
+        ) : (
+          <tbody>
+            {state.equipment.coinPurse.map((entry) => (
+              <tr>
+                <td>{entry.type}</td>
+                <td className="text-center value">{entry.amount}</td>
+              </tr>
+            ))}
+          </tbody>
+        )}
+      </table>
+
+      <hr className="my-4" />
+
+      <table className="table table--striped w-full mt-4">
+        <thead>
+          <tr>
+            <th className="whitespace-nowrap">Carried Weight</th>
+            <th className="whitespace-nowrap w-20">lb</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Armor & Weapons</td>
+            <td className="text-center value">{combatWeight()}</td>
+          </tr>
+          <tr>
+            <td>Currency</td>
+            <td className="text-center value">{currencyWeight()}</td>
+          </tr>
+          <tr>
+            <td>Equipment</td>
+            <td className="text-center value">{equipWeight()}</td>
+          </tr>
+          <tr>
+            <td className="font-bold">Total</td>
+            <td className="text-center value">{state.equipment.weight.currLoad}</td>
+          </tr>
         </tbody>
       </table>
 
       <hr className="my-4" />
 
-      <Field label="Carried Weight" horizontal />
       <table className="table table--striped w-full mt-4">
         <thead>
           <tr>
-            <th className="whitespace-nowrap">Armor & Weapons</th>
-            <th className="whitespace-nowrap">Currency</th>
-            <th className="whitespace-nowrap">Equipment</th>
-            <th className="whitespace-nowrap">Total</th>
+            <th className="whitespace-nowrap">Loads & Lift</th>
+            <th className="whitespace-nowrap w-20">lb</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td className="text-center">{combatWeight()}</td>
-            <td className="text-center">{currencyWeight()}</td>
-            <td className="text-center">{equipWeight()}</td>
-            <td className="text-center">{state.equipment.weight.currLoad}</td>
+            <td>Light Load</td>
+            <td className="text-center value">{"<=" + state.equipment.weight.lightLoad}</td>
           </tr>
-        </tbody>
-      </table>
-
-      <hr className="my-4" />
-
-      <Field label="Loads & Lift" horizontal>
-        <p className="flex-1 text-center">Current Load: {getLoadCategory()}</p>
-      </Field>
-      <table className="table table--striped w-full mt-4">
-        <thead>
           <tr>
-            <th className="whitespace-nowrap">Light Load</th>
-            <th className="whitespace-nowrap">Medium Load</th>
-            <th className="whitespace-nowrap">Heavy Load</th>
-            <th className="whitespace-nowrap">Lift above Head</th>
-            <th className="whitespace-nowrap">Lift off Ground</th>
-            <th className="whitespace-nowrap">Drag & Push</th>
+            <td>Medium Load</td>
+            <td className="text-center value">{"<=" + state.equipment.weight.medLoad}</td>
           </tr>
-        </thead>
-        <tbody>
           <tr>
-            <td className="text-center">{"<=" + state.equipment.weight.lightLoad}</td>
-            <td className="text-center">{"<=" + state.equipment.weight.medLoad}</td>
-            <td className="text-center">{"<=" + state.equipment.weight.heavyLoad}</td>
-            <td className="text-center">{state.equipment.weight.heavyLoad}</td>
-            <td className="text-center">{Number(state.equipment.weight.heavyLoad) * 2}</td>
-            <td className="text-center">{Number(state.equipment.weight.heavyLoad) * 5}</td>
+            <td>Heavy Load</td>
+            <td className="text-center value">{"<=" + state.equipment.weight.heavyLoad}</td>
+          </tr>
+          <tr>
+            <td>Lift above Head</td>
+            <td className="text-center value">{state.equipment.weight.heavyLoad}</td>
+          </tr>
+          <tr>
+            <td>Lift off Ground</td>
+            <td className="text-center value">{Number(state.equipment.weight.heavyLoad) * 2}</td>
+          </tr>
+          <tr>
+            <td>Drag & Push</td>
+            <td className="text-center value">{Number(state.equipment.weight.heavyLoad) * 5}</td>
+          </tr>
+          <tr>
+            <td className="font-bold">Current Load</td>
+            <td className="text-center">{getLoadCategory()}</td>
           </tr>
         </tbody>
       </table>
