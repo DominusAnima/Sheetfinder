@@ -15,6 +15,7 @@ import { Special } from "./Blocks/Special.tsx";
 import { Feats } from "./Blocks/Feats.tsx";
 import { Equipment } from "./Blocks/Equipment.tsx";
 import { Magic } from "./Blocks/Magic.tsx";
+import Button from "./Components/Button.tsx";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
@@ -51,7 +52,15 @@ export default function App() {
     <FormContextProvider dispatch={dispatch}>
       <Container>
         <h1 className="text-lg font-bold text-center mb-4">Pathfinder digital character sheet prototype</h1>
-        <button onClick={resetSheet}>Reset character sheet</button>
+        <Button
+          onClick={() => {
+            if (confirm("Are you sure you want to reset the entire character sheet?")) {
+              resetSheet;
+            }
+          }}
+        >
+          Reset character sheet
+        </Button>
         <Bio state={state.bio} />
         <ClassRecorder state={state.classRecorder} />
         <AbilityScores state={state.abilityBlock} />

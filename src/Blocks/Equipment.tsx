@@ -106,7 +106,7 @@ export function Equipment({ state }: { state: Blocks }) {
   };
 
   return (
-    <div className="mt-">
+    <div className="mt-4">
       <SectionTitle title="Equipment">
         <EditButton editing={editing} onClick={() => setEditing((v) => !v)} />
       </SectionTitle>

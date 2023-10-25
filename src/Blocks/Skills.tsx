@@ -82,7 +82,7 @@ export function Skills({ state }: { state: Blocks }) {
                 return (
                   <tr key={i}>
                     {skill.editable ? (
-                      <td className="text-center">
+                      <td>
                         <input
                           type="checkbox"
                           defaultChecked={skill.trained}
@@ -90,7 +90,7 @@ export function Skills({ state }: { state: Blocks }) {
                         />
                       </td>
                     ) : (
-                      <td className="text-center font-bold">{skill.trained ? "*" : ""}</td>
+                      <td className="font-bold">{skill.trained ? "*" : ""}</td>
                     )}
                     <td className="text-center">
                       <input
@@ -165,7 +165,7 @@ export function Skills({ state }: { state: Blocks }) {
             : state.skills.skills.map((skill, i) => {
                 return (
                   <tr key={i}>
-                    <td className="text-center font-bold">{skill.trained ? "*" : ""}</td>
+                    <td className="font-bold">{skill.trained ? "*" : ""}</td>
                     <td className="text-center font-bold">{skill.name}</td>
                     <td className="text-center value">
                       {!skill.trained || (skill.trained && Number(skill.ranks) > 0) ? skill.totalBonus : "-"}
