@@ -32,7 +32,7 @@ export function Special({ state }: { state: SpecialBlock }) {
           <tr>
             <th className="whitespace-nowrap">Description</th>
             <th className="whitespace-nowrap">Name</th>
-            <th className="whitespace-nowrap">Uses/Day</th>
+            <th className="whitespace-nowrap">Uses</th>
             <th className="whitespace-nowrap">Used</th>
           </tr>
         </thead>
@@ -102,7 +102,9 @@ export function Special({ state }: { state: SpecialBlock }) {
                   </td>
                   <td className="text-center">{entry.name}</td>
                   <td className="text-center">{entry.usesLimit}</td>
-                  <td className="text-center">{entry.used}</td>
+                  <td>
+                    <InlineInput value={entry.used} onChange={(e) => handleChange("used", i, e.target.value)} />
+                  </td>
                 </tr>
                 {entry.toggleDescr && (
                   <tr>
