@@ -6,7 +6,6 @@ import SectionTitle from "../Components/SectionTitle";
 import { ArmorType, Blocks, SpeedList } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 import { SPECIAL_SIZE_MODIFIER } from "../constants";
-import Select from "../Components/Select";
 
 export function CombatBlock({ state }: { state: Blocks }) {
   const [editing, setEditing] = useState(false);
@@ -617,7 +616,7 @@ export function CombatBlock({ state }: { state: Blocks }) {
             <tr>
               <td>Type</td>
               <td>
-                <Select
+                <select
                   value={state.combat.equipment.armor.armorType}
                   onChange={(e) => handleArmorTypeChange(e.target.value as ArmorType)}
                 >
@@ -626,7 +625,7 @@ export function CombatBlock({ state }: { state: Blocks }) {
                       {ARMOR_TYPES[type]}
                     </option>
                   ))}
-                </Select>
+                </select>
               </td>
               <td></td>
             </tr>
