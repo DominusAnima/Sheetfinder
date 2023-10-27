@@ -54,7 +54,6 @@ export enum Alignment {
 
 export interface AbilityBlock {
   abilities: Abilities;
-  toggleDetail: boolean;
 }
 
 export interface Abilities {
@@ -117,7 +116,6 @@ export interface HPBlock {
 
 //pull total skill ranks from ClassrecordBlock.ClassStatTotals.skill
 export interface SkillBlock {
-  detailToggle: boolean;
   totalRanks: number;
   remainRanks: number;
   skills: Array<Skill>;
@@ -220,7 +218,6 @@ export interface SpecialEntry {
 }
 
 export interface MagicBlock {
-  detailToggle: boolean;
   casterClass: string;
   specialty: CasterSpecialty;
   casterLvl: string;
@@ -296,7 +293,6 @@ export interface EquipBlock {
   bags: Array<Bag>;
   coinPurse: Array<Money>;
   weight: CarriedLoad;
-  toggleDetail: boolean;
 }
 
 export interface Item {

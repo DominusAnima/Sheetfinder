@@ -22,7 +22,6 @@ import {
 import { emptySpell, initSpellSlot, makeEmptyItem } from "./constants";
 
 const DEFAULT_EQUIP_BLOCK: EquipBlock = {
-  toggleDetail: true,
   inventory: [makeEmptyItem(EquipSlot.NONE)],
   worn: {
     belt: makeEmptyItem(EquipSlot.BELT),
@@ -59,7 +58,6 @@ const DEFAULT_FEAT_BLOCK: FeatBlock = {
 };
 
 const DEFAULT_MAGIC: MagicBlock = {
-  detailToggle: true,
   casterClass: "-",
   specialty: { mainSpecial: [{ name: "-" }], subSpecial: [{ name: "-" }] },
   casterLvl: "0",
@@ -189,7 +187,6 @@ const DEFAULT_COMBAT_BLOCK: CombatBlock = {
 };
 
 const DEFAULT_SKILL_BLOCK: SkillBlock = {
-  detailToggle: true,
   totalRanks: 0,
   remainRanks: 0,
   skills: [
@@ -476,7 +473,6 @@ const DEFAULT_RECORD_BLOCK: ClassRecordBlock = {
 };
 
 const DEFAULT_ABILITIES: AbilityBlock = {
-  toggleDetail: true,
   abilities: {
     str: {
       total: 0,

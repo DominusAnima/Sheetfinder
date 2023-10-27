@@ -43,7 +43,6 @@ export type ReducerAction =
   | ChangeCasterSpecialFieldAction
   | AddCasterSpecialAction
   | ChangeMagicFieldAction
-  | ToggleMagicDetailAction
   | changeManeuverBonusAction
   | AddBagAction
   | RemoveBagAction
@@ -55,7 +54,6 @@ export type ReducerAction =
   | ToggleWornDescrAction
   | unequipItemAction
   | equipItemAction
-  | ToggleEquipDetailAction
   | AddInventoryEntryAction
   | RemoveInventoryEntryAction
   | ChangeInventoryEntrySlotAction
@@ -76,14 +74,12 @@ export type ReducerAction =
   | changeAttackBonusAction
   | changeSaveBonusAction
   | changeACBonusAction
-  | toggleSkillDetailAction
   | toggleSkillAction
   | ChangeSkillFieldAction
   | ChangeClassEntryFieldAction
   | AddClassEntryAction
   | RemoveClassEntryAction
   | ChangeHPFieldAction
-  | AbilToggleAction
   | ChangeBioAction
   | RecalculateAction
   | ChangeAbilFieldAction;
@@ -108,10 +104,6 @@ type ChangeAbilFieldAction = {
     field: "base" | "enh" | "size" | "misc" | "damage" | "drain";
     value: string;
   };
-};
-
-type AbilToggleAction = {
-  type: "abilToggle";
 };
 
 type ChangeHPFieldAction = {
@@ -164,10 +156,6 @@ type toggleSkillAction = {
     skillIndex: number;
     field: "classSkill" | "trained";
   };
-};
-
-type toggleSkillDetailAction = {
-  type: "toggleSkillDetail";
 };
 
 type changeACBonusAction = {
@@ -302,10 +290,6 @@ type AddInventoryEntryAction = {
   type: "addInventoryEntry";
 };
 
-type ToggleEquipDetailAction = {
-  type: "toggleEquipDetail";
-};
-
 type equipItemAction = {
   type: "equipItem";
   payload: {
@@ -377,10 +361,6 @@ type RemoveBagAction = {
 
 type AddBagAction = {
   type: "addBag";
-};
-
-type ToggleMagicDetailAction = {
-  type: "toggleMagicDetail";
 };
 
 type ChangeMagicFieldAction = {
@@ -717,17 +697,6 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
       return newState;
     }
-    case "abilToggle": {
-      const newState: Blocks = {
-        ...state,
-        abilityBlock: {
-          ...state.abilityBlock,
-          toggleDetail: !state.abilityBlock.toggleDetail,
-        },
-      };
-
-      return newState;
-    }
     case "changeHPField": {
       const newState: Blocks = {
         ...state,
@@ -834,17 +803,6 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       };
 
       reducer(newState, { type: "recalculate" });
-
-      return newState;
-    }
-    case "toggleSkillDetail": {
-      const newState: Blocks = {
-        ...state,
-        skills: {
-          ...state.skills,
-          detailToggle: !state.skills.detailToggle,
-        },
-      };
 
       return newState;
     }
@@ -1219,17 +1177,6 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
 
       return newState;
     }
-    case "toggleEquipDetail": {
-      const newState: Blocks = {
-        ...state,
-        equipment: {
-          ...state.equipment,
-          toggleDetail: !state.equipment.toggleDetail,
-        },
-      };
-
-      return newState;
-    }
     case "equipItem": {
       if (
         JSON.stringify(state.equipment.worn[action.payload.item.slot] as Item) !==
@@ -1485,17 +1432,6 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       };
 
       reducer(newState, { type: "recalculate" });
-
-      return newState;
-    }
-    case "toggleMagicDetail": {
-      const newState: Blocks = {
-        ...state,
-        magic: {
-          ...state.magic,
-          detailToggle: !state.magic.detailToggle,
-        },
-      };
 
       return newState;
     }

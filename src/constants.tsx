@@ -12,14 +12,14 @@ export const ABILITY_LABELS: { [key in keyof Abilities]: string } = {
 };
 export const makeEmptyItem = (slot: EquipSlot): Item => {
   return {
-    description: "",
-    hp: "",
-    name: "",
-    qtyOrUses: "",
+    description: "-",
+    hp: "-",
+    name: "-",
+    qtyOrUses: "-",
     slot,
     toggleDescr: false,
-    value: "",
-    weight: "",
+    value: "-",
+    weight: "0",
   };
 };
 
@@ -34,7 +34,7 @@ export const emptySpell = (): Spell => {
     lvl: "0",
     prepared: "0",
     name: "-",
-    toggleDescr: true,
+    toggleDescr: false,
     description: "-",
     school: "-",
     duration: "-",
