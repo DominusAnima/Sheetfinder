@@ -1,10 +1,7 @@
 IMPORTANT:
-  add fields for equipped weapons, armor and shield to combat block
-  combat block also needs CMD and CMB
+  add firebase functionality
 
 NON-ESSENTIAL:
-  update the state structure graph and export an image, so others can see it without special software (structure is still being changed, so any graph made now wouldn't reflect it correctly)
   change combat tables into arrays, so they can be initialized in a loop
   merge change combat block field functions in reducer
-  add toggle detail button to all blocks
   add text field to some blocks for notes
