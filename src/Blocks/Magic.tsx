@@ -90,17 +90,19 @@ export function Magic({ state }: { state: MagicBlock }) {
         <Field label="Spells per Day" />
         <table className="table table--striped w-full mt-4">
           <thead>
-            <th className="whitespace-nowrap">Level</th>
-            <th className="whitespace-nowrap">DC</th>
-            <th className="whitespace-nowrap">Total</th>
-            {editing && (
-              <>
-                <th className="whitespace-nowrap">Class</th>
-                <th className="whitespace-nowrap">Ability</th>
-                <th className="whitespace-nowrap">Misc</th>
-              </>
-            )}
-            <th className="whitespace-nowrap">Available</th>
+            <tr>
+              <th className="whitespace-nowrap">Level</th>
+              <th className="whitespace-nowrap">DC</th>
+              <th className="whitespace-nowrap">Total</th>
+              {editing && (
+                <>
+                  <th className="whitespace-nowrap">Class</th>
+                  <th className="whitespace-nowrap">Ability</th>
+                  <th className="whitespace-nowrap">Misc</th>
+                </>
+              )}
+              <th className="whitespace-nowrap">Available</th>
+            </tr>
           </thead>
           {editing ? (
             <tbody>
