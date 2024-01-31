@@ -17,23 +17,20 @@ export function DocSelectPage({
   useEffect(() => {
     async function fetchDocList() {
       try {
-        setDocList(await getDocList(userId));
-      } catch (error) {
-        if (error == "empty") {
-          console.log("No saved docs found. Creating a new doc.");
-          docIdSetter(await saveNew(DEFAULT_STATE, userId));
-        } else {
-          console.error(error);
+        if (docList == undefined) {
+          setDocList(await getDocList(userId));
         }
+      } catch (error) {
+        console.error(error);
       }
     }
     fetchDocList();
-  }, []);
+  }, [docList]);
 
   if (docList == undefined) {
     return <label>Loading</label>;
   } else {
-    return <LoadedSelectPage userId={userId} docList={docList} docIdSetter={docIdSetter} />;
+    return <LoadedSelectPage userId={userId} docList={docList} docIdSetter={docIdSetter} docListSetter={setDocList} />;
   }
 }
 
@@ -41,10 +38,12 @@ function LoadedSelectPage({
   userId,
   docList,
   docIdSetter,
+  docListSetter,
 }: {
   userId: string;
   docList: QueryDocumentSnapshot<DocumentData, DocumentData>[];
   docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docListSetter: React.Dispatch<React.SetStateAction<QueryDocumentSnapshot<DocumentData, DocumentData>[] | undefined>>;
 }) {
   return (
     <Container>
@@ -64,17 +63,21 @@ function LoadedSelectPage({
         </thead>
         <tbody>
           {docList.map((e) => (
-            <tr>
+            <tr key={e.id}>
               <td>{e.data().bio.name}</td>
               <td>{e.data().classRecorder.totals.levels}</td>
               <td>
-                <Button onClick={() => docIdSetter(e.id)}>Open Character Sheet</Button>
+                <Button size="small" onClick={() => docIdSetter(e.id)}>
+                  Open Character Sheet
+                </Button>
               </td>
               <td>
                 <Button
-                  onClick={() => {
+                  size="small"
+                  onClick={async () => {
                     if (confirm("Are you sure you want to pemanently delete this character?")) {
-                      deleteCharacter(e.id);
+                      await deleteCharacter(userId + "/" + e.id);
+                      docListSetter(undefined);
                     }
                   }}
                 >

@@ -97,7 +97,10 @@ function LoadedSheetPage({
         </Button>
         <Button
           onClick={() => {
-            docIdSetter(undefined);
+            async function unload() {
+              docIdSetter(undefined);
+            }
+            unload();
           }}
         >
           Change Character Sheet

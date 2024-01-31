@@ -7,7 +7,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { DocumentData, QueryDocumentSnapshot, addDoc, collection, connectFirestoreEmulator, deleteDoc, doc, getDoc, getDocs, getFirestore, orderBy, query, setDoc } from "firebase/firestore";
+import { DocumentData, QueryDocumentSnapshot, addDoc, collection, connectFirestoreEmulator, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc } from "firebase/firestore";
 import { Blocks } from "./charSheet";
 
 const firebaseConfig = {
@@ -46,11 +46,13 @@ export const logOutGoogle = () => {
 }
 
 // Activates whenever a user logs in, or logs out
-export const monitorAuthState = async (setUserId: React.Dispatch<React.SetStateAction<string | undefined>>, setDataId: React.Dispatch<React.SetStateAction<string | undefined>>) => {
+export const monitorAuthState = (setUserId: React.Dispatch<React.SetStateAction<string | undefined>>, setDataId: React.Dispatch<React.SetStateAction<string | undefined>>) => {
   onAuthStateChanged(auth, user => {
     if(user) {
+      console.log("Setting user state to: " + user.uid);
       setUserId(user.uid);
     } else {
+      console.log("Resetting Id states to undefined.")
       setUserId(undefined);
       setDataId(undefined);
     }
@@ -94,16 +96,21 @@ export const saveNew = async (state: Blocks, collectionName: string ): Promise<s
 
 // Returns a list of docs in the provided collection.
 export async function getDocList(collectionName: string): Promise<QueryDocumentSnapshot<DocumentData, DocumentData>[]> {
-  const docsQuery = query(collection(firestore, collectionName), orderBy('state.bio.name'));
-
   try {
-    const querySnapshot = await getDocs(docsQuery);
-    if (querySnapshot.empty) {
-      return Promise.reject("empty");
+    const docsQuery = query(collection(firestore, collectionName));
+
+    try {
+      const querySnapshot = await getDocs(docsQuery);
+      querySnapshot.forEach((snap) => {
+        console.log('Document ', snap.id, 'contains', snap.data() as Blocks);
+      })
+      return querySnapshot.docs;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    return querySnapshot.docs;
   } catch (error) {
-    return Promise.reject(error);
+    throw error;
   }
 }
 

@@ -10,9 +10,13 @@ export default function App() {
   const [userId, setUserId] = useState<string>();
   const [dataId, setDataId] = useState<string>();
   const [page, setPage] = useState<JSX.Element>(<LoginPage />);
-  monitorAuthState(setUserId, setDataId);
 
   useEffect(() => {
+    monitorAuthState(setUserId, setDataId);
+  }, []);
+
+  useEffect(() => {
+    console.log("New user state", userId, dataId);
     if (userId != undefined) {
       if (dataId != undefined) {
         setPage(<SheetPage userId={userId} docId={dataId} docIdSetter={setDataId} />);
