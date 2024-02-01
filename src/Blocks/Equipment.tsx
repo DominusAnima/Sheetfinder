@@ -9,6 +9,7 @@ import Field from "../Components/Field";
 import { FaPlusCircle } from "react-icons/fa";
 import Button from "../Components/Button";
 import InlineInput from "../Components/InlineInput";
+import Textarea from "../Components/Textarea";
 
 const SLOTS: { [K in EquipSlot]: string } = {
   belt: "Belt",
@@ -195,7 +196,7 @@ export function Equipment({ state }: { state: Blocks }) {
                         size="small"
                         onClick={() => {
                           if (confirm("Are you sure?")) {
-                            dispatch({ type: "unequipItem", payload: { item: entry } });
+                            dispatch({ type: "removeInventoryEntry", payload: { entry: entry } });
                           }
                         }}
                       >
@@ -206,9 +207,10 @@ export function Equipment({ state }: { state: Blocks }) {
                   {entry.toggleDescr && (
                     <tr>
                       <td colSpan={6}>
-                        <InlineInput
+                        <Textarea
                           value={entry.description}
                           onChange={(e) => handleInvChange("description", i, e.target.value)}
+                          rows={1}
                         />
                       </td>
                     </tr>
@@ -242,7 +244,7 @@ export function Equipment({ state }: { state: Blocks }) {
                   {entry.toggleDescr && (
                     <tr>
                       <td className="text-center" colSpan={3}>
-                        {entry.description}
+                        {entry.description.trim()}
                       </td>
                     </tr>
                   )}
@@ -338,9 +340,10 @@ export function Equipment({ state }: { state: Blocks }) {
                   {item.toggleDescr && (
                     <tr>
                       <td colSpan={7}>
-                        <InlineInput
+                        <Textarea
                           value={item.description}
                           onChange={(e) => handleWornChange("description", item, e.target.value)}
+                          rows={1}
                         />
                       </td>
                     </tr>
@@ -371,11 +374,8 @@ export function Equipment({ state }: { state: Blocks }) {
                   </tr>
                   {item.toggleDescr && (
                     <tr>
-                      <td colSpan={4}>
-                        <InlineInput
-                          value={item.description}
-                          onChange={(e) => handleWornChange("description", item, e.target.value)}
-                        />
+                      <td colSpan={4} className="text-center">
+                        {item.description.trim()}
                       </td>
                     </tr>
                   )}
@@ -469,9 +469,10 @@ export function Equipment({ state }: { state: Blocks }) {
                   {bag.toggleDescr && (
                     <tr>
                       <td colSpan={7}>
-                        <InlineInput
+                        <Textarea
                           value={bag.description}
                           onChange={(e) => handleBagChange("description", bag, e.target.value)}
+                          rows={1}
                         />
                       </td>
                     </tr>
@@ -496,7 +497,7 @@ export function Equipment({ state }: { state: Blocks }) {
                   {bag.toggleDescr && (
                     <tr>
                       <td className="text-center" colSpan={4}>
-                        {bag.description}
+                        {bag.description.trim()}
                       </td>
                     </tr>
                   )}

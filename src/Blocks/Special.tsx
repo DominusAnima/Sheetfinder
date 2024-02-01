@@ -7,6 +7,7 @@ import Button from "../Components/Button";
 import InlineInput from "../Components/InlineInput";
 import { useState } from "react";
 import EditButton from "../Components/EditButton";
+import Textarea from "../Components/Textarea";
 
 export function Special({ state }: { state: SpecialBlock }) {
   const [editing, setEditing] = useState(false);
@@ -77,9 +78,10 @@ export function Special({ state }: { state: SpecialBlock }) {
                 {entry.toggleDescr && (
                   <tr>
                     <td colSpan={4}>
-                      <InlineInput
+                      <Textarea
                         value={entry.description}
                         onChange={(e) => handleChange("description", i, e.target.value)}
+                        rows={1}
                       />
                     </td>
                   </tr>
@@ -109,7 +111,7 @@ export function Special({ state }: { state: SpecialBlock }) {
                 {entry.toggleDescr && (
                   <tr>
                     <td colSpan={4} className="text-center">
-                      {entry.description}
+                      {entry.description.trim()}
                     </td>
                   </tr>
                 )}

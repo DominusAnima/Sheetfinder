@@ -7,6 +7,7 @@ import FlatButton from "../Components/FlatButton";
 import { FaPlusCircle } from "react-icons/fa";
 import Button from "../Components/Button";
 import InlineInput from "../Components/InlineInput";
+import Textarea from "../Components/Textarea";
 
 export function Feats({ state }: { state: FeatBlock }) {
   const [editing, setEditing] = useState(false);
@@ -61,9 +62,10 @@ export function Feats({ state }: { state: FeatBlock }) {
                 {entry.toggleDescr && (
                   <tr>
                     <td colSpan={2}>
-                      <InlineInput
+                      <Textarea
                         value={entry.description}
                         onChange={(e) => handleChange("description", i, e.target.value)}
+                        rows={1}
                       />
                     </td>
                   </tr>
@@ -86,7 +88,7 @@ export function Feats({ state }: { state: FeatBlock }) {
                 {entry.toggleDescr && (
                   <tr>
                     <td colSpan={2} className="text-center">
-                      {entry.description}
+                      {entry.description.trim()}
                     </td>
                   </tr>
                 )}

@@ -1,7 +1,8 @@
 IMPORTANT:
-  add firebase functionality
+  allow creation of multiple magic blocks
 
 NON-ESSENTIAL:
+  add button to hide individual blocks
   change combat tables into arrays, so they can be initialized in a loop
   merge change combat block field functions in reducer
   add text field to some blocks for notes

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { deleteCharacter, getDocList, saveNew } from "../firebase";
+import { deleteCharacter, getDocList, logOutGoogle, saveNew } from "../firebase";
 import { DEFAULT_STATE } from "../DefaultState";
 import Button from "../Components/Button";
 import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import Container from "../Components/Container";
+import { reducer } from "../reducer";
 
 export function DocSelectPage({
   userId,
@@ -49,10 +50,19 @@ function LoadedSelectPage({
     <Container>
       <Button
         onClick={async () => {
-          docIdSetter(await saveNew(DEFAULT_STATE, userId));
+          docIdSetter(await saveNew(reducer(DEFAULT_STATE, { type: "recalculate" }), userId));
         }}
       >
         Create new Character
+      </Button>
+      <Button
+        onClick={() => {
+          if (confirm("Are you sure you want to sign out?")) {
+            logOutGoogle();
+          }
+        }}
+      >
+        Sign out
       </Button>
       <table className="table table--striped w-full mt-4">
         <thead>

@@ -8,6 +8,7 @@ import InlineInput from "../Components/InlineInput";
 import Button from "../Components/Button";
 import { FaPlusCircle } from "react-icons/fa";
 import FlatButton from "../Components/FlatButton";
+import Textarea from "../Components/Textarea";
 
 export function Magic({ state }: { state: MagicBlock }) {
   const [editing, setEditing] = useState(false);
@@ -390,9 +391,10 @@ export function Magic({ state }: { state: MagicBlock }) {
                     {spell.toggleDescr && (
                       <tr>
                         <td colSpan={9}>
-                          <InlineInput
+                          <Textarea
                             onChange={(e) => handleSpellChange("description", spell, e.target.value)}
                             value={spell.description}
+                            rows={1}
                           />
                         </td>
                       </tr>
@@ -425,7 +427,7 @@ export function Magic({ state }: { state: MagicBlock }) {
                     {spell.toggleDescr && (
                       <tr>
                         <td colSpan={4} className="text-center">
-                          {spell.description}
+                          {spell.description.trim()}
                         </td>
                       </tr>
                     )}

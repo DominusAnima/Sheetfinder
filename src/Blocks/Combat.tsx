@@ -6,6 +6,7 @@ import SectionTitle from "../Components/SectionTitle";
 import { ArmorType, Blocks, SpeedList } from "../charSheet";
 import { useFormDispatch } from "../lib/useFormDispatch";
 import { SPECIAL_SIZE_MODIFIER } from "../constants";
+import Textarea from "../Components/Textarea";
 
 export function CombatBlock({ state }: { state: Blocks }) {
   const [editing, setEditing] = useState(false);
@@ -649,15 +650,17 @@ export function CombatBlock({ state }: { state: Blocks }) {
             <tr>
               <td>Notes</td>
               <td>
-                <InlineInput
+                <Textarea
                   value={state.combat.equipment.armor.description}
                   onChange={(e) => handleArmorChange("armor", "description", e.target.value)}
+                  rows={1}
                 />
               </td>
               <td>
-                <InlineInput
+                <Textarea
                   value={state.combat.equipment.shield.description}
                   onChange={(e) => handleArmorChange("shield", "description", e.target.value)}
+                  rows={1}
                 />
               </td>
             </tr>
@@ -671,8 +674,8 @@ export function CombatBlock({ state }: { state: Blocks }) {
             </tr>
             <tr>
               <td>Notes</td>
-              <td className="text-center value">{state.combat.equipment.armor.description}</td>
-              <td className="text-center value">{state.combat.equipment.shield.description}</td>
+              <td className="text-center value">{state.combat.equipment.armor.description.trim()}</td>
+              <td className="text-center value">{state.combat.equipment.shield.description.trim()}</td>
             </tr>
           </tbody>
         )}
@@ -787,15 +790,17 @@ export function CombatBlock({ state }: { state: Blocks }) {
             <tr>
               <td>Notes</td>
               <td>
-                <InlineInput
+                <Textarea
                   value={state.combat.equipment.mainWeapon.description}
                   onChange={(e) => handleWeaponChange("mainWeapon", "description", e.target.value)}
+                  rows={1}
                 />
               </td>
               <td>
-                <InlineInput
+                <Textarea
                   value={state.combat.equipment.offhand.description}
                   onChange={(e) => handleWeaponChange("offhand", "description", e.target.value)}
+                  rows={1}
                 />
               </td>
             </tr>

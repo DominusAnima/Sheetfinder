@@ -82,7 +82,8 @@ export type ReducerAction =
   | ChangeHPFieldAction
   | ChangeBioAction
   | RecalculateAction
-  | ChangeAbilFieldAction;
+  | ChangeAbilFieldAction
+  | ChangeFavClassAction;
 
 type RecalculateAction = {
   type: "recalculate";
@@ -472,6 +473,13 @@ type ChangeWeaponFieldAction = {
   };
 };
 
+type ChangeFavClassAction = {
+  type: "changeFavClass";
+  payload: {
+    value: string;
+  };
+};
+
 export function reducer(state: Blocks, action: ReducerAction): Blocks {
   switch (action.type) {
     case "recalculate": {
@@ -499,13 +507,14 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       newClassRecTot.will = 0;
       newClassRecTot.skill = 0;
       newClassRecTot.levels = 0;
+      newState.skills.totalRanks = 0;
       //reset max hp
       const newHP = newState.hitPoints;
       newHP.maxPoints = 0;
       //calculate total bab, skill points, favoured bonus, saves and levels before ability modifiers
       newState.classRecorder.entries.forEach((entry) => {
         newClassRecTot.bab += Number(entry.bab);
-        newClassRecTot.favClassBonus += Number(entry.favClassBonus);
+        newClassRecTot.favClassBonus += Number(entry.favClassBonus) * Number(entry.levels);
         newClassRecTot.fort += Number(entry.fort);
         newClassRecTot.ref += Number(entry.ref);
         newClassRecTot.will += Number(entry.will);
@@ -515,6 +524,14 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
         let classHP = entry.hitDie.match(/(\d+)/); //extracts numbers from a string
         if (classHP && Number(entry.levels) > 0) {
           newHP.maxPoints += Number(classHP[0]) + (Math.floor(Number(classHP[0]) / 2) + 1) * (Number(entry.levels) - 1);
+        }
+        //check if this is the favoured class and if the favoured bonus is hp or skill point
+        if (newState.classRecorder.favClass === entry.name) {
+          if (entry.favClassBonusType.localeCompare("hp", undefined, { sensitivity: "accent" }) === 0) {
+            newHP.maxPoints += Number(entry.favClassBonus) * Number(entry.levels);
+          } else if (entry.favClassBonusType.localeCompare("skill point", undefined, { sensitivity: "accent" }) === 0) {
+            newState.skills.totalRanks = Number(entry.favClassBonus) * Number(entry.levels);
+          }
         }
       });
       newHP.maxPoints += Number(newState.classRecorder.totals.levels * newState.abilityBlock.abilities.con.mod);
@@ -617,7 +634,9 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       //calculate skill rank amounts and skill bonus totals
       newState.skills.totalRanks = Math.max(
         0,
-        newClassRecTot.skill + newClassRecTot.levels * newState.abilityBlock.abilities.int.mod
+        newState.skills.totalRanks +
+          newClassRecTot.skill +
+          newClassRecTot.levels * newState.abilityBlock.abilities.int.mod
       );
       newState.skills.remainRanks = newState.skills.totalRanks;
       newState.skills.skills.forEach((element) => {
@@ -1618,6 +1637,17 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       };
 
       reducer(newState, { type: "recalculate" });
+
+      return newState;
+    }
+    case "changeFavClass": {
+      const newState: Blocks = {
+        ...state,
+        classRecorder: {
+          ...state.classRecorder,
+          favClass: action.payload.value,
+        },
+      };
 
       return newState;
     }
