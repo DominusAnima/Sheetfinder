@@ -57,7 +57,7 @@ const DEFAULT_FEAT_BLOCK: FeatBlock = {
   entries: [{ name: "-", toggleDescr: true, description: "-" }],
 };
 
-const DEFAULT_MAGIC: MagicBlock = {
+export const DEFAULT_MAGIC: MagicBlock = {
   casterClass: "-",
   specialty: { mainSpecial: [{ name: "-" }], subSpecial: [{ name: "-" }] },
   casterLvl: "0",
@@ -562,7 +562,7 @@ export const DEFAULT_STATE: Blocks = {
   skills: DEFAULT_SKILL_BLOCK,
   combat: DEFAULT_COMBAT_BLOCK,
   special: DEFAULT_SPECIAL_BLOCK, //active abilities
-  magic: DEFAULT_MAGIC,
+  magic: [DEFAULT_MAGIC],
   featList: DEFAULT_FEAT_BLOCK,
   equipment: DEFAULT_EQUIP_BLOCK,
 };

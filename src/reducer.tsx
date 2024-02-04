@@ -1,4 +1,4 @@
-import { DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
+import { DEFAULT_MAGIC, DEFAULT_STATE, buildClassRecordEntry } from "./DefaultState";
 import {
   Abilities,
   ArmorType,
@@ -83,7 +83,9 @@ export type ReducerAction =
   | ChangeBioAction
   | RecalculateAction
   | ChangeAbilFieldAction
-  | ChangeFavClassAction;
+  | ChangeFavClassAction
+  | AddMagicBlockAction
+  | RemoveMagicBlockAction;
 
 type RecalculateAction = {
   type: "recalculate";
@@ -369,6 +371,7 @@ type ChangeMagicFieldAction = {
   payload: {
     field: "casterClass" | "casterLvl";
     value: string;
+    index: number;
   };
 };
 
@@ -376,6 +379,7 @@ type AddCasterSpecialAction = {
   type: "addCasterSpecial";
   payload: {
     specialType: keyof CasterSpecialty;
+    index: number;
   };
 };
 
@@ -385,6 +389,7 @@ type ChangeCasterSpecialFieldAction = {
     specialType: keyof CasterSpecialty;
     entry: CasterSpecialEntry;
     value: string;
+    index: number;
   };
 };
 
@@ -393,6 +398,7 @@ type RemoveCasterSpecialAction = {
   payload: {
     specialType: keyof CasterSpecialty;
     entry: CasterSpecialEntry;
+    index: number;
   };
 };
 
@@ -402,6 +408,7 @@ type ChangeSpellSlotFieldAction = {
     slot: SpellSlot;
     field: keyof SpellSlot;
     value: string;
+    index: number;
   };
 };
 
@@ -409,6 +416,7 @@ type ToggleSpellDescrAction = {
   type: "toggleSpellDescr";
   payload: {
     spell: Spell;
+    index: number;
   };
 };
 
@@ -418,17 +426,22 @@ type ChangeSpellFieldAction = {
     field: "lvl" | "prepared" | "name" | "description" | "school" | "duration" | "range" | "saveType" | "spellRes";
     spell: Spell;
     value: string;
+    index: number;
   };
 };
 
 type AddSpellAction = {
   type: "addSpell";
+  payload: {
+    index: number;
+  };
 };
 
 type RemoveSpellAction = {
   type: "removeSpell";
   payload: {
     spell: Spell;
+    index: number;
   };
 };
 
@@ -477,6 +490,17 @@ type ChangeFavClassAction = {
   type: "changeFavClass";
   payload: {
     value: string;
+  };
+};
+
+type AddMagicBlockAction = {
+  type: "addMagicBlock";
+};
+
+type RemoveMagicBlockAction = {
+  type: "removeMagicBlock";
+  payload: {
+    index: number;
   };
 };
 
@@ -668,18 +692,20 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       newState.equipment.weight.medLoad = LOADS["medium"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
       newState.equipment.weight.heavyLoad = LOADS["heavy"][Math.min(newState.abilityBlock.abilities.str.total, 30)];
 
-      //calculate total spell slots and limit available spell slots
-      newState.magic.spellSlots.forEach(
-        (slot) => (
-          (slot.total = String(Number(slot.classAmount) + Number(slot.abilityBonus) + Number(slot.misc))),
-          (slot.available = String(Math.min(Number(slot.available), Number(slot.total))))
-        )
-      );
+      newState.magic.forEach((e) => {
+        //calculate total spell slots and limit available spell slots
+        e.spellSlots.forEach(
+          (slot) => (
+            (slot.total = String(Number(slot.classAmount) + Number(slot.abilityBonus) + Number(slot.misc))),
+            (slot.available = String(Math.min(Number(slot.available), Number(slot.total))))
+          )
+        );
 
-      //claculate spell ranges
-      newState.magic.closeRange = String(25 + Math.floor(Number(state.magic.casterLvl) / 2) * 5);
-      newState.magic.medRange = String(100 + Number(state.magic.casterLvl) * 10);
-      newState.magic.longRange = String(400 + Number(state.magic.casterLvl) * 40);
+        //claculate spell ranges
+        e.closeRange = String(25 + Math.floor(Number(e.casterLvl) / 2) * 5);
+        e.medRange = String(100 + Number(e.casterLvl) * 10);
+        e.longRange = String(400 + Number(e.casterLvl) * 40);
+      });
 
       return newState;
     }
@@ -1402,16 +1428,21 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "addCasterSpecial": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          specialty: {
-            ...state.magic.specialty,
-            [action.payload.specialType]: [
-              ...state.magic.specialty[action.payload.specialType],
-              EmptyCasterSpecialEntry(),
-            ],
-          },
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                specialty: {
+                  ...e.specialty,
+                  [action.payload.specialType]: [...e.specialty[action.payload.specialType], EmptyCasterSpecialEntry()],
+                },
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       return newState;
@@ -1419,24 +1450,32 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "changeCasterSpecialField": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          specialty: {
-            ...state.magic.specialty,
-            [action.payload.specialType]: [
-              ...state.magic.specialty[action.payload.specialType].map((e) => {
-                if (e === action.payload.entry) {
-                  return {
-                    ...e,
-                    name: action.payload.value,
-                  };
-                } else {
-                  return e;
-                }
-              }),
-            ],
-          },
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                specialty: {
+                  ...e.specialty,
+                  [action.payload.specialType]: [
+                    ...e.specialty[action.payload.specialType].map((e) => {
+                      if (e === action.payload.entry) {
+                        return {
+                          ...e,
+                          name: action.payload.value,
+                        };
+                      } else {
+                        return e;
+                      }
+                    }),
+                  ],
+                },
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       return newState;
@@ -1444,10 +1483,15 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "changeMagicField": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          [action.payload.field]: action.payload.value,
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return { ...e, [action.payload.field]: action.payload.value };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       reducer(newState, { type: "recalculate" });
@@ -1457,15 +1501,23 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "removeCasterSpecial": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          specialty: {
-            ...state.magic.specialty,
-            [action.payload.specialType]: [
-              ...state.magic.specialty[action.payload.specialType].filter((entry) => entry !== action.payload.entry),
-            ],
-          },
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                specialty: {
+                  ...e.specialty,
+                  [action.payload.specialType]: [
+                    ...e.specialty[action.payload.specialType].filter((entry) => entry !== action.payload.entry),
+                  ],
+                },
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       return newState;
@@ -1473,21 +1525,29 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "changeSpellSlotField": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          spellSlots: [
-            ...state.magic.spellSlots.map((slot) => {
-              if (slot === action.payload.slot) {
-                return {
-                  ...slot,
-                  [action.payload.field]: action.payload.value,
-                };
-              } else {
-                return slot;
-              }
-            }),
-          ],
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                spellSlots: [
+                  ...e.spellSlots.map((slot) => {
+                    if (slot === action.payload.slot) {
+                      return {
+                        ...slot,
+                        [action.payload.field]: action.payload.value,
+                      };
+                    } else {
+                      return slot;
+                    }
+                  }),
+                ],
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       reducer(newState, { type: "recalculate" });
@@ -1497,21 +1557,29 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "toggleSpellDescr": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          spellsKnown: [
-            ...state.magic.spellsKnown.map((spell) => {
-              if (spell === action.payload.spell) {
-                return {
-                  ...spell,
-                  toggleDescr: !spell.toggleDescr,
-                };
-              } else {
-                return spell;
-              }
-            }),
-          ],
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                spellsKnown: [
+                  ...e.spellsKnown.map((spell) => {
+                    if (spell === action.payload.spell) {
+                      return {
+                        ...spell,
+                        toggleDescr: !spell.toggleDescr,
+                      };
+                    } else {
+                      return spell;
+                    }
+                  }),
+                ],
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       return newState;
@@ -1519,21 +1587,29 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "changeSpellField": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          spellsKnown: [
-            ...state.magic.spellsKnown.map((spell) => {
-              if (spell === action.payload.spell) {
-                return {
-                  ...spell,
-                  [action.payload.field]: action.payload.value,
-                };
-              } else {
-                return spell;
-              }
-            }),
-          ],
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                spellsKnown: [
+                  ...e.spellsKnown.map((spell) => {
+                    if (spell === action.payload.spell) {
+                      return {
+                        ...spell,
+                        [action.payload.field]: action.payload.value,
+                      };
+                    } else {
+                      return spell;
+                    }
+                  }),
+                ],
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       return newState;
@@ -1541,10 +1617,18 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "addSpell": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          spellsKnown: [...state.magic.spellsKnown, emptySpell()],
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                spellsKnown: [...e.spellsKnown, emptySpell()],
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       return newState;
@@ -1552,10 +1636,18 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
     case "removeSpell": {
       const newState: Blocks = {
         ...state,
-        magic: {
-          ...state.magic,
-          spellsKnown: state.magic.spellsKnown.filter((spell) => spell !== action.payload.spell),
-        },
+        magic: [
+          ...state.magic.map((e, i) => {
+            if (i === action.payload.index) {
+              return {
+                ...e,
+                spellsKnown: e.spellsKnown.filter((spell) => spell !== action.payload.spell),
+              };
+            } else {
+              return e;
+            }
+          }),
+        ],
       };
 
       return newState;
@@ -1647,6 +1739,22 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
           ...state.classRecorder,
           favClass: action.payload.value,
         },
+      };
+
+      return newState;
+    }
+    case "addMagicBlock": {
+      const newState: Blocks = {
+        ...state,
+        magic: [...state.magic, DEFAULT_MAGIC],
+      };
+
+      return newState;
+    }
+    case "removeMagicBlock": {
+      const newState: Blocks = {
+        ...state,
+        magic: state.magic.filter((_block, i) => i !== action.payload.index),
       };
 
       return newState;

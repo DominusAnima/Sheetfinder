@@ -6,7 +6,7 @@ export interface Blocks {
   skills: SkillBlock;
   combat: CombatBlock;
   special: SpecialBlock; //active abilities
-  magic: MagicBlock;
+  magic: MagicBlock[];
   featList: FeatBlock;
   equipment: EquipBlock;
 }
