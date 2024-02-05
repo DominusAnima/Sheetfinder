@@ -51,7 +51,7 @@ export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
             </Button>
           </div>
           <div className="flex flex-wrap gap-x-2">
-            {state.favClass === entry.name && (
+            {entry.name !== "" && state.favClass === entry.name && (
               <>
                 {"Favoured Class Bonus Type:"}
                 <ModalInput
@@ -63,18 +63,17 @@ export function ClassRecorder({ state }: { state: ClassRecordBlock }) {
             )}
             {fields.map((field) => (
               <>
-                {state.favClass === entry.name ||
-                  (state.favClass !== entry.name && field !== "favClassBonus" && (
-                    <div key={field}>
-                      {field}:{" "}
-                      <ModalInput
-                        type="number"
-                        value={entry[field]}
-                        placeholder={`{${field}}`}
-                        onChange={(v) => handleChange(i, field, v)}
-                      />
-                    </div>
-                  ))}
+                {(state.favClass === entry.name || (state.favClass !== entry.name && field !== "favClassBonus")) && (
+                  <div key={field}>
+                    {field}:{" "}
+                    <ModalInput
+                      type="number"
+                      value={entry[field]}
+                      placeholder={`{${field}}`}
+                      onChange={(v) => handleChange(i, field, v)}
+                    />
+                  </div>
+                )}
               </>
             ))}
           </div>

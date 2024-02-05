@@ -16,6 +16,7 @@ import { reducer } from "../reducer";
 import { Blocks } from "../charSheet";
 import { loadState, logOutGoogle, saveState } from "../firebase";
 import { DEFAULT_STATE } from "../DefaultState";
+import Field from "../Components/Field";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
@@ -45,7 +46,7 @@ export function SheetPage({
   }, []);
 
   if (state == undefined) {
-    return <label>Loading</label>;
+    return <label className="text-center">Loading</label>;
   } else {
     return <LoadedSheetPage userId={userId} docId={docId} docIdSetter={docIdSetter} initState={state} />;
   }
@@ -76,7 +77,7 @@ function LoadedSheetPage({
 
   return (
     <FormContextProvider dispatch={dispatch}>
-      <Container>
+      <Field className="text-center">
         <Button
           onClick={() => {
             if (confirm("Are you sure you want to reset the entire character sheet?")) {
@@ -105,7 +106,7 @@ function LoadedSheetPage({
         >
           Change Character Sheet
         </Button>
-      </Container>
+      </Field>
       <Container>
         <Bio state={state.bio} />
         <ClassRecorder state={state.classRecorder} />
