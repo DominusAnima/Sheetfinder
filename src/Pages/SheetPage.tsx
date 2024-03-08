@@ -67,8 +67,23 @@ function LoadedSheetPage({
   const [state, dispatch] = useReducer(reducer, initState, initialize);
 
   useEffect(() => {
+    const handleUnload = (event: any) => {
+      // doesn't work. Saves arguments when the listener is created and uses those instead of the actual values of state and docPath.
+      // This means that it tries to save the state as it was when the page loaded and the listener was created, not as it is now.
+      //saveState(state, docPath);
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
+
+  useEffect(() => {
     console.log("newState", state);
-    saveState(state, docPath);
   }, [state]);
 
   function resetSheet() {
@@ -90,6 +105,7 @@ function LoadedSheetPage({
         <Button
           onClick={() => {
             if (confirm("Are you sure you want to sign out?")) {
+              saveState(state, docPath);
               logOutGoogle();
             }
           }}
@@ -99,12 +115,20 @@ function LoadedSheetPage({
         <Button
           onClick={() => {
             async function unload() {
+              saveState(state, docPath);
               docIdSetter(undefined);
             }
             unload();
           }}
         >
           Change Character Sheet
+        </Button>
+        <Button
+          onClick={() => {
+            saveState(state, docPath);
+          }}
+        >
+          Save Character sheet
         </Button>
       </Field>
       <Container>
