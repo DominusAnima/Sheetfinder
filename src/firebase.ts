@@ -3,11 +3,10 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
-  connectAuthEmulator,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { DocumentData, QueryDocumentSnapshot, addDoc, collection, connectFirestoreEmulator, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc } from "firebase/firestore";
+import { DocumentData, QueryDocumentSnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc } from "firebase/firestore";
 import { Blocks } from "./charSheet";
 
 const firebaseConfig = {
@@ -23,12 +22,10 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 const auth = getAuth(firebaseApp);
-connectAuthEmulator(auth, "http://127.0.0.1:9099");
 
 const provider = new GoogleAuthProvider();
 
 const firestore = getFirestore(firebaseApp);
-connectFirestoreEmulator(firestore, "127.0.0.1", 8080);
 
 // Signs the user in and returns their unique uid.
 export const loginGoogle = async (): Promise<string> => {
