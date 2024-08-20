@@ -564,6 +564,10 @@ export function reducer(state: Blocks, action: ReducerAction): Blocks {
       //calculate armor classes
       const combatBonuses = newState.combat.acBonuses;
       const newCombatBlock = newState.combat;
+
+      combatBonuses.armor = newCombatBlock.equipment.armor.baseACBonus;
+      combatBonuses.shield = newCombatBlock.equipment.shield.baseACBonus;
+
       newCombatBlock.ac =
         10 +
         Number(combatBonuses.armor) +
