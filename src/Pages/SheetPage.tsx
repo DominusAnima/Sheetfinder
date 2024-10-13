@@ -14,7 +14,7 @@ import { FormContextProvider } from "../lib/FormContext";
 import { useReducer, useEffect, useState } from "react";
 import { reducer } from "../reducer";
 import { Blocks } from "../charSheet";
-import { loadState, logOutGoogle, saveState } from "../firebase";
+import { loadState, saveState } from "../firebase";
 import { DEFAULT_STATE } from "../DefaultState";
 import Field from "../Components/Field";
 
@@ -26,16 +26,18 @@ export function SheetPage({
   userId,
   docId,
   docIdSetter,
+  userIdSetter,
 }: {
   userId: string;
-  docId: string;
-  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docId: number;
+  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
+  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   const [state, setState] = useState<Blocks>();
   useEffect(() => {
     async function fetchState() {
       try {
-        const defaultState = await loadState(userId + "/" + docId);
+        const defaultState = await loadState(docId);
         setState(defaultState);
       } catch (error) {
         console.error(error);
@@ -48,7 +50,15 @@ export function SheetPage({
   if (state == undefined) {
     return <label className="text-center">Loading</label>;
   } else {
-    return <LoadedSheetPage userId={userId} docId={docId} docIdSetter={docIdSetter} initState={state} />;
+    return (
+      <LoadedSheetPage
+        userId={userId}
+        docId={docId}
+        docIdSetter={docIdSetter}
+        userIdSetter={userIdSetter}
+        initState={state}
+      />
+    );
   }
 }
 
@@ -56,14 +66,15 @@ function LoadedSheetPage({
   userId,
   docId,
   docIdSetter,
+  userIdSetter,
   initState,
 }: {
   userId: string;
-  docId: string;
-  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docId: number;
+  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
+  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
   initState: Blocks;
 }) {
-  const docPath = userId + "/" + docId;
   const [state, dispatch] = useReducer(reducer, initState, initialize);
 
   useEffect(() => {
@@ -103,10 +114,11 @@ function LoadedSheetPage({
           Reset character sheet
         </Button>
         <Button
-          onClick={() => {
+          onClick={async () => {
             if (confirm("Are you sure you want to sign out?")) {
-              saveState(state, docPath);
-              logOutGoogle();
+              await saveState(state, docId, userId);
+              userIdSetter(undefined);
+              docIdSetter(undefined);
             }
           }}
         >
@@ -115,7 +127,7 @@ function LoadedSheetPage({
         <Button
           onClick={() => {
             async function unload() {
-              saveState(state, docPath);
+              await saveState(state, docId, userId);
               docIdSetter(undefined);
             }
             unload();
@@ -124,8 +136,8 @@ function LoadedSheetPage({
           Change Character Sheet
         </Button>
         <Button
-          onClick={() => {
-            saveState(state, docPath);
+          onClick={async () => {
+            await saveState(state, docId, userId);
           }}
         >
           Save Character sheet

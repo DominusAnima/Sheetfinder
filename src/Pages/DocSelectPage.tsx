@@ -1,20 +1,28 @@
 import { useEffect, useState } from "react";
-import { deleteCharacter, getDocList, logOutGoogle, saveNew } from "../firebase";
+import { deleteCharacter, getDocList, saveNew } from "../firebase";
 import { DEFAULT_STATE } from "../DefaultState";
 import Button from "../Components/Button";
-import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+// import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import Container from "../Components/Container";
 import { reducer } from "../reducer";
 import Field from "../Components/Field";
 
+interface DocListEntry {
+  id: number;
+  create_time: string;
+  name: string;
+}
+
 export function DocSelectPage({
   userId,
   docIdSetter,
+  userIdSetter,
 }: {
   userId: string;
-  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
+  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
-  const [docList, setDocList] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>[]>();
+  const [docList, setDocList] = useState<DocListEntry[]>();
 
   useEffect(() => {
     async function fetchDocList() {
@@ -32,7 +40,15 @@ export function DocSelectPage({
   if (docList == undefined) {
     return <label className="text-center mb-4">Loading</label>;
   } else {
-    return <LoadedSelectPage userId={userId} docList={docList} docIdSetter={docIdSetter} docListSetter={setDocList} />;
+    return (
+      <LoadedSelectPage
+        userId={userId}
+        docList={docList}
+        docIdSetter={docIdSetter}
+        docListSetter={setDocList}
+        userIdSetter={userIdSetter}
+      />
+    );
   }
 }
 
@@ -41,11 +57,13 @@ function LoadedSelectPage({
   docList,
   docIdSetter,
   docListSetter,
+  userIdSetter,
 }: {
   userId: string;
-  docList: QueryDocumentSnapshot<DocumentData, DocumentData>[];
-  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
-  docListSetter: React.Dispatch<React.SetStateAction<QueryDocumentSnapshot<DocumentData, DocumentData>[] | undefined>>;
+  docList: DocListEntry[];
+  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
+  docListSetter: React.Dispatch<React.SetStateAction<DocListEntry[] | undefined>>;
+  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   return (
     <Container>
@@ -60,7 +78,7 @@ function LoadedSelectPage({
         <Button
           onClick={() => {
             if (confirm("Are you sure you want to sign out?")) {
-              logOutGoogle();
+              userIdSetter(undefined);
             }
           }}
         >
@@ -71,14 +89,13 @@ function LoadedSelectPage({
         <thead>
           <tr>
             <th className="whitespace-nowrap">Character Name</th>
-            <th className="whitespace-nowrap">Character Level</th>
+            {/* <th className="whitespace-nowrap">Character Level</th> */}
           </tr>
         </thead>
         <tbody>
           {docList.map((e) => (
             <tr key={e.id}>
-              <td className="text-left">{e.data().bio.name}</td>
-              <td>{e.data().classRecorder.totals.levels}</td>
+              <td className="text-left">{e.name}</td>
               <td>
                 <Button size="small" onClick={() => docIdSetter(e.id)}>
                   Open Character Sheet
@@ -89,7 +106,7 @@ function LoadedSelectPage({
                   size="small"
                   onClick={async () => {
                     if (confirm("Are you sure you want to pemanently delete this character?")) {
-                      await deleteCharacter(userId + "/" + e.id);
+                      await deleteCharacter(e.id);
                       docListSetter(undefined);
                     }
                   }}
