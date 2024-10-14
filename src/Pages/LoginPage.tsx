@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "../Components/Button";
 import Field from "../Components/Field";
 import Input from "../Components/Input";
-import { login, register } from "../firebase";
+import { login, register } from "../firebase/firebase";
 // import { loginGoogle } from "../firebase";
 
 export function LoginPage({

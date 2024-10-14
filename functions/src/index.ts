@@ -2,14 +2,9 @@ import * as functions from 'firebase-functions';
 import * as mysql from 'mysql2/promise';
 import * as express from 'express';
 import * as charSheet from '../../src/charSheet';
+import { webUserOptions } from './dbCredentails';
 
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'webapp_user',
-  password: 'SN6L&Z8y+D9q',
-  database: 'sheetFinderDB',
-  port: 3006
-});
+const pool = mysql.createPool( webUserOptions );
 
 const app = express();
 

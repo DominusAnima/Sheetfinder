@@ -14,7 +14,7 @@ import { FormContextProvider } from "../lib/FormContext";
 import { useReducer, useEffect, useState } from "react";
 import { reducer } from "../reducer";
 import { Blocks } from "../charSheet";
-import { loadState, saveState } from "../firebase";
+import { loadState, saveState } from "../firebase/firebase";
 import { DEFAULT_STATE } from "../DefaultState";
 import Field from "../Components/Field";
 

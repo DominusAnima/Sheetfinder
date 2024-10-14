@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { deleteCharacter, getDocList, saveNew } from "../firebase";
+import { deleteCharacter, getDocList, saveNew } from "../firebase/firebase";
 import { DEFAULT_STATE } from "../DefaultState";
 import Button from "../Components/Button";
 // import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";

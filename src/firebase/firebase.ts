@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { DocumentData, QueryDocumentSnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, setDoc } from "firebase/firestore";
-import { Blocks } from "./charSheet";
+import { Blocks } from "../charSheet";
 
 const firebaseConfig = {
   apiKey: "AIzaSyABsTpxdiwxaVsY3CfiyIOa9XGxNUnxqfU",
@@ -125,7 +125,7 @@ export async function deleteCharacter(docPath: string) {
 */
 // custom backend calls -----------------------------------------------------------
 
-const backendUrl = "http://127.0.0.1:5001/sheetfinder-2fe23/us-central1/api"; // Replace with your backend URL
+import { backendUrl } from "./backendSecure";
 
 // Signs the user in and returns their email.
 export const login = async (email: string, password: string): Promise<string> => {
