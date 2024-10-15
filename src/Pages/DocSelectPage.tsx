@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { deleteCharacter, getDocList, saveNew } from "../firebase/firebase";
 import { DEFAULT_STATE } from "../DefaultState";
 import Button from "../Components/Button";
-// import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import Container from "../Components/Container";
 import { reducer } from "../reducer";
-import Field from "../Components/Field";
+import Modal from "../Components/Modal";
+import Toast from "../Components/Toast";
+import Toolbar, { ToolbarItem } from "../Components/Toolbar";
 
 interface DocListEntry {
   id: number;
@@ -65,31 +66,67 @@ function LoadedSelectPage({
   docListSetter: React.Dispatch<React.SetStateAction<DocListEntry[] | undefined>>;
   userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
+  const [deleteModal, setDeleteModal] = useState<undefined | number>(undefined);
+  const [signOutModal, setSignOutModal] = useState(false);
+  const [toastContent, setToastContent] = useState<{ type: "success" | "error" | "info"; message: string } | undefined>(
+    undefined
+  );
+
+  const toolbarItems: ToolbarItem[] = [
+    {
+      name: "Create new Character",
+      onClick: async () => {
+        docIdSetter(await saveNew(reducer(DEFAULT_STATE, { type: "recalculate" }), userId));
+      },
+    },
+    {
+      name: "Sign out",
+      onClick: () => {
+        setSignOutModal(true);
+      },
+    },
+  ];
+
   return (
     <Container>
-      <Field className="text-center mb-4">
-        <Button
-          onClick={async () => {
-            docIdSetter(await saveNew(reducer(DEFAULT_STATE, { type: "recalculate" }), userId));
+      <Modal
+        show={deleteModal !== undefined}
+        title="Are you sure you want to permanently delete this character?"
+        onClose={() => setDeleteModal(undefined)}
+        onOk={async () => {
+          try {
+            await deleteCharacter(deleteModal as number);
+            docListSetter(undefined);
+            setToastContent({ type: "success", message: "Successfully deleted character" });
+          } catch (error) {
+            setToastContent({ type: "error", message: "" + error });
+          }
+          setDeleteModal(undefined);
+        }}
+      />
+      <Modal
+        show={signOutModal}
+        title="Are you sure you want to sign out?"
+        onClose={() => setSignOutModal(false)}
+        onOk={() => {
+          userIdSetter(undefined);
+          setSignOutModal(false);
+        }}
+      />
+      {toastContent && (
+        <Toast
+          type={toastContent.type}
+          message={toastContent.message}
+          onClose={() => {
+            setToastContent(undefined);
           }}
-        >
-          Create new Character
-        </Button>
-        <Button
-          onClick={() => {
-            if (confirm("Are you sure you want to sign out?")) {
-              userIdSetter(undefined);
-            }
-          }}
-        >
-          Sign out
-        </Button>
-      </Field>
+        />
+      )}
+      <Toolbar items={toolbarItems} />
       <table className="table table--striped w-full mt-4 text-center">
         <thead>
           <tr>
             <th className="whitespace-nowrap">Character Name</th>
-            {/* <th className="whitespace-nowrap">Character Level</th> */}
           </tr>
         </thead>
         <tbody>
@@ -104,11 +141,8 @@ function LoadedSelectPage({
               <td className="text-right">
                 <Button
                   size="small"
-                  onClick={async () => {
-                    if (confirm("Are you sure you want to pemanently delete this character?")) {
-                      await deleteCharacter(e.id);
-                      docListSetter(undefined);
-                    }
+                  onClick={() => {
+                    setDeleteModal(e.id);
                   }}
                 >
                   Delete Character

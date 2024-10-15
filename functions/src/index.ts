@@ -16,6 +16,15 @@ app.post('/register-user', async (req, res) => {
   const connection = await pool.getConnection();
   await connection.beginTransaction();
   try {
+    const [results] = await connection.query<mysql.RowDataPacket[]>(
+      `SELECT email FROM users WHERE email = ?`, [email]
+    );
+    
+    if (results.length > 0) {
+      res.status(409).send({ error: 'User already exists.' });
+      return;
+    }
+
     await connection.query(
       `INSERT INTO users (email, password)
         VALUES (?, ?)`,
@@ -995,7 +1004,13 @@ async function fetchEquipBlock(sheetId: number, connection: mysql.PoolConnection
     const [itemResults] = await connection.query<mysql.RowDataPacket[]>(
       `SELECT id, name, hp, toggle_descr, description, weight, value, slot, qty_or_uses
        FROM item
-       WHERE equip_block_id = ? AND id NOT IN (SELECT item_id FROM bag) AND id NOT IN (SELECT item_id FROM equipped_items)`, [sheetId]
+       WHERE equip_block_id = ? 
+        AND id NOT IN (SELECT item_id FROM bag) 
+        AND id NOT IN (SELECT item_id FROM equipped_items) 
+        AND id NOT IN (SELECT equip_armor FROM combat_block)
+        AND id NOT IN (SELECT equip_shield FROM combat_block)
+        AND id NOT IN (SELECT equip_main_weapon FROM combat_block)
+        AND id NOT IN (SELECT equip_offhand_weapon FROM combat_block)`, [sheetId]
     );
 
     const [wornResults] = await connection.query<mysql.RowDataPacket[]>(
