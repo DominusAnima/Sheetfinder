@@ -1,29 +1,20 @@
 import { useEffect, useState } from "react";
-import { deleteCharacter, getDocList, saveNew } from "../firebase/firebase";
+import { deleteCharacter, getDocList, logOutGoogle, saveNew } from "../firebase";
 import { DEFAULT_STATE } from "../DefaultState";
 import Button from "../Components/Button";
+import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import Container from "../Components/Container";
 import { reducer } from "../reducer";
-import Modal from "../Components/Modal";
-import Toast from "../Components/Toast";
-import Toolbar, { ToolbarItem } from "../Components/Toolbar";
-
-interface DocListEntry {
-  id: number;
-  create_time: string;
-  name: string;
-}
+import Field from "../Components/Field";
 
 export function DocSelectPage({
   userId,
   docIdSetter,
-  userIdSetter,
 }: {
   userId: string;
-  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
-  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
-  const [docList, setDocList] = useState<DocListEntry[]>();
+  const [docList, setDocList] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>[]>();
 
   useEffect(() => {
     async function fetchDocList() {
@@ -41,15 +32,7 @@ export function DocSelectPage({
   if (docList == undefined) {
     return <label className="text-center mb-4">Loading</label>;
   } else {
-    return (
-      <LoadedSelectPage
-        userId={userId}
-        docList={docList}
-        docIdSetter={docIdSetter}
-        docListSetter={setDocList}
-        userIdSetter={userIdSetter}
-      />
-    );
+    return <LoadedSelectPage userId={userId} docList={docList} docIdSetter={docIdSetter} docListSetter={setDocList} />;
   }
 }
 
@@ -58,81 +41,44 @@ function LoadedSelectPage({
   docList,
   docIdSetter,
   docListSetter,
-  userIdSetter,
 }: {
   userId: string;
-  docList: DocListEntry[];
-  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
-  docListSetter: React.Dispatch<React.SetStateAction<DocListEntry[] | undefined>>;
-  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docList: QueryDocumentSnapshot<DocumentData, DocumentData>[];
+  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docListSetter: React.Dispatch<React.SetStateAction<QueryDocumentSnapshot<DocumentData, DocumentData>[] | undefined>>;
 }) {
-  const [deleteModal, setDeleteModal] = useState<undefined | number>(undefined);
-  const [signOutModal, setSignOutModal] = useState(false);
-  const [toastContent, setToastContent] = useState<{ type: "success" | "error" | "info"; message: string } | undefined>(
-    undefined
-  );
-
-  const toolbarItems: ToolbarItem[] = [
-    {
-      name: "Create new Character",
-      onClick: async () => {
-        docIdSetter(await saveNew(reducer(DEFAULT_STATE, { type: "recalculate" }), userId));
-      },
-    },
-    {
-      name: "Sign out",
-      onClick: () => {
-        setSignOutModal(true);
-      },
-    },
-  ];
-
   return (
     <Container>
-      <Modal
-        show={deleteModal !== undefined}
-        title="Are you sure you want to permanently delete this character?"
-        onClose={() => setDeleteModal(undefined)}
-        onOk={async () => {
-          try {
-            await deleteCharacter(deleteModal as number);
-            docListSetter(undefined);
-            setToastContent({ type: "success", message: "Successfully deleted character" });
-          } catch (error) {
-            setToastContent({ type: "error", message: "" + error });
-          }
-          setDeleteModal(undefined);
-        }}
-      />
-      <Modal
-        show={signOutModal}
-        title="Are you sure you want to sign out?"
-        onClose={() => setSignOutModal(false)}
-        onOk={() => {
-          userIdSetter(undefined);
-          setSignOutModal(false);
-        }}
-      />
-      {toastContent && (
-        <Toast
-          type={toastContent.type}
-          message={toastContent.message}
-          onClose={() => {
-            setToastContent(undefined);
+      <Field className="text-center mb-4">
+        <Button
+          onClick={async () => {
+            docIdSetter(await saveNew(reducer(DEFAULT_STATE, { type: "recalculate" }), userId));
           }}
-        />
-      )}
-      <Toolbar items={toolbarItems} />
+        >
+          Create new Character
+        </Button>
+        <Button
+          onClick={() => {
+            if (confirm("Are you sure you want to sign out?")) {
+              logOutGoogle();
+            }
+          }}
+        >
+          Sign out
+        </Button>
+      </Field>
       <table className="table table--striped w-full mt-4 text-center">
         <thead>
           <tr>
             <th className="whitespace-nowrap">Character Name</th>
+            <th className="whitespace-nowrap">Character Level</th>
           </tr>
         </thead>
         <tbody>
           {docList.map((e) => (
             <tr key={e.id}>
-              <td className="text-left">{e.name}</td>
+              <td className="text-left">{e.data().bio.name}</td>
+              <td>{e.data().classRecorder.totals.levels}</td>
               <td>
                 <Button size="small" onClick={() => docIdSetter(e.id)}>
                   Open Character Sheet
@@ -141,8 +87,11 @@ function LoadedSelectPage({
               <td className="text-right">
                 <Button
                   size="small"
-                  onClick={() => {
-                    setDeleteModal(e.id);
+                  onClick={async () => {
+                    if (confirm("Are you sure you want to pemanently delete this character?")) {
+                      await deleteCharacter(userId + "/" + e.id);
+                      docListSetter(undefined);
+                    }
                   }}
                 >
                   Delete Character

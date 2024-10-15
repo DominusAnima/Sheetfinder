@@ -8,16 +8,15 @@ import { HitPoints } from "../Blocks/HitPoints";
 import { Magic } from "../Blocks/Magic";
 import { Skills } from "../Blocks/Skills";
 import { Special } from "../Blocks/Special";
+import Button from "../Components/Button";
 import Container from "../Components/Container";
 import { FormContextProvider } from "../lib/FormContext";
 import { useReducer, useEffect, useState } from "react";
 import { reducer } from "../reducer";
 import { Blocks } from "../charSheet";
-import { loadState, saveState } from "../firebase/firebase";
+import { loadState, logOutGoogle, saveState } from "../firebase";
 import { DEFAULT_STATE } from "../DefaultState";
-import Modal from "../Components/Modal";
-import Toast from "../Components/Toast";
-import Toolbar, { ToolbarItem } from "../Components/Toolbar";
+import Field from "../Components/Field";
 
 const initialize = (state: Blocks): Blocks => {
   return reducer(state, { type: "recalculate" });
@@ -27,18 +26,16 @@ export function SheetPage({
   userId,
   docId,
   docIdSetter,
-  userIdSetter,
 }: {
   userId: string;
-  docId: number;
-  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
-  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docId: string;
+  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   const [state, setState] = useState<Blocks>();
   useEffect(() => {
     async function fetchState() {
       try {
-        const defaultState = await loadState(docId);
+        const defaultState = await loadState(userId + "/" + docId);
         setState(defaultState);
       } catch (error) {
         console.error(error);
@@ -51,15 +48,7 @@ export function SheetPage({
   if (state == undefined) {
     return <label className="text-center">Loading</label>;
   } else {
-    return (
-      <LoadedSheetPage
-        userId={userId}
-        docId={docId}
-        docIdSetter={docIdSetter}
-        userIdSetter={userIdSetter}
-        initState={state}
-      />
-    );
+    return <LoadedSheetPage userId={userId} docId={docId} docIdSetter={docIdSetter} initState={state} />;
   }
 }
 
@@ -67,51 +56,15 @@ function LoadedSheetPage({
   userId,
   docId,
   docIdSetter,
-  userIdSetter,
   initState,
 }: {
   userId: string;
-  docId: number;
-  docIdSetter: React.Dispatch<React.SetStateAction<number | undefined>>;
-  userIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
+  docId: string;
+  docIdSetter: React.Dispatch<React.SetStateAction<string | undefined>>;
   initState: Blocks;
 }) {
+  const docPath = userId + "/" + docId;
   const [state, dispatch] = useReducer(reducer, initState, initialize);
-  const [modal, setModal] = useState<"none" | "reset" | "signOut">("none");
-  const [toast, setToast] = useState<"none" | "success" | "failed">("none");
-
-  const toolbarItems: ToolbarItem[] = [
-    {
-      name: "Reset character sheet",
-      onClick: () => setModal("reset"),
-    },
-    {
-      name: "Change Character Sheet",
-      onClick: async () => {
-        const status = await saveState(state, docId, userId);
-        if (status) {
-          docIdSetter(undefined);
-        } else {
-          setToast("failed");
-        }
-      },
-    },
-    {
-      name: "Save Character sheet",
-      onClick: async () => {
-        const status = await saveState(state, docId, userId);
-        if (status) {
-          setToast("success");
-        } else {
-          setToast("failed");
-        }
-      },
-    },
-    {
-      name: "Sign out",
-      onClick: () => setModal("signOut"),
-    },
-  ];
 
   useEffect(() => {
     const handleUnload = (event: any) => {
@@ -139,33 +92,45 @@ function LoadedSheetPage({
 
   return (
     <FormContextProvider dispatch={dispatch}>
-      <Modal
-        show={modal === "reset"}
-        title="Are you sure you want to reset the entire character sheet?"
-        onOk={resetSheet}
-        onClose={() => setModal("none")}
-      />
-      <Modal
-        show={modal === "signOut"}
-        title="Are you sure you want to sign out?"
-        onOk={async () => {
-          const status = await saveState(state, docId, userId);
-          if (status) {
-            userIdSetter(undefined);
-            docIdSetter(undefined);
-          } else {
-            setToast("failed");
-          }
-        }}
-        onClose={() => setModal("none")}
-      />
-      {toast !== "none" &&
-        (toast === "success" ? (
-          <Toast message="Character sheet saved" type="success" onClose={() => setToast("none")} />
-        ) : (
-          <Toast message="Failed to save character sheet" type="error" onClose={() => setToast("none")} />
-        ))}
-      <Toolbar items={toolbarItems} />
+      <Field className="text-center">
+        <Button
+          onClick={() => {
+            if (confirm("Are you sure you want to reset the entire character sheet?")) {
+              resetSheet();
+            }
+          }}
+        >
+          Reset character sheet
+        </Button>
+        <Button
+          onClick={() => {
+            if (confirm("Are you sure you want to sign out?")) {
+              saveState(state, docPath);
+              logOutGoogle();
+            }
+          }}
+        >
+          Sign out
+        </Button>
+        <Button
+          onClick={() => {
+            async function unload() {
+              saveState(state, docPath);
+              docIdSetter(undefined);
+            }
+            unload();
+          }}
+        >
+          Change Character Sheet
+        </Button>
+        <Button
+          onClick={() => {
+            saveState(state, docPath);
+          }}
+        >
+          Save Character sheet
+        </Button>
+      </Field>
       <Container>
         <Bio state={state.bio} />
         <ClassRecorder state={state.classRecorder} />
