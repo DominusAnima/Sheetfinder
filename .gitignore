@@ -23,5 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 .firebase
-src/firebase/backendSecure.ts
-functions/src/dbCredentails.ts
